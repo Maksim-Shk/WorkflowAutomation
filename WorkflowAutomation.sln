@@ -3,21 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkflowAutomation.Server", "WorkflowAutomation\Server\WorkflowAutomation.Server.csproj", "{50957688-DBF9-404A-B4B2-7DDA899BE3A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkflowAutomation.Server", "WorkflowAutomation\Server\WorkflowAutomation.Server.csproj", "{50957688-DBF9-404A-B4B2-7DDA899BE3A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkflowAutomation.Client", "WorkflowAutomation\Client\WorkflowAutomation.Client.csproj", "{7279D6A9-721B-403C-83A6-BE5A449C8C66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkflowAutomation.Client", "WorkflowAutomation\Client\WorkflowAutomation.Client.csproj", "{7279D6A9-721B-403C-83A6-BE5A449C8C66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkflowAutomation.Shared", "WorkflowAutomation\Shared\WorkflowAutomation.Shared.csproj", "{A68339F6-2642-404F-A17A-31F21E7366E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkflowAutomation.Shared", "WorkflowAutomation\Shared\WorkflowAutomation.Shared.csproj", "{A68339F6-2642-404F-A17A-31F21E7366E7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{26AC090A-CD7A-47BB-9DDF-F18C733B48C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkflowAutomation.Application", "WorkflowAutomation.Application\WorkflowAutomation.Application.csproj", "{E457D519-27C8-479C-BC19-0B50E8FBA560}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkflowAutomation.Application", "WorkflowAutomation.Application\WorkflowAutomation.Application.csproj", "{E457D519-27C8-479C-BC19-0B50E8FBA560}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkflowAutomation.Domain", "WorkflowAutomation.Domain\WorkflowAutomation.Domain.csproj", "{E55CC5E6-58D5-4707-87C9-5671BF58B081}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkflowAutomation.Domain", "WorkflowAutomation.Domain\WorkflowAutomation.Domain.csproj", "{E55CC5E6-58D5-4707-87C9-5671BF58B081}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{C3AA4F1A-C79A-4919-B555-972241F58600}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkflowAutomation.Persistence", "WorkflowAutomation.Persistence\WorkflowAutomation.Persistence.csproj", "{FF6D1048-2455-444C-82D2-C4228DEAF7D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkflowAutomation.Persistence", "WorkflowAutomation.Persistence\WorkflowAutomation.Persistence.csproj", "{FF6D1048-2455-444C-82D2-C4228DEAF7D0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{D7A74820-FE3C-47BD-B5FD-18B270A6657A}"
 EndProject
