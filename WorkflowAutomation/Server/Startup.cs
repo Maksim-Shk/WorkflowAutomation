@@ -17,7 +17,7 @@ using WorkflowAutomation.WebApi.Services;
 using Serilog.Events;
 using Serilog;
 
-namespace WorkflowAutomation.WebApi
+namespace WorkflowAutomation.Server
 {
     public class Startup
     {
@@ -47,25 +47,25 @@ namespace WorkflowAutomation.WebApi
                 });
             });
 
-          // services.AddAuthentication(config =>
-          // {
-          //     config.DefaultAuthenticateScheme =
-          //         JwtBearerDefaults.AuthenticationScheme;
-          //     config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-          // })
-          //     .AddJwtBearer("Bearer", options =>
-          //     {
-          //         options.Authority = "https://localhost:44386/";
-          //         options.Audience = "NotesWebAPI";
-          //         options.RequireHttpsMetadata = false;
-          //     });
+            services.AddAuthentication(config =>
+            {
+                config.DefaultAuthenticateScheme =
+                    JwtBearerDefaults.AuthenticationScheme;
+                config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer("Bearer", options =>
+                {
+                    options.Authority = "https://localhost:7153/";
+                    options.Audience = "WorkflowAutomationWebAPI";
+                    options.RequireHttpsMetadata = false;
+                });
 
             //services.AddVersionedApiExplorer(options =>
             //    options.GroupNameFormat = "'v'VVV");
-           //services.AddTransient<IConfigureOptions<SwaggerGenOptions>,
-           //        ConfigureSwaggerOptions>();
-          //  services.AddSwaggerGen();
-          //  services.AddApiVersioning();
+            //services.AddTransient<IConfigureOptions<SwaggerGenOptions>,
+            //        ConfigureSwaggerOptions>();
+            //  services.AddSwaggerGen();
+            //  services.AddApiVersioning();
 
             services.AddSingleton<ICurrentUserService, CurrentUserService>();
             services.AddHttpContextAccessor();
@@ -79,24 +79,24 @@ namespace WorkflowAutomation.WebApi
             {
                 app.UseDeveloperExceptionPage();
             }
-           // app.UseSwagger();
-           // app.UseSwaggerUI(config =>
-           // {
-           //     foreach (var description in provider.ApiVersionDescriptions)
-           //     {
-           //         config.SwaggerEndpoint(
-           //             $"/swagger/{description.GroupName}/swagger.json",
-           //             description.GroupName.ToUpperInvariant());
-           //         config.RoutePrefix = string.Empty;
-           //     }
-           // });
+            // app.UseSwagger();
+            // app.UseSwaggerUI(config =>
+            // {
+            //     foreach (var description in provider.ApiVersionDescriptions)
+            //     {
+            //         config.SwaggerEndpoint(
+            //             $"/swagger/{description.GroupName}/swagger.json",
+            //             description.GroupName.ToUpperInvariant());
+            //         config.RoutePrefix = string.Empty;
+            //     }
+            // });
             app.UseCustomExceptionHandler();
             app.UseRouting();
             app.UseHttpsRedirection();
             app.UseCors("AllowAll");
-          //  app.UseAuthentication();
-          //  app.UseAuthorization();
-          //  app.UseApiVersioning();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            // app.UseApiVersioning();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

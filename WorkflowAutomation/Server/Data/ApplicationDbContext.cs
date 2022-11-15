@@ -6,12 +6,12 @@ using WorkflowAutomation.Server.Models;
 
 namespace WorkflowAutomation.Server.Data
 {
-    public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
-    {
-        public ApplicationDbContext(
-            DbContextOptions options,
-            IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
-        {
-        }
-    }
+ //  public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
+ //  {
+ //      public ApplicationDbContext(
+ //          DbContextOptions options,
+ //          IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
+ //      {
+ //      }
+ //  }
 }
