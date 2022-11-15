@@ -12,13 +12,13 @@ namespace WorkflowAutomation.WebApi.Services
         public CurrentUserService(IHttpContextAccessor httpContextAccessor) =>
             _httpContextAccessor = httpContextAccessor;
 
-        public int UserId
+        public Guid UserId
         {
             get
             {
                 var id = _httpContextAccessor.HttpContext?.User?
                     .FindFirstValue(ClaimTypes.NameIdentifier);
-                return int.Parse(id);
+                return string.IsNullOrEmpty(id) ? Guid.Empty : Guid.Parse(id);
             }
         }
     }

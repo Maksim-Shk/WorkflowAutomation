@@ -13,9 +13,8 @@ namespace WorkflowAutomation.Application.Interfaces
         DbSet<Document> Documents { get; set; }
         DbSet<DocumentContent> DocumentContents { get; set; }
         DbSet<DocumentType> DocumentTypes { get; set; }
-        DbSet<DocumentUser> DocumentUsers { get; set; }
+        DbSet<DocumentStatus> DocumentUsers { get; set; }
         DbSet<Position> Positions { get; set; }
-        DbSet<Route> Routes { get; set; }
         DbSet<Status> Statuses { get; set; }
         DbSet<Subdivision> Subdivisions { get; set; }
         DbSet<User> Users { get; set; }
