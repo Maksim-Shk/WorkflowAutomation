@@ -46,9 +46,9 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentList
             //           }).ToList();
             //
 
-            var documentsQuery = await _dbContext.DocumentUsers
+            var documentsQuery = await _dbContext.Documents
                 .Where(x => x.IdReceiver == request.UserId || x.IdSender == request.UserId)
-                .Include(y => y.IdDocumentNavigation)
+                //.Include(y => y.IdDocumentNavigation)
                 .ProjectTo<SimpleDocumentLookupDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 

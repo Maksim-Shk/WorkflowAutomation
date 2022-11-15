@@ -10,7 +10,7 @@ namespace WorkflowAutomation.WebApi.Models
         [Required]
         public string Title { get; set; }
         public int DocumentTypeId { get; set; }
-        public Guid ReceiverUser { get; set; }
+        public Guid ReceiverUserId { get; set; }
 
         public void Mapping(Profile profile)
         {
@@ -19,8 +19,8 @@ namespace WorkflowAutomation.WebApi.Models
                     opt => opt.MapFrom(docDto => docDto.Title))
                  .ForMember(docCommand => docCommand.DocumentTypeId,
                     opt => opt.MapFrom(docDto => docDto.DocumentTypeId))
-                  .ForMember(docCommand => docCommand.ReceiverUser,
-                    opt => opt.MapFrom(docDto => docDto.ReceiverUser));
+                  .ForMember(docCommand => docCommand.ReceiverUserId,
+                    opt => opt.MapFrom(docDto => docDto.ReceiverUserId));
         }
     } 
 }

@@ -19,36 +19,34 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
         public async Task<int> Handle(CreateNewDocumentCommand request,
             CancellationToken cancellationToken)
         {
-            var route = new Route
-            {
-                Name = "Маршрут «" + request.Title + "»",
-                CreateDate = DateTime.Now,
-                CompleteDate = null,
-            };
-
             var document = new Document
             {
                 IdDocumentType = request.DocumentTypeId,
                 Title = request.Title,
-                IdRoute = route.IdRoute,
-                IdStatus = _dbContext.Statuses.Where(x => x.Name == "В работе").First().IdStatus,
+                IdStatus = _dbContext.Statuses.Where(x => x.Name == "Зарегистрировано").First().IdStatus,
                 // IdStatus = request.StatusId, //Возможно по-умолчанию "В работе"
                 CreateDate = DateTime.Now,
                 UpdateDate = null,
-                RemoveDate = null
-            };
-
-            var documentUser = new DocumentUser
-            {
+                RemoveDate = null,
                 IdSender = request.UserId,
-                IdDocument = document.IdDocument,
-                IdReceiver = request.ReceiverUser,
-                PreviousDocumentUser = null
+                IdReceiver = request.ReceiverUserId
             };
 
-            await _dbContext.Routes.AddAsync(route, cancellationToken);
+            var documentStatus = new DocumentStatus
+            {
+                IdDocument = document.IdDocument,
+                IdStatus = document.IdStatus,
+                AppropriationDate = document.CreateDate,
+                //??????
+                IdUser = request.UserId,
+
+            };
+
+            // Добавить DocumentContent
+
+
             await _dbContext.Documents.AddAsync(document, cancellationToken);
-            await _dbContext.DocumentUsers.AddAsync(documentUser, cancellationToken);
+            await _dbContext.DocumentStatuses.AddAsync(documentStatus, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return document.IdDocument;
