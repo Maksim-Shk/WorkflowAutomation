@@ -3,7 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using WorkflowAutomation.Application.Interfaces;
 
-namespace WorkflowAutomation.WebApi.Services
+namespace WorkflowAutomation.Server.Services
 {
     public class CurrentUserService : ICurrentUserService
     {

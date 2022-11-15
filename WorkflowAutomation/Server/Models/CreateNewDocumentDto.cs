@@ -3,7 +3,7 @@ using WorkflowAutomation.Application.Common.Mappings;
 using WorkflowAutomation.Application.Documents.Commands.CreateNewDocument;
 using System.ComponentModel.DataAnnotations;
 
-namespace WorkflowAutomation.WebApi.Models
+namespace WorkflowAutomation.Server.Models
 {
     public class CreateNewDocumentDto : IMapWith<CreateNewDocumentCommand>
     {

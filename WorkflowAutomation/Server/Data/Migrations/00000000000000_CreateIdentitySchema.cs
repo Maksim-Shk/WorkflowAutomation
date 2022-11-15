@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿/*
+using Microsoft.EntityFrameworkCore.Migrations;
 using System;
 
 namespace WorkflowAutomation.Server.Data.Migrations
@@ -319,3 +320,4 @@ namespace WorkflowAutomation.Server.Data.Migrations
         }
     }
 }
+*/

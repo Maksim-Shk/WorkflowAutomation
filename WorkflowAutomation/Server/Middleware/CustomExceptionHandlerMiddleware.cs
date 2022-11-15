@@ -6,7 +6,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using WorkflowAutomation.Application.Common.Exceptions;
 
-namespace WorkflowAutomation.WebApi.Middleware
+namespace WorkflowAutomation.Server.Middleware
 {
     public class CustomExceptionHandlerMiddleware
     {

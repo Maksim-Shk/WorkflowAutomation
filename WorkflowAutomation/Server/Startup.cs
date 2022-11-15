@@ -12,8 +12,8 @@ using WorkflowAutomation.Application;
 using WorkflowAutomation.Application.Common.Mappings;
 using WorkflowAutomation.Application.Interfaces;
 using WorkflowAutomation.Persistence;
-using WorkflowAutomation.WebApi.Middleware;
-using WorkflowAutomation.WebApi.Services;
+using WorkflowAutomation.Server.Middleware;
+using WorkflowAutomation.Server.Services;
 using Serilog.Events;
 using Serilog;
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 
-namespace WorkflowAutomation.WebApi.Middleware
+namespace WorkflowAutomation.Server.Middleware
 {
     public static class CustomExceptionHandlerMiddlewareExtensions
     {

@@ -4,7 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace WorkflowAutomation.WebApi.Controllers
+namespace WorkflowAutomation.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]

@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using WorkflowAutomation.Application.Documents.Commands.CreateNewDocument;
 using WorkflowAutomation.Application.Documents.Queries.GetDocumentList;
-using WorkflowAutomation.WebApi.Models;
-using WorkflowAutomation.WebApi.Controllers;
+using WorkflowAutomation.Server.Models;
+using WorkflowAutomation.Server.Controllers;
 
-namespace WorkflowAutomation.WebApi.Controllers
+namespace WorkflowAutomation.Server.Controllers
 {
     //[ApiVersion("1.0")]
     [Produces("application/json")]
