@@ -4,6 +4,6 @@ namespace WorkflowAutomation.Application.Interfaces
 {
     public interface ICurrentUserService
     {
-        int UserId { get; }
+        Guid UserId { get; }
     }
 }

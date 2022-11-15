@@ -11,9 +11,10 @@ using WorkflowAutomation.WebApi.Controllers;
 
 namespace WorkflowAutomation.WebApi.Controllers
 {
-    [ApiVersion("1.0")]
+    //[ApiVersion("1.0")]
     [Produces("application/json")]
-    [Route("api/{version:apiVersion}/[controller]")]
+    //[Route("api/{version:apiVersion}/[controller]")]
+    [Route("api/[controller]")]
     public class DocumentController : BaseController
     {
         private readonly IMapper _mapper;

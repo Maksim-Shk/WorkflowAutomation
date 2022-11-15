@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using System.Reflection;
-using Swashbuckle.AspNetCore.SwaggerGen;
+//using Swashbuckle.AspNetCore.SwaggerGen;
 using WorkflowAutomation.Application;
 using WorkflowAutomation.Application.Common.Mappings;
 using WorkflowAutomation.Application.Interfaces;
