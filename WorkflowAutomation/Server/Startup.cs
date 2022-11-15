@@ -74,7 +74,7 @@ namespace WorkflowAutomation.Server
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env
             //,IApiVersionDescriptionProvider provider
             )
-        {
+        { 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
