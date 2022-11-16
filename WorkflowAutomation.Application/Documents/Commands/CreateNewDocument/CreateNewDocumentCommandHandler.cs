@@ -23,8 +23,7 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
             {
                 IdDocumentType = request.DocumentTypeId,
                 Title = request.Title,
-                IdStatus = _dbContext.Statuses.Where(x => x.Name == "Зарегистрировано").First().IdStatus,
-                // IdStatus = request.StatusId, //Возможно по-умолчанию "В работе"
+                
                 CreateDate = DateTime.Now,
                 UpdateDate = null,
                 RemoveDate = null,
@@ -35,7 +34,8 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
             var documentStatus = new DocumentStatus
             {
                 IdDocument = document.IdDocument,
-                IdStatus = document.IdStatus,
+                IdStatus = _dbContext.Statuses.Where(x => x.Name == "Зарегистрировано").First().IdStatus,
+                // IdStatus = request.StatusId, //Возможно по-умолчанию "В работе"
                 AppropriationDate = document.CreateDate,
                 //??????
                 IdUser = request.UserId,

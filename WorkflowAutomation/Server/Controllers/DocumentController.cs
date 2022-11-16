@@ -8,6 +8,7 @@ using WorkflowAutomation.Application.Documents.Commands.CreateNewDocument;
 using WorkflowAutomation.Application.Documents.Queries.GetDocumentList;
 using WorkflowAutomation.Server.Models;
 using WorkflowAutomation.Server.Controllers;
+using WorkflowAutomation.Shared;
 
 namespace WorkflowAutomation.Server.Controllers
 {
