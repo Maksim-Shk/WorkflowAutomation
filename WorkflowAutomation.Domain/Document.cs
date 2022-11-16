@@ -9,8 +9,6 @@ public partial class Document
 
     public int IdDocumentType { get; set; }
 
-    public int IdStatus { get; set; }
-
     public string? Title { get; set; }
 
     public DateTime CreateDate { get; set; }

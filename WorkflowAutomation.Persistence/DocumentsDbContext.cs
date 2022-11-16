@@ -77,8 +77,6 @@ namespace WorkflowAutomation.Persistence
 
                 entity.HasIndex(e => e.IdSender, "fki_document_id_sender_fkey");
 
-                entity.HasIndex(e => e.IdStatus, "fki_document_id_status_fkey");
-
                 entity.HasIndex(e => e.IdDocumentType, "fki_rtewte");
 
                 entity.Property(e => e.IdDocument)
@@ -91,7 +89,6 @@ namespace WorkflowAutomation.Persistence
                 entity.Property(e => e.IdDocumentType).HasColumnName("id_document_type");
                 entity.Property(e => e.IdReceiver).HasColumnName("id_receiver");
                 entity.Property(e => e.IdSender).HasColumnName("id_sender");
-                entity.Property(e => e.IdStatus).HasColumnName("id_status");
                 entity.Property(e => e.RemoveDate)
                     .HasColumnType("timestamp without time zone")
                     .HasColumnName("remove_date");
