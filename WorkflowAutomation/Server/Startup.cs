@@ -33,7 +33,7 @@ namespace WorkflowAutomation.Server
                 config.AddProfile(new AssemblyMappingProfile(typeof(IDocumentUserDbContext).Assembly));
             });
 
-            //services.AddApplication();
+            services.AddApplication();
             services.AddPersistence(Configuration);
             services.AddControllers();
 
