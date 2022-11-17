@@ -13,9 +13,11 @@ using WorkflowAutomation.Shared;
 namespace WorkflowAutomation.Server.Controllers
 {
     //[ApiVersion("1.0")]
-    [Produces("application/json")]
+    //[Produces("application/json")]
     //[Route("api/{version:apiVersion}/[controller]")]
-    [Route("api/[controller]")]
+    [Authorize]
+    [ApiController]
+    [Route("[controller]")]
     public class DocumentController : BaseController
     {
         private readonly IMapper _mapper;
