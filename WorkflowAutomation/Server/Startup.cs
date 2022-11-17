@@ -45,7 +45,7 @@ namespace WorkflowAutomation.Server
             {
                 options.UseNpgsql(connectionString);
             });
-            services.AddControllers();
+          
 
             services.AddCors(options =>
             {
@@ -88,8 +88,9 @@ namespace WorkflowAutomation.Server
             //  services.AddSwaggerGen();
             //  services.AddApiVersioning();
 
-            services.AddSingleton<ICurrentUserService, CurrentUserService>();
-            services.AddHttpContextAccessor();
+           // services.AddSingleton<ICurrentUserService, CurrentUserService>();
+
+            //services.AddHttpContextAccessor();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env
@@ -126,7 +127,7 @@ namespace WorkflowAutomation.Server
 
             app.UseCustomExceptionHandler();
             app.UseRouting();
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseCors("AllowAll");
             app.UseIdentityServer();
             app.UseAuthentication();
@@ -137,6 +138,7 @@ namespace WorkflowAutomation.Server
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
+                endpoints.MapFallbackToFile("index.html");
             });
         }
     }
