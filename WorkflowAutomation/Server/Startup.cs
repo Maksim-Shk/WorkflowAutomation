@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,8 @@ using Serilog.Events;
 using Serilog;
 using Microsoft.EntityFrameworkCore;
 using WorkflowAutomation.Server.Data;
+using Microsoft.AspNetCore.Authentication;
+using WorkflowAutomation.Server.Models;
 
 namespace WorkflowAutomation.Server
 {
@@ -53,19 +56,30 @@ namespace WorkflowAutomation.Server
                     policy.AllowAnyOrigin();
                 });
             });
+            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<AuthDbContext>();
 
-            services.AddAuthentication(config =>
-            {
-                config.DefaultAuthenticateScheme =
-                    JwtBearerDefaults.AuthenticationScheme;
-                config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer("Bearer", options =>
-                {
-                    options.Authority = "https://localhost:7153/";
-                    options.Audience = "WorkflowAutomationWebAPI";
-                    options.RequireHttpsMetadata = false;
-                });
+            services.AddIdentityServer()
+                .AddApiAuthorization<ApplicationUser, AuthDbContext>();
+
+            services.AddAuthentication()
+                .AddIdentityServerJwt();
+
+            services.AddControllersWithViews();
+            services.AddRazorPages();
+
+           // services.AddAuthentication(config =>
+           // {
+           //     config.DefaultAuthenticateScheme =
+           //         JwtBearerDefaults.AuthenticationScheme;
+           //     config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+           // })
+           //     .AddJwtBearer("Bearer", options =>
+           //     {
+           //         options.Authority = "https://localhost:7153/";
+           //         options.Audience = "WorkflowAutomationWebAPI";
+           //         options.RequireHttpsMetadata = false;
+           //     });
 
             //services.AddVersionedApiExplorer(options =>
             //    options.GroupNameFormat = "'v'VVV");
@@ -84,7 +98,15 @@ namespace WorkflowAutomation.Server
         { 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                app.UseMigrationsEndPoint();
+                app.UseWebAssemblyDebugging();
+                // app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                //app.UseExceptionHandler("/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
             }
             // app.UseSwagger();
             // app.UseSwaggerUI(config =>
@@ -97,15 +119,23 @@ namespace WorkflowAutomation.Server
             //         config.RoutePrefix = string.Empty;
             //     }
             // });
+            app.UseHttpsRedirection();
+
+            app.UseBlazorFrameworkFiles();
+            app.UseStaticFiles();
+
             app.UseCustomExceptionHandler();
             app.UseRouting();
             app.UseHttpsRedirection();
             app.UseCors("AllowAll");
+            app.UseIdentityServer();
             app.UseAuthentication();
             app.UseAuthorization();
             // app.UseApiVersioning();
+         
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapRazorPages();
                 endpoints.MapControllers();
             });
         }
