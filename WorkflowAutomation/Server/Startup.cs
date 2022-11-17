@@ -16,6 +16,8 @@ using WorkflowAutomation.Server.Middleware;
 using WorkflowAutomation.Server.Services;
 using Serilog.Events;
 using Serilog;
+using Microsoft.EntityFrameworkCore;
+using WorkflowAutomation.Server.Data;
 
 namespace WorkflowAutomation.Server
 {
@@ -35,6 +37,11 @@ namespace WorkflowAutomation.Server
 
             services.AddApplication();
             services.AddPersistence(Configuration);
+            var connectionString = Configuration["DbConnection"];
+            services.AddDbContext<AuthDbContext>(options =>
+            {
+                options.UseNpgsql(connectionString);
+            });
             services.AddControllers();
 
             services.AddCors(options =>
