@@ -12,10 +12,10 @@ builder.Services.AddHttpClient("WorkflowAutomation.ServerAPI", client => client.
 
 // Supply HttpClient instances that include access tokens when making requests to the server project
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("WorkflowAutomation.ServerAPI"));
-builder.Services.AddOidcAuthentication(options =>
-{
-    builder.Configuration.Bind("oidc", options.ProviderOptions);
-});
+//builder.Services.AddOidcAuthentication(options =>
+//{
+//    builder.Configuration.Bind("oidc", options.ProviderOptions);
+//});
 builder.Services.AddApiAuthorization();
 
 await builder.Build().RunAsync();
