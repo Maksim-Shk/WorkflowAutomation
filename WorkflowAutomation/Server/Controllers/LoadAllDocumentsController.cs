@@ -34,8 +34,8 @@ namespace WorkflowAutomation.Server.Controllers
                 ladItem.Title = doc.Title;
                 ladItem.DocumentType = _dbContext.DocumentTypes.Where(x => x.IdDocumentType == doc.IdDocumentType).First().Name;
                 var str = "";
-                str = _dbContext.Users.First(x => x.IdUser == doc.IdReceiver).Name;
-                str += _dbContext.Users.First(x => x.IdUser == doc.IdReceiver).Surname;
+                str = _dbContext.Users.First(x => x.IdUser == doc.IdReceiver).Name +
+                    _dbContext.Users.First(x => x.IdUser == doc.IdReceiver).Surname;
                 ladItem.ReceiverUser = str;
                 lad.Add(ladItem);
             }
