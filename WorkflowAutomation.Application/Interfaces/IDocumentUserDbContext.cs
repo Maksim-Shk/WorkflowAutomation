@@ -17,7 +17,7 @@ namespace WorkflowAutomation.Application.Interfaces
         DbSet<Position> Positions { get; set; }
         DbSet<Status> Statuses { get; set; }
         DbSet<Subdivision> Subdivisions { get; set; }
-        DbSet<User> Users { get; set; }
+        DbSet<AppUser> Users { get; set; }
         DbSet<UserPosition> UserPositions { get; set; }
         DbSet<UserSubdivision> UserSubdivisions { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);

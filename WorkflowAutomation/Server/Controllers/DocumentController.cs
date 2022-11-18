@@ -32,7 +32,7 @@ namespace WorkflowAutomation.Server.Controllers
         {
             //Task<ActionResult<Guid> 
             var command = _mapper.Map<CreateNewDocumentCommand>(createDocumentDto);
-            command.UserId = UserId;
+            command.UserId = UserId.ToString();
             var documentId = await Mediator.Send(command);
             return Ok(documentId);
         }
@@ -45,7 +45,7 @@ namespace WorkflowAutomation.Server.Controllers
         {
             var query = new GetSimpleDocumentListQuery
             {
-                UserId = UserId
+                UserId = UserId.ToString()
             };
             var vm = await Mediator.Send(query);
             return Ok(vm);

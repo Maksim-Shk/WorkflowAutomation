@@ -9,6 +9,6 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentList
 {
     public class GetSimpleDocumentListQuery  : IRequest<SimpleDocumentListVm>
     {
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
     }
 }

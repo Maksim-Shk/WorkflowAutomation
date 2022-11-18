@@ -7,7 +7,7 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentList
     {
         public GetSimpleDocumentListQueryValidator()
         {
-            RuleFor(x => x.UserId).NotEqual(Guid.Empty);
+            RuleFor(x => x.UserId).NotEqual(Guid.Empty.ToString());
         }
     }
 }
