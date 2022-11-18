@@ -76,8 +76,8 @@ namespace WorkflowAutomation.Server.Migrations
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.Key", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Algorithm")
                         .IsRequired()
@@ -167,12 +167,12 @@ namespace WorkflowAutomation.Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("ConcurrencyStamp")
+                    b.Property<Guid>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("text");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
@@ -199,15 +199,15 @@ namespace WorkflowAutomation.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("text");
+                    b.Property<Guid>("ClaimType")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("text");
+                    b.Property<Guid>("ClaimValue")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("RoleId")
+                    b.Property<Guid>("RoleId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -224,15 +224,15 @@ namespace WorkflowAutomation.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("text");
+                    b.Property<Guid>("ClaimType")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("text");
+                    b.Property<Guid>("ClaimValue")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("UserId")
+                    b.Property<Guid>("UserId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -252,9 +252,9 @@ namespace WorkflowAutomation.Server.Migrations
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("text");
 
-                    b.Property<string>("UserId")
+                    b.Property<Guid>("UserId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("uuid");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -265,11 +265,11 @@ namespace WorkflowAutomation.Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("RoleId")
-                        .HasColumnType("text");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -280,8 +280,8 @@ namespace WorkflowAutomation.Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("text");
@@ -289,8 +289,8 @@ namespace WorkflowAutomation.Server.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<string>("Value")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Value")
+                        .HasColumnType("uuid");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
@@ -299,15 +299,15 @@ namespace WorkflowAutomation.Server.Migrations
 
             modelBuilder.Entity("WorkflowAutomation.Server.Models.ApplicationUser", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
-                    b.Property<string>("ConcurrencyStamp")
+                    b.Property<Guid>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("text");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -339,8 +339,8 @@ namespace WorkflowAutomation.Server.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("text");
+                    b.Property<Guid>("SecurityStamp")
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
