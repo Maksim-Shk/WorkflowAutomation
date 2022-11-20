@@ -3,7 +3,7 @@ using System;
 using WorkflowAutomation.Application.Common.Mappings;
 using WorkflowAutomation.Domain;
 
-namespace WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
+namespace WorkflowAutomation.Shared
 {
     public class SubdivisionListLookupDto : IMapWith<Subdivision>
     {

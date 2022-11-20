@@ -1,7 +1,7 @@
 using System;
 using FluentValidation;
 
-namespace WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
+namespace WorkflowAutomation.Shared
 {
     public class GetSimpleDocumentListQueryValidator : AbstractValidator<GetSubdivisionListQuery>
     {

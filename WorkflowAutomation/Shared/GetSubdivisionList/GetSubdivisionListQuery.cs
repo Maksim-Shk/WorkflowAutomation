@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
+namespace WorkflowAutomation.Shared
 {
     public class GetSubdivisionListQuery : IRequest<SubdivisionListVm>
     {

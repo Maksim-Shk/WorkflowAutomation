@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using WorkflowAutomation.Domain;
 
-namespace WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
+namespace WorkflowAutomation.Shared
 {
     public class SubdivisionListVm
     {

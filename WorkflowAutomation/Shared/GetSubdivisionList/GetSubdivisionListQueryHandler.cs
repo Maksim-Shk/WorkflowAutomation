@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using WorkflowAutomation.Application.Interfaces;
 using WorkflowAutomation.Domain;
 
-namespace WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
+namespace WorkflowAutomation.Shared
 {
     public class GetSubdivisionListQueryHandler
         : IRequestHandler<GetSubdivisionListQuery, SubdivisionListVm>
