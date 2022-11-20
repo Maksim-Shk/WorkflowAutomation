@@ -14,8 +14,9 @@ namespace WorkflowAutomation.Server.Controllers
         protected IMediator Mediator =>
             _mediator ??= HttpContext.RequestServices.GetService<IMediator>();
 
-        internal Guid UserId => !User.Identity.IsAuthenticated
-              ? Guid.Empty
-              : Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        internal string UserId => !User.Identity.IsAuthenticated
+              ? string.Empty
+              : User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            //: Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
     }
 }

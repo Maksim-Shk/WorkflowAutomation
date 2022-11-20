@@ -26,8 +26,6 @@ namespace WorkflowAutomation.Server.Controllers
 
         [HttpPost]
         [Authorize]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<int>> CreateNewDocument([FromBody] CreateNewDocumentDto createDocumentDto)
         {
             //Task<ActionResult<Guid> 
@@ -39,8 +37,6 @@ namespace WorkflowAutomation.Server.Controllers
 
         [HttpGet]
         [Authorize]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<SimpleDocumentListVm>> GetSimpleDocuments()
         {
             var query = new GetSimpleDocumentListQuery
@@ -51,5 +47,14 @@ namespace WorkflowAutomation.Server.Controllers
             return Ok(vm);
         }
 
+        [HttpPut]
+        [Authorize]
+        public async Task<ActionResult<SimpleDocumentListVm>> CreateUserInfo([FromBody] CreateUserInfoDto createUserInfoDto)
+        {
+            var command = _mapper.Map<CreateUserInfoCommand>(createUserInfoDto);
+            command.UserId = UserId;
+            var userId = await Mediator.Send(command);
+            return Ok(userId);
+        }
     }
 }
