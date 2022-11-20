@@ -10,6 +10,9 @@ using WorkflowAutomation.Application.Documents.Commands.UserInfoCommand;
 using WorkflowAutomation.Server.Models;
 using WorkflowAutomation.Server.Controllers;
 using WorkflowAutomation.Shared;
+using Microsoft.EntityFrameworkCore;
+using System.Threading;
+using WorkflowAutomation.Domain;
 
 namespace WorkflowAutomation.Server.Controllers
 {
@@ -57,5 +60,25 @@ namespace WorkflowAutomation.Server.Controllers
             var userId = await Mediator.Send(command);
             return Ok(userId);
         }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<SubdivisionListLookupDto>> GetAllSubdivisions()
+        {
+            var query = new GetSubdivisionListQuery
+            {
+                UserId = UserId
+            };
+            var vm = await Mediator.Send(query);
+            return Ok(vm);
+        }
+
+      //[HttpGet]
+      //[Authorize]
+      //public async Task<ActionResult<SubdivisionListLookupDto>> GetAllPositions()
+      //{
+      //    
+      //
+      //}
     }
 }
