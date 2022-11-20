@@ -1,9 +1,9 @@
 using System;
 using MediatR;
 
-namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
+namespace WorkflowAutomation.Application.Documents.Commands.UserInfoCommand
 {
-    public class UserInfoCommand : IRequest<string>
+    public class CreateUserInfoCommand : IRequest<string>
     {
         public string UserId { get; set; }
         public string Name { get; set; }

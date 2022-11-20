@@ -5,6 +5,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Documents\Commands\UserInfo\**" />
+    <EmbeddedResource Remove="Documents\Commands\UserInfo\**" />
+    <None Remove="Documents\Commands\UserInfo\**" />
+  </ItemGroup>
 	
 	 <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
@@ -28,10 +34,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WorkflowAutomation.Domain\WorkflowAutomation.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Documents\Commands\UserInfo\" />
   </ItemGroup>
 
 </Project>

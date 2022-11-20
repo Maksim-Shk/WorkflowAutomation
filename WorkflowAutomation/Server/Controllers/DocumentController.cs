@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using WorkflowAutomation.Application.Documents.Commands.CreateNewDocument;
 using WorkflowAutomation.Application.Documents.Queries.GetDocumentList;
+using WorkflowAutomation.Application.Documents.Commands.UserInfoCommand;
 using WorkflowAutomation.Server.Models;
 using WorkflowAutomation.Server.Controllers;
 using WorkflowAutomation.Shared;

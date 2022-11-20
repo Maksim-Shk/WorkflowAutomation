@@ -6,20 +6,20 @@ using MediatR;
 using WorkflowAutomation.Application.Interfaces;
 using WorkflowAutomation.Domain;
 
-namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
+namespace WorkflowAutomation.Application.Documents.Commands.UserInfoCommand
 {
-    public class UserInfoCommandHandler
-        : IRequestHandler<UserInfoCommand, string>
+    public class CreateUserInfoCommandHandler
+        : IRequestHandler<CreateUserInfoCommand, string>
     {
         private readonly IDocumentUserDbContext _dbContext;
 
-        public UserInfoCommandHandler(IDocumentUserDbContext dbContext) =>
+        public CreateUserInfoCommandHandler(IDocumentUserDbContext dbContext) =>
             _dbContext = dbContext;
 
-        public async Task<int> Handle(UserInfoCommand request,
+        public async Task<string> Handle(CreateUserInfoCommand request,
             CancellationToken cancellationToken)
         {
-            var User = new AppUser
+            var user = new AppUser
             {
                 IdUser = request.UserId,
                 Name = request.Name,
@@ -48,12 +48,12 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
                 RemovalDate = null
             };
 
-            await _dbContext.Users.AddAsync(User, cancellationToken);
+            await _dbContext.Users.AddAsync(user, cancellationToken);
             await _dbContext.UserSubdivisions.AddAsync(userSubdivision, cancellationToken);
             await _dbContext.UserPositions.AddAsync(userPosition, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return document.IdDocument;
+            return user.IdUser;
         }
     }
 }
