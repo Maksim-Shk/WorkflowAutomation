@@ -1,167 +1,90 @@
-﻿@page "/CreateNewDoc"
+﻿@page "/CreateNewUserInfo"
 @using Microsoft.Extensions.Logging;
 @using System.ComponentModel.DataAnnotations;
-@inject ILogger<Test> Logger
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using WorkflowAutomation.Shared
 @attribute [Authorize]
 @inject HttpClient Http
 
-<h3>Создать новый документ</h3>
 
-<h6>Введите название документа</h6>
-@*<EditForm Model="@exampleModel" OnValidSubmit="@HandleValidSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
 
-    <InputText id="name" @bind-Value="exampleModel.Title" />    
+<EditForm Model="@model">   
+    <h3>Заполнить данные пользователя</h3>
+    <hr />
+    <div class="form-group row">
+        <label for="firstName" class="col-sm-2 col-form-label">
+            Имя
+        </label>
+        <div class="col-sm-10">
+            <InputText id="firstName" class="form-control" placeholder="Имя"
+                       @bind-Value="model.Name" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="surname" class="col-sm-2 col-form-label">
+            Фамилия
+        </label>
+        <div class="col-sm-10">
+            <InputText id="surname" class="form-control" placeholder="Фамилия"
+                       @bind-Value="model.Surname" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="patronymic" class="col-sm-2 col-form-label">
+            Отчество
+        </label>
+        <div class="col-sm-10">
+            <InputText id="patronymic" class="form-control" placeholder="Отчество"
+                       @bind-Value="model.Patronymic" />
+        </div>
+    </div>
+
+    @*<div class="form-group row">
+        <label for="subdivid" class="col-sm-2 col-form-label">
+            Позразделение 
+        </label>
+        <div class="col-sm-10">
+            <InputSelect id="idsubdiv" @bind-Value="SubdivionId" class="form-control">
+                @foreach (var sub in )
+                {
+                    <option value="@dept.DepartmentId">@dept.DepartmentName</option>
+                }
+            </InputSelect>
+        </div>
+    </div>*@
+
+    <div class="form-group row">
+        <label for="idposition" class="col-sm-2 col-form-label">
+            Должность
+        </label>
+        <div class="col-sm-10">
+            <InputNumber id="idposition" class="form-control" placeholder="Должность"
+                         @bind-Value="model.IdPositon" />
+        </div>
+    </div>
+    
+    @*<div class="form-group row">
+        <label for="department" class="col-sm-2 col-form-label">
+            Department
+        </label>
+        <div class="col-sm-10">
+            <InputSelect id="department" @bind-Value="DepartmentId" class="form-control">
+                @foreach (var dept in Departments)
+                {
+                    <option value="@dept.DepartmentId">@dept.DepartmentName</option>
+                }
+            </InputSelect>
+        </div>
+    </div>*@
 </EditForm>
-<br/>*@
 
-<h6>Выберите получателя</h6>
-<select class="form-control" @bind="@receiverDto.Id">
 
-    
-    @foreach (var rec in receivers)
-    {
-        <option value="@rec.Id"> @rec.FullName, должность @rec.Position  </option>
-    }
-    }
-
-</select>
-
-<h6>Выберите тип документа</h6>
-<select class="form-control" @bind="@docTypeDto.Id">
-
-    
-    @foreach (var doc in docTypes)
-    {
-        <option value="@doc.Id"> @doc.Name</option>
-    }
-    }
-
-</select>
-<br />
 
 
 
 @code {
-
-    ReceiverDto receiverDto = new ReceiverDto();
-    DocTypeDto docTypeDto = new DocTypeDto();
-
-
-    private ReceiverDto[]? receivers;
-
-    private DocTypeDto[]? docTypes;
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            receivers = new ReceiverDto[]{
-                new ReceiverDto{
-                    Id = Guid.NewGuid(),
-                    FullName = "ВВВ",
-                    Position = "BBBFree" },
-                new ReceiverDto{
-                    Id = Guid.NewGuid(),
-                    FullName = "AAA",
-                    Position = "AAAFree" },
-                new ReceiverDto{
-                    Id = Guid.NewGuid(),
-                    FullName = "CCC",
-                    Position = "CCCFree" },
-
-
-
-        };
-        // receivers = await Http.GetFromJsonAsync<ReceiverDto[]>("ReceiverDto");
-        }
-        catch (AccessTokenNotAvailableException exception)
-        {
-            exception.Redirect();
-        }
-
-        try
-        {
-            docTypes = new DocTypeDto[] { new DocTypeDto { Id = 1, Name = "Служеная записка" }, new DocTypeDto { Id = 2, Name = "Приказ" } };
-            //docTypes = await Http.GetFromJsonAsync<DocTypeDto[]>("DocTypeDto");
-        }
-        catch (AccessTokenNotAvailableException exception)
-        {
-            exception.Redirect();
-        }
-    }
-
-    public class NewDocDto
-    {
-        [Required]
-        [StringLength(10, ErrorMessage = "Name is too long.")]
-        public string? Title { get; set; }
-
-        [Required]
-        [StringLength(10, ErrorMessage = "Name is too long.")]
-        public Guid ReceiverId { get; set; }
-
-        public int DoctypeId { get; set; }
-
-    }
-   
-
-    public class ReceiverDto
-    { 
-        public Guid Id { get; set;}
-
-        public string FullName { get; set; }
-
-        public string Position { get; set; }
-
-    }
-
-    public class DocTypeDto
-
-    {
-        public int Id { get; set; }
-
-        public string Name { get; set; }    
-    }
-
-   // private ExampleModel exampleModel = new();
-
-    private void HandleValidSubmit()
-    {
-        Logger.LogInformation("HandleValidSubmit called");
-
-        // Process the valid form
-    }
-
-   //string selectedCountryID;
-
-   // string SelectedCountryID
-   // {
-   //     get => selectedCountryID;
-   //     set
-   //     {
-   //         selectedCountryID = value;
-
-   //     }
-   // }
-
-   // List<Country> CountryList = new List<Country>() { new Country ("Кощеев Михаил Валерьевич", "Студент"),
-   //                                                   new Country ("Школин Максим Аркадьевич", "Студент") };
-
-   // public class Country
-   // {
-
-   //     public Country(string code, string name)
-   //     {
-   //         Code = code;
-   //         Name = name;
-   //     }
-   //     public string Code { get; set; }
-   //     public string Name { get; set; }
+    private CreateUserInfoDto model = new();
 
     }
 
