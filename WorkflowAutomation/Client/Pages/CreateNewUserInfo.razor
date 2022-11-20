@@ -36,23 +36,23 @@
         </label>
         <div class="col-sm-10">
             <InputText id="patronymic" class="form-control" placeholder="Отчество"
-                       @bind-Value="model.Patronymic" />
+                       @bind-Value="model.Patronymic"/>
         </div>
     </div>
 
-    @*<div class="form-group row">
+    <div class="form-group row">
         <label for="subdivid" class="col-sm-2 col-form-label">
             Позразделение 
         </label>
         <div class="col-sm-10">
-            <InputSelect id="idsubdiv" @bind-Value="SubdivionId" class="form-control">
-                @foreach (var sub in )
+            <InputSelect id="idsubdiv" @bind-Value="createUserInfoDto.IdSubdivision" class="form-control">
+                @foreach (var sub in subs.Subdivisions)
                 {
-                    <option value="@dept.DepartmentId">@dept.DepartmentName</option>
+                    <option value="@sub.Id">@sub.Name</option>
                 }
             </InputSelect>
         </div>
-    </div>*@
+    </div>
 
     <div class="form-group row">
         <label for="idposition" class="col-sm-2 col-form-label">
@@ -85,7 +85,21 @@
 
 @code {
     private CreateUserInfoDto model = new();
+    private SubdivisionListVm subs = new();
+    private CreateUserInfoDto createUserInfoDto = new();
 
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var item = await Http.GetFromJsonAsync<SubdivisionListVm>("Document");
+            subs.Subdivisions = item.Subdivisions;
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }     
     }
+}
 
 
