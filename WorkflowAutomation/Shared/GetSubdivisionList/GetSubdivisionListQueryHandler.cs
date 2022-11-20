@@ -23,7 +23,7 @@ namespace WorkflowAutomation.Shared
         public async Task<SubdivisionListVm> Handle(GetSubdivisionListQuery request,
             CancellationToken cancellationToken)
         {
-            var subdivisionsQuery = await _dbContext.Documents
+            var subdivisionsQuery = await _dbContext.Subdivisions
                 .ProjectTo<SubdivisionListLookupDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
