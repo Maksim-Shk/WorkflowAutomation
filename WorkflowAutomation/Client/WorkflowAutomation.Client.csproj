@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\WorkflowAutomation.Domain\WorkflowAutomation.Domain.csproj" />
     <ProjectReference Include="..\Shared\WorkflowAutomation.Shared.csproj" />
   </ItemGroup>
 

@@ -11,8 +11,9 @@ namespace WorkflowAutomation.Application
        public static IServiceCollection AddApplication(
            this IServiceCollection services)
        {
-           services.AddMediatR(Assembly.GetExecutingAssembly());
-           services
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+           services.AddMediatR(assemblies);
+           services 
                .AddValidatorsFromAssemblies(new[] { Assembly.GetExecutingAssembly() });
           //services.AddTransient(typeof(IPipelineBehavior<,>),
           //    typeof(ValidationBehavior<,>));

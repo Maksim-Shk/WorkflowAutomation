@@ -12,7 +12,7 @@ namespace WorkflowAutomation.Domain
         }
 
         public int IdSubdivision { get; set; }
-        public string Name { get; set; } = null!;
+        public string Name { get; set; } //= null!;
         public int? IdSubordination { get; set; }
 
         public virtual Subdivision? IdSubordinationNavigation { get; set; }
