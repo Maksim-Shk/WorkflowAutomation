@@ -28,13 +28,13 @@ namespace WorkflowAutomation.Server.Controllers
     [Route("[controller]")]
     public class DocumentController : BaseController
     {
-        private readonly IMapper _mapper;
+    //    private readonly IMapper _mapper;
         private readonly ILogger<DocumentController> _logger;
         private readonly IDocumentUserDbContext _dbContext;
 
         public DocumentController(IMapper mapper, ILogger<DocumentController> logger, IDocumentUserDbContext dbContext)
         {
-            _mapper = mapper;
+          //  _mapper = mapper;
             _logger = logger;
             _dbContext = dbContext;
         }
@@ -72,41 +72,41 @@ namespace WorkflowAutomation.Server.Controllers
         //       return Ok(userId);
         //   }
 
-        [HttpGet]
-        [Authorize]
-        public async Task<ActionResult<List<Subdivision>>> GetAllSubdivisions()
-        {
-           //List<SubdivisionListLookupDto> SubdivisionListLookupDtos = new List<SubdivisionListLookupDto>{
-           //    new SubdivisionListLookupDto { Id = 1, IdSubordination = 1, Name = "1111" },
-           //    new SubdivisionListLookupDto { Id = 2, IdSubordination = 1, Name = "22" },
-           //    new SubdivisionListLookupDto { Id = 3, IdSubordination = 1, Name = "33" },
-           //    new SubdivisionListLookupDto { Id = 4, IdSubordination = 1, Name = "44" }
-           //};
-           
-           var SubdivisionListLookupDtos2 = await _dbContext.Subdivisions
-              // .ProjectTo<SubdivisionListLookupDto>(_mapper.ConfigurationProvider)
-               .ToListAsync();
-            _logger.LogError(SubdivisionListLookupDtos2.Count.ToString() + " !!!!!))))");
-            return SubdivisionListLookupDtos2;
-                //new SubdivisionListVm { Subdivisions = subdivisionsQuery };
-            //Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            //_logger.LogError("Количество сборок = " + assemblies.Length.ToString());
-            //var query = new GetSubdivisionListQuery
-            //{
-            //    UserId = UserId
-            //};
-            //var vm = await Mediator.Send(query);
-            //return Ok(vm);
+     //  [HttpGet]
+     //  [Authorize]
+     //  public async Task<ActionResult<List<Subdivision>>> GetAllSubdivisions()
+     //  {
+     //      //List<SubdivisionListLookupDto> SubdivisionListLookupDtos = new List<SubdivisionListLookupDto>{
+     //      //    new SubdivisionListLookupDto { Id = 1, IdSubordination = 1, Name = "1111" },
+     //      //    new SubdivisionListLookupDto { Id = 2, IdSubordination = 1, Name = "22" },
+     //      //    new SubdivisionListLookupDto { Id = 3, IdSubordination = 1, Name = "33" },
+     //      //    new SubdivisionListLookupDto { Id = 4, IdSubordination = 1, Name = "44" }
+     //      //};
+     //
+     //      var SubdivisionListLookupDtos2 = await _dbContext.Subdivisions
+     //          // .ProjectTo<SubdivisionListLookupDto>(_mapper.ConfigurationProvider)
+     //          .ToListAsync();
+     //      _logger.LogError(SubdivisionListLookupDtos2.Count.ToString() + " !!!!!))))");
+     //      return SubdivisionListLookupDtos2;
+     //      //new SubdivisionListVm { Subdivisions = subdivisionsQuery };
+     //      //Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+     //      //_logger.LogError("Количество сборок = " + assemblies.Length.ToString());
+     //      //var query = new GetSubdivisionListQuery
+     //      //{
+     //      //    UserId = UserId
+     //      //};
+     //      //var vm = await Mediator.Send(query);
+     //      //return Ok(vm);
+     //
+     //
+     //  }
 
-
-        }
-
-      //[HttpGet]
-      //[Authorize]
-      //public async Task<ActionResult<SubdivisionListLookupDto>> GetAllPositions()
-      //{
-      //    
-      //
-      //}
+        //[HttpGet]
+        //[Authorize]
+        //public async Task<ActionResult<SubdivisionListLookupDto>> GetAllPositions()
+        //{
+        //    
+        //
+        //}
     }
 }

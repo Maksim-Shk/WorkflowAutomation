@@ -46,9 +46,9 @@ namespace WorkflowAutomation.Server
             });
 
             // services.AddApplication();
-            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            services.AddMediatR(assemblies);
-            
+            //Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            services.AddMediatR(Assembly.GetExecutingAssembly());
+
             var connectionString = Configuration["DbConnection"];
             services.AddDbContext<AuthDbContext>(options =>
             {
