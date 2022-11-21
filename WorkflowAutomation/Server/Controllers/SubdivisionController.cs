@@ -43,24 +43,31 @@ namespace WorkflowAutomation.Server.Controllers
 
         [HttpGet]
         [Authorize]
-        public List<SubdivisionListLookupDto> SubdivisionGet()
+        public async Task<ActionResult<List<SubdivisionListLookupDto>>> SubdivisionGet()
         {
-            List<Subdivision> subdivisions = new List<Subdivision>{
-               new Subdivision { IdSubdivision = 1, IdSubordination = 1, Name = "1111" },
-               new Subdivision { IdSubdivision = 2, IdSubordination = 1, Name = "22" },
-               new Subdivision { IdSubdivision = 3, IdSubordination = 1, Name = "33" },
-               new Subdivision { IdSubdivision = 4, IdSubordination = 1, Name = "44" }
-           };
+         //  List<Subdivision> subdivisions = new List<Subdivision>{
+         //     new Subdivision { IdSubdivision = 1, IdSubordination = 1, Name = "1111" },
+         //     new Subdivision { IdSubdivision = 2, IdSubordination = 1, Name = "22" },
+         //     new Subdivision { IdSubdivision = 3, IdSubordination = 1, Name = "33" },
+         //     new Subdivision { IdSubdivision = 4, IdSubordination = 1, Name = "44" }
+         // };
+         //
+         //
+         //  // List<Subdivision> subdivisions2 = _dbContext.Subdivisions.ToList();
+         //  // subdivisions2.Clear();
+         //  // subdivisions2 = subdivisions;
+         //  List<SubdivisionListLookupDto> subdivisions2 = _dbContext.Subdivisions
+         //      .ProjectTo<SubdivisionListLookupDto>(_mapper.ConfigurationProvider)
+         //      .ToList();
+         //
+         //  return subdivisions2;
 
-
-            // List<Subdivision> subdivisions2 = _dbContext.Subdivisions.ToList();
-            // subdivisions2.Clear();
-            // subdivisions2 = subdivisions;
-            List<SubdivisionListLookupDto> subdivisions2 = _dbContext.Subdivisions
-                .ProjectTo<SubdivisionListLookupDto>(_mapper.ConfigurationProvider)
-                .ToList();
-
-            return subdivisions2;
+            var query = new GetSubdivisionListQuery
+            {
+                UserId = UserId
+            };
+            var vm = await Mediator.Send(query);
+            return Ok(vm);
         }
     }
 }

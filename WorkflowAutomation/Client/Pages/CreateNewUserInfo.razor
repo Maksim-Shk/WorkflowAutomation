@@ -48,7 +48,7 @@
         </label>
         <div class="col-sm-10">
             <InputSelect id="idsubdiv" @bind-Value="createUserInfoDto.IdSubdivision" class="form-control">
-                @foreach (var sub in subs)
+                @foreach (var sub in subs.Subdivisions)
                 {
                     <option value="@sub.Id">@sub.Name</option>
                 }
@@ -87,17 +87,19 @@
 
 @code {
     // private CreateUserInfoDto model = new();
-    private List<SubdivisionListLookupDto> subs = new List<SubdivisionListLookupDto>();
+    // private List<SubdivisionListLookupDto> subs = new List<SubdivisionListLookupDto>();
     private CreateUserInfoDto createUserInfoDto = new();
+    private SubdivisionListVm subs = new();
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            // var item = await Http.GetFromJsonAsync<SubdivisionListVm>("Document");
-            // subs.Subdivisions = item.Subdivisions;
+            subs.Subdivisions = new List<SubdivisionListLookupDto>();
+            var item = await Http.GetFromJsonAsync<SubdivisionListVm>("Subdivision");
+             subs.Subdivisions = item.Subdivisions;
 
-            subs = await Http.GetFromJsonAsync<List<SubdivisionListLookupDto>>("Subdivision");
+            //subs = await Http.GetFromJsonAsync<List<SubdivisionListLookupDto>>("Subdivision");
         }
         catch (AccessTokenNotAvailableException exception)
         {

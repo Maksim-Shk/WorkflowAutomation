@@ -10,13 +10,13 @@ using WorkflowAutomation.Domain;
 
 namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentList
 {
-    public class GetNoteListQueryHandler
+    public class GetSimpleDocumentListQueryHandler
         : IRequestHandler<GetSimpleDocumentListQuery, SimpleDocumentListVm>
     {
         private readonly IDocumentUserDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public GetNoteListQueryHandler(IDocumentUserDbContext dbContext,
+        public GetSimpleDocumentListQueryHandler(IDocumentUserDbContext dbContext,
             IMapper mapper) =>
             (_dbContext, _mapper) = (dbContext, mapper);
 
