@@ -1,10 +1,10 @@
-using System.Collections.Generic;
-using WorkflowAutomation.Domain;
+//using System.Collections.Generic;
+//using WorkflowAutomation.Domain;
 
-namespace WorkflowAutomation.Shared
-{
-    public class SubdivisionListVm
-    {
-        public IList<SubdivisionListLookupDto> Subdivisions { get; set; }
-    }
-}
+//namespace WorkflowAutomation.Shared
+//{
+//    public class SubdivisionListVm
+//    {
+//        public IList<SubdivisionListLookupDto> Subdivisions { get; set; }
+//    }
+//}

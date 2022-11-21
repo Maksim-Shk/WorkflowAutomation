@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace WorkflowAutomation.Server.Controllers
 {
     [ApiController]
-    [Route("api/[controller]/[action]")]
+    [Route("[controller]")]
     public abstract class BaseController : ControllerBase
     {
         private IMediator _mediator;

@@ -21,14 +21,20 @@ using Microsoft.EntityFrameworkCore;
 using WorkflowAutomation.Server.Data;
 using Microsoft.AspNetCore.Authentication;
 using WorkflowAutomation.Server.Models;
+using MediatR;
+
 
 namespace WorkflowAutomation.Server
 {
     public class Startup
     {
         public IConfiguration Configuration { get; }
+       
 
-        public Startup(IConfiguration configuration) => Configuration = configuration;
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -36,16 +42,19 @@ namespace WorkflowAutomation.Server
             {
                 config.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
                 config.AddProfile(new AssemblyMappingProfile(typeof(IDocumentUserDbContext).Assembly));
+         
             });
 
             services.AddApplication();
-            services.AddPersistence(Configuration);
+            //Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+           // services.AddMediatR(Assembly.GetExecutingAssembly());
+
             var connectionString = Configuration["DbConnection"];
             services.AddDbContext<AuthDbContext>(options =>
             {
                 options.UseNpgsql(connectionString);
             });
-          
+            services.AddPersistence(Configuration);
 
             services.AddCors(options =>
             {
@@ -101,7 +110,8 @@ namespace WorkflowAutomation.Server
             {
                 app.UseMigrationsEndPoint();
                 app.UseWebAssemblyDebugging();
-                // app.UseDeveloperExceptionPage();
+
+                app.UseDeveloperExceptionPage();
             }
             else
             {
@@ -120,14 +130,13 @@ namespace WorkflowAutomation.Server
             //         config.RoutePrefix = string.Empty;
             //     }
             // });
-            app.UseHttpsRedirection();
-
+          
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
 
             app.UseCustomExceptionHandler();
             app.UseRouting();
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
             app.UseCors("AllowAll");
             app.UseIdentityServer();
             app.UseAuthentication();
