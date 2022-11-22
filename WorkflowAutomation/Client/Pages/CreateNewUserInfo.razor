@@ -9,10 +9,11 @@
 @using WorkflowAutomation.Application.Documents.Queries.GetPositionList
 @attribute [Authorize]
 @inject HttpClient Http
+@inject NavigationManager NavigationManager
 
 
 
-<EditForm Model="@createUserInfoDto">
+<EditForm Model="@createUserInfoDto" OnValidSubmit="@HandleValidSubmit">
     <h3>Заполнить данные пользователя</h3>
     <hr />
     <div class="form-group row">
@@ -70,6 +71,9 @@
             </InputSelect>
         </div>
     </div>
+
+        <button type="submit">Submit</button>
+
 @*
     <div class="form-group row">
         <label for="idposition" class="col-sm-2 col-form-label">
@@ -121,6 +125,12 @@
         {
             exception.Redirect();
         }     
+    }
+    private void HandleValidSubmit()
+    {
+        NavigationManager.NavigateTo("/counter");
+
+        // Process the valid form
     }
 }
 
