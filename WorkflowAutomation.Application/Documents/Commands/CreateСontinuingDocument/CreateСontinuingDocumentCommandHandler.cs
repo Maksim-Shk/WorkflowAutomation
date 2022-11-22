@@ -46,7 +46,7 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateСontinuingDoc
   //
   //         await _dbContext.Documents.AddAsync(document, cancellationToken);
   //         await _dbContext.DocumentUsers.AddAsync(documentUser, cancellationToken);
-  //         await _dbContext.SaveChangesAsync(cancellationToken);
+  //         await _dbContext.Save(cancellationToken);
   //
   //         return document.IdDocument;
   //     }

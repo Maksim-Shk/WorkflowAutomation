@@ -9,6 +9,7 @@ namespace WorkflowAutomation.Persistence
     {
         public DocumentsDbContext(DbContextOptions<DocumentsDbContext> options)
             : base(options) { }
+
         // public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<AppUser> Users { get; set; } = null!;
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; } = null!;
@@ -536,6 +537,11 @@ namespace WorkflowAutomation.Persistence
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("user_subdivision_id_user_fkey");
             });
+        }
+
+        public async Task<int> Save(CancellationToken cancellationToken)
+        {
+            return await this.SaveChangesAsync(cancellationToken);
         }
     }
 }

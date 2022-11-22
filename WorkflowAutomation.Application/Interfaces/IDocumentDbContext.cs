@@ -8,6 +8,6 @@ namespace WorkflowAutomation.Application.Interfaces
     public interface IDocumentsDbContext
     {
         DbSet<Document> Documents { get; set; }
-        Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+        Task<int> Save(CancellationToken cancellationToken);
     }
 }

@@ -51,7 +51,7 @@ namespace WorkflowAutomation.Application.Documents.Commands.CompleteDocument
   //           .Where(status => status.Name == "Выполнено")
   //           .First().IdStatus;
   //
-  //         await _dbContext.SaveChangesAsync(cancellationToken);
+  //         await _dbContext.Save(cancellationToken);
   //
   //         return Unit.Value;
   //     }

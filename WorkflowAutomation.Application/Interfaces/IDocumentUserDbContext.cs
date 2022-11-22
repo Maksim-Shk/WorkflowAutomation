@@ -31,6 +31,6 @@ namespace WorkflowAutomation.Application.Interfaces
         DbSet<Subdivision> Subdivisions { get; set; } 
         DbSet<UserPosition> UserPositions { get; set; }
         DbSet<UserSubdivision> UserSubdivisions { get; set; }
-        Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+        Task<int> Save(CancellationToken cancellationToken);
     }
 }

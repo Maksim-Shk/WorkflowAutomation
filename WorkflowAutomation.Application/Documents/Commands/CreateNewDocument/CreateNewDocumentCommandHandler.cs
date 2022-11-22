@@ -47,7 +47,7 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
 
             await _dbContext.Documents.AddAsync(document, cancellationToken);
             await _dbContext.DocumentStatuses.AddAsync(documentStatus, cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.Save(cancellationToken);
 
             return document.IdDocument;
         }
