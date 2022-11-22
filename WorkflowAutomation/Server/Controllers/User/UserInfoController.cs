@@ -15,6 +15,8 @@ using System.Reflection;
 using WorkflowAutomation.Application.Interfaces;
 using AutoMapper.QueryableExtensions;
 using Microsoft.Extensions.Logging;
+using WorkflowAutomation.Application.Documents.Queries.GetPositionList;
+using WorkflowAutomation.Application.Users.Commands.GetUserInfo;
 
 namespace WorkflowAutomation.Server.Controllers
 {
@@ -36,7 +38,7 @@ namespace WorkflowAutomation.Server.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<string>> CreateNewDocument([FromBody] CreateUserInfoDto createUsertDto)
+        public async Task<ActionResult<string>> CreateUserInfo([FromBody] CreateUserInfoDto createUsertDto)
         {
             //Task<ActionResult<Guid> 
             var command = _mapper.Map<CreateUserInfoCommand>(createUsertDto);
@@ -45,6 +47,17 @@ namespace WorkflowAutomation.Server.Controllers
             var userId = await Mediator.Send(command);
 
             return Ok(userId);
+        }
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<GetUserInfoDto>> GetUserInfo()
+        {
+            var command = new GetUserInfoCommand
+            {
+                UserId = UserId
+            };
+            var dto = await Mediator.Send(command);
+            return Ok(dto);
         }
     }
 }

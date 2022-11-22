@@ -1,31 +1,32 @@
-﻿@page "/asd"
+﻿@page "/"
 
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
 @using Microsoft.AspNetCore.Authorization
 @using System.Security.Claims
+
+@using WorkflowAutomation.Application.Users.Commands.GetUserInfo
+
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
 @inject SignOutSessionStateManager SignOutManager
+@inject HttpClient Http
 
 
     <PageTitle>Index</PageTitle>
 
-    <h1>Здравствуйте, @Username</h1>
+<h1>Здравствуйте, @getUserInfoDto.Name   @getUserInfoDto.Surname   @getUserInfoDto.Patronymic</h1>
+<h2>@getUserInfoDto.SubdivisionName - @getUserInfoDto.PositonName</h2>
 
     Welcome to your new app.
 
     <SurveyPrompt Title="How is Blazor working for you?" />
 
-
-
-
-
-
 @code{
 
-    private string Username;
+    //private string Username;
+    private GetUserInfoDto getUserInfoDto = new GetUserInfoDto();
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -36,7 +37,8 @@
         }
         else
         {
-            Username = user.Identity.Name;
+            getUserInfoDto = await Http.GetFromJsonAsync<GetUserInfoDto>("UserInfo");
+           // Username = user.Identity.Name;
         }
     }
 }
