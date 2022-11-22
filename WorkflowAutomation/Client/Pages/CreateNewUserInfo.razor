@@ -11,6 +11,7 @@
 @attribute [Authorize]
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
+@inject SignOutSessionStateManager SignOutManager
 
 <EditForm Model="@createUserInfoDto" OnValidSubmit="@HandleValidSubmit">
     <h3>Заполнить данные пользователя</h3>
@@ -105,11 +106,11 @@
     private async Task<string> HandleValidSubmit()
     {
         var httpResponse = await Http.PostAsJsonAsync<CreateUserInfoDto>("/UserInfo", createUserInfoDto);
-        //NavigationManager.NavigateTo("/counter");
+      
 
         var str = await httpResponse.Content.ReadAsStringAsync();
         st = str;
-
+        NavigationManager.NavigateTo("/counter");
         return await httpResponse.Content.ReadAsStringAsync();
     }
 }
