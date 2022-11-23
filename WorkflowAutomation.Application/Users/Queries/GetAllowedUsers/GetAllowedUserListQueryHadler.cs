@@ -46,20 +46,13 @@ namespace WorkflowAutomation.Application.Users.Queries.GetUserInfo
                 // createUserInfoDto.SubdivisionName = _dbContext.Subdivisions
                 //     .First(y => y.IdSubordination == _dbContext.UserSubdivisions
                 //     .First(x => x.IdUser == request.UserId && x.RemovalDate == null).IdSubdivision).Name;
-                try
-                {
-                    var testQuery = await _dbContext.Subdivisions
-                        .FirstAsync(y => y.IdSubordination == _dbContext.UserSubdivisions
-                        .First(x => x.IdUser == request.UserId && x.RemovalDate == null).IdSubdivision);
-                    userListDto.SubdivisionName = testQuery.Name;
-                }
-                catch(Exception ex) { }
 
-              //  var UserSubdivision = await _dbContext.UserSubdivisions
-              //      .FirstAsync(us => us.IdUser == request.UserId && us.RemovalDate == null, cancellationToken);
-              //  var Subdivision = await _dbContext.Subdivisions
-              //      .FirstAsync(p => p.IdSubdivision == UserSubdivision.IdSubdivision, cancellationToken);
-              //  userListDto.SubdivisionName = Subdivision.Name;
+
+                var UserSubdivision = await _dbContext.UserSubdivisions
+                  .FirstAsync(us => us.IdUser == request.UserId && us.RemovalDate == null, cancellationToken);
+                var Subdivision = await _dbContext.Subdivisions
+                    .FirstAsync(p => p.IdSubdivision == UserSubdivision.IdSubdivision, cancellationToken);
+                userListDto.SubdivisionName = Subdivision.Name;
 
                 // createUserInfoDto.PositonName = _dbContext.Positions
                 //    .First(y => y.IdPosition == _dbContext.UserPositions
