@@ -45,9 +45,9 @@ namespace WorkflowAutomation.Server.Controllers
             //Task<ActionResult<Guid> 
             var command = _mapper.Map<CreateNewDocumentCommand>(createNewDocumentDto);
             command.UserId = UserId.ToString();
-            var userId = await Mediator.Send(command);
+            var docId = await Mediator.Send(command);
 
-            return Ok(userId);
+            return Ok(docId);
         }
         //
         //   [HttpPost]

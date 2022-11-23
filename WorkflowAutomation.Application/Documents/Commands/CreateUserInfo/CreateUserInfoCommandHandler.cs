@@ -29,7 +29,7 @@ namespace WorkflowAutomation.Application.Documents.Commands.UserInfoCommand
                 Patronymic = request.Patronymic,
                 RegisterDate = DateTime.Now,
                 LastOnline = DateTime.Now,
-                RemovalDate = DateTime.Now,
+                RemovalDate = null
             };
 
             var userSubdivision = new UserSubdivision

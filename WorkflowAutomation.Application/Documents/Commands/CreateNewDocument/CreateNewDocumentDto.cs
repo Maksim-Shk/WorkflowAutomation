@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
@@ -12,8 +13,11 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
 {
     public class CreateNewDocumentDto : IMapWith<CreateNewDocumentCommand>
     {
+        [Required]
         public string Title { get; set; }
+        [Required]
         public int DocumentTypeId { get; set; }
+        [Required]
         public string ReceiverUserId { get; set; }
 
         public void Mapping(Profile profile)

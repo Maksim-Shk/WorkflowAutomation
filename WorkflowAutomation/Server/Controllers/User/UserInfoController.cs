@@ -16,7 +16,7 @@ using WorkflowAutomation.Application.Interfaces;
 using AutoMapper.QueryableExtensions;
 using Microsoft.Extensions.Logging;
 using WorkflowAutomation.Application.Documents.Queries.GetPositionList;
-using WorkflowAutomation.Application.Users.Commands.GetUserInfo;
+using WorkflowAutomation.Application.Users.Queries.GetUserInfo;
 
 namespace WorkflowAutomation.Server.Controllers
 {

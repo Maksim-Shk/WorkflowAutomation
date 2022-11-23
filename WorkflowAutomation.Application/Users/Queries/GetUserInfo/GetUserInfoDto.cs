@@ -3,7 +3,7 @@ using WorkflowAutomation.Application.Common.Mappings;
 using System.ComponentModel.DataAnnotations;
 using WorkflowAutomation.Domain;
 
-namespace WorkflowAutomation.Application.Users.Commands.GetUserInfo
+namespace WorkflowAutomation.Application.Users.Queries.GetUserInfo
 {
     public class GetUserInfoDto
     {
