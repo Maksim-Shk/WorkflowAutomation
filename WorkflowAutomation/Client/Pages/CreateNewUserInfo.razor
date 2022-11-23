@@ -14,6 +14,7 @@
 @inject SignOutSessionStateManager SignOutManager
 
 <EditForm Model="@createUserInfoDto" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
     <h3>Заполнить данные пользователя</h3>
     <hr />
     <div class="form-group row">
@@ -23,6 +24,7 @@
         <div class="col-sm-10">
             <InputText id="firstName" class="form-control" placeholder="Имя"
                        @bind-Value="createUserInfoDto.Name" />
+            <ValidationMessage For="@(() => createUserInfoDto.Name)" style="margin-bottom:10px"/>
         </div>
     </div>
     <div class="form-group row">
@@ -32,15 +34,17 @@
         <div class="col-sm-10">
             <InputText id="surname" class="form-control" placeholder="Фамилия"
                        @bind-Value="createUserInfoDto.Surname" />
+            <ValidationMessage For="@(() => createUserInfoDto.Surname)" style="margin-bottom:10px" />
         </div>
     </div>
     <div class="form-group row">
-        <label for="patronymic" class="col-sm-2 col-form-label">
+        <label for="patronymic" class="col-sm-2 col-form-label" style="margin-bottom:10px">
             Отчество
         </label>
         <div class="col-sm-10">
             <InputText id="patronymic" class="form-control" placeholder="Отчество"
                        @bind-Value="createUserInfoDto.Patronymic"/>
+            <ValidationMessage For="@(() => createUserInfoDto.Patronymic)" style="margin-bottom:10px" />
         </div>
     </div>
 
@@ -49,12 +53,17 @@
             Позразделение 
         </label>
         <div class="col-sm-10">
-            <InputSelect id="idsubdiv" @bind-Value="createUserInfoDto.IdSubdivision" class="form-control">
+            <InputSelect id="idsubdiv" @bind-Value="createUserInfoDto.IdSubdivision" class="form-control"  >
+
+               @* <option disabled value="0" style="display:none"> -- Выберите подразделение -- </option>*@
                 @foreach (var sub in subdivisionListVm.Subdivisions)
                 {
+
                     <option value="@sub.Id">@sub.Name</option>
                 }
+                <ValidationMessage For="@(() => createUserInfoDto.IdSubdivision)" style="margin-bottom:10px" />
             </InputSelect>
+            
         </div>
     </div>
 
@@ -64,15 +73,18 @@
         </label>
         <div class="col-sm-10">
             <InputSelect id="positionId" @bind-Value="createUserInfoDto.IdPositon" class="form-control">
+                
                 @foreach (var pos in positionListVm.Positions)
                 {
                     <option value="@pos.Id">@pos.Name</option>
                 }
+
             </InputSelect>
+
         </div>
     </div>
-    <InputText @bind-Value="st"></InputText>
-        <button type="submit">Submit</button>
+   
+    <button type="submit" class="btn btn-primary"  >Отправить данные</button>
 </EditForm>
 
 
@@ -80,15 +92,17 @@
 
 
 @code {
+
+
     // private CreateUserInfoDto model = new();
     private CreateUserInfoDto createUserInfoDto = new();
     private SubdivisionListVm subdivisionListVm = new();
-    private PositionListVm positionListVm = new();
+    private PositionListVm positionListVm = new();     
 
-    string st;
 
     protected override async Task OnInitializedAsync()
     {
+            
         try
         {
             subdivisionListVm.Subdivisions = new List<SubdivisionListLookupDto>();
@@ -103,16 +117,14 @@
             exception.Redirect();
         }     
     }
-    private async Task<string> HandleValidSubmit()
+    private async void HandleValidSubmit()
     {
-        var httpResponse = await Http.PostAsJsonAsync<CreateUserInfoDto>("/UserInfo", createUserInfoDto);
-      
-
-        var str = await httpResponse.Content.ReadAsStringAsync();
-        st = str;
+        var httpResponse = await Http.PostAsJsonAsync<CreateUserInfoDto>("/UserInfo", createUserInfoDto);               
+        
         NavigationManager.NavigateTo("/counter");
-        return await httpResponse.Content.ReadAsStringAsync();
-    }
+     }
+
+    
 }
 
 

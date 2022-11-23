@@ -6,15 +6,21 @@ namespace WorkflowAutomation.Application.Documents.Commands.UserInfoCommand
 {
     public class CreateUserInfoDto : IMapWith<CreateUserInfoCommand>
     {
-        [Required]
-        public string Name { get; set; }
-        [Required]
-        public string Surname { get; set; }
-        public string Patronymic { get; set; }
-        [Required]
+        [Required(ErrorMessage = "¬ведите им€")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "»м€ должно быть не менее 2-х символов и не более 50-ти")]
+        public string Name { get; set; } = null;
+
+        [Required(ErrorMessage = "¬ведите фамилию")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "‘амили€ должно быть не менее 2-х символов и не более 50-ти")]
+        public string Surname { get; set; } = null;
+
+        [Required(ErrorMessage = "¬ведите отчество")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "ќтчество должно быть не менее 2-х символов и не более 50-ти")]
+        public string Patronymic { get; set; } = null;
+        [Required(ErrorMessage = "¬ведите подразделение")]
         public int IdSubdivision { get; set; }
-        [Required]
-        public int IdPositon { get; set; }
+        [Required(ErrorMessage = "¬ведите должность")]
+        public int IdPositon { get; set; } 
 
         public void Mapping(Profile profile)
         {
