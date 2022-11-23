@@ -13,29 +13,27 @@
 @inject HttpClient Http
 
 
-        <EditForm Model="@createNewDocumentDto" OnValidSubmit="@HandleValidSubmit">
+<EditForm Model="@createNewDocumentDto" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-<h3>Создать новый документ</h3>
-<h6>Введите название документа</h6>
-<h6>Тема</h6>
+    <h3>Создать новый документ</h3>
+    <h6>Введите название документа</h6>
+    <h6>Тема</h6>
 
-<InputText id="Title" @bind-Value="createNewDocumentDto.Title" />
+    <InputText id="Title" @bind-Value="createNewDocumentDto.Title" />
 
     <h6>Выберите получателя</h6>
-   <InputSelect id="selectAllowedUsers" class="form-control" @bind-Value="@createNewDocumentDto.ReceiverUserId" >
+    <InputSelect id="selectAllowedUsers" class="form-control" @bind-Value="@createNewDocumentDto.ReceiverUserId">
 
         @foreach (var doc in allowedUsers.AllowedUsers)
         {
-            <option  value="@doc.Id">
-                <p> @doc.Name @doc.Surname @doc.Patronymic </p>
-                <p> @doc.SubdivisionName @doc.PositonName </p> </option>
+            <option value="@doc.Id"> @doc.Name @doc.Surname @doc.Patronymic @doc.SubdivisionName @doc.PositonName </option>
         }
     </InputSelect>
 
     <h6>Выберите тип документа</h6>
-    <InputSelect id="selectedDocTypes" class="form-control" @bind-Value="@createNewDocumentDto.DocumentTypeId" >
+    <InputSelect id="selectedDocTypes" class="form-control" @bind-Value="@createNewDocumentDto.DocumentTypeId">
 
         @foreach (var doc in docTypes.DocumentTypes)
         {
@@ -43,9 +41,9 @@
         }
     </InputSelect>
 
-    <br/>
+    <br />
 </EditForm>
-<br/>
+<br />
 
 @code {
     // DocTypeDto docTypeDto = new DocTypeDto();
@@ -61,7 +59,7 @@
 
         docTypes = await Http.GetFromJsonAsync<DocumentTypeListVm>("DocumentType");
         allowedUsers = await Http.GetFromJsonAsync<AllowedUserListVm>("GetAllowedUsers");
-     
+
     }
     private void HandleValidSubmit()
     {
