@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using WorkflowAutomation.Application.Interfaces;
 using WorkflowAutomation.Domain;
 using WorkflowAutomation.Persistence.EntityTypeConfigurations;
@@ -543,5 +544,7 @@ namespace WorkflowAutomation.Persistence
         {
             return await this.SaveChangesAsync(cancellationToken);
         }
+
+        DatabaseFacade Database { get { return this.Database; } }
     }
 }

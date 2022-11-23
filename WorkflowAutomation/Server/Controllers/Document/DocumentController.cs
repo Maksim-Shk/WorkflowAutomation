@@ -40,7 +40,7 @@ namespace WorkflowAutomation.Server.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<int>> CreateNewDocument([FromBody] CreateNewDocumentDto createNewDocumentDto)
+        public async Task<ActionResult<int>> CreateNewDocument(CreateNewDocumentDto createNewDocumentDto)
         {
             //Task<ActionResult<Guid> 
             var command = _mapper.Map<CreateNewDocumentCommand>(createNewDocumentDto);

@@ -1,6 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using WorkflowAutomation.Domain;
 
 namespace WorkflowAutomation.Application.Interfaces
@@ -21,6 +23,7 @@ namespace WorkflowAutomation.Application.Interfaces
         // DbSet<UserPosition> UserPositions { get; set; }
         // DbSet<UserSubdivision> UserSubdivisions { get; set; }
 
+
         DbSet<AppUser> Users { get; set; } 
         DbSet<Document> Documents { get; set; } 
         DbSet<DocumentContent> DocumentContents { get; set; } 
@@ -32,5 +35,8 @@ namespace WorkflowAutomation.Application.Interfaces
         DbSet<UserPosition> UserPositions { get; set; }
         DbSet<UserSubdivision> UserSubdivisions { get; set; }
         Task<int> Save(CancellationToken cancellationToken);
+
+        DatabaseFacade Database { get { return this.Database; } }
+
     }
 }

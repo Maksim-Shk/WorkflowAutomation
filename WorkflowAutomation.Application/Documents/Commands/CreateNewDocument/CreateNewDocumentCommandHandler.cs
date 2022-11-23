@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Data;
+using System.Reflection.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using WorkflowAutomation.Application.Interfaces;
 using WorkflowAutomation.Domain;
+using Document = WorkflowAutomation.Domain.Document;
 
 namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
 {
@@ -19,36 +21,50 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
         public async Task<int> Handle(CreateNewDocumentCommand request,
             CancellationToken cancellationToken)
         {
-            var document = new Document
+
+            using (var transaction = _dbContext.Database.BeginTransaction())
             {
-                IdDocumentType = request.DocumentTypeId,
-                Title = request.Title,
-                CreateDate = DateTime.Now,
-                UpdateDate = null,
-                RemoveDate = null,
-                IdSender = request.UserId,
-                IdReceiver = request.ReceiverUserId
-            };
+                try
+                {
+                    var document = new Document
+                    {
+                        IdDocumentType = request.DocumentTypeId,
+                        Title = request.Title,
+                        CreateDate = DateTime.Now,
+                        UpdateDate = null,
+                        RemoveDate = null,
+                        IdSender = request.UserId,
+                        IdReceiver = request.ReceiverUserId
+                    };
 
-            var documentStatus = new DocumentStatus
-            {
-                IdDocument = document.IdDocument,
-                IdStatus = _dbContext.Statuses.Where(x => x.Name == "Зарегистрировано").First().IdStatus,
-                // IdStatus = request.StatusId, //Возможно по-умолчанию "В работе"
-                AppropriationDate = document.CreateDate,
-                //??????
-                IdUser = request.UserId,
+                    await _dbContext.Documents.AddAsync(document, cancellationToken);
+                    await _dbContext.Save(cancellationToken);
 
-            };
+                    var documentStatus = new DocumentStatus
+                    {
+                        IdDocument = document.IdDocument,
+                        IdStatus = _dbContext.Statuses.Where(x => x.Name == "Зарегистрировано").First().IdStatus,
+                        // IdStatus = request.StatusId, //Возможно по-умолчанию "В работе"
+                        AppropriationDate = document.CreateDate,
+                        //??????
+                        IdUser = request.UserId,
 
-            // TODO : Добавить DocumentContent
+                    };
 
+                    // TODO : Добавить DocumentContent
 
-            await _dbContext.Documents.AddAsync(document, cancellationToken);
-            await _dbContext.DocumentStatuses.AddAsync(documentStatus, cancellationToken);
-            await _dbContext.Save(cancellationToken);
+                    await _dbContext.DocumentStatuses.AddAsync(documentStatus, cancellationToken);
+                    await _dbContext.Save(cancellationToken);
 
-            return document.IdDocument;
+                    transaction.Commit();
+                    return document.IdDocument;
+                }
+                catch 
+                {
+                    //TODO кастомное исключение в Middleware
+                    throw new InvalidOperationException();
+                }
+            }
         }
     }
 }
