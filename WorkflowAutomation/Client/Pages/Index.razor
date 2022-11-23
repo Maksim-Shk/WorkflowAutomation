@@ -13,20 +13,15 @@
 @inject SignOutSessionStateManager SignOutManager
 @inject HttpClient Http
 
+    <PageTitle>Документооборот ОГУ</PageTitle>
 
-    <PageTitle>Index</PageTitle>
-
-<h1>Здравствуйте, @getUserInfoDto.Name   @getUserInfoDto.Surname   @getUserInfoDto.Patronymic</h1>
+<h1>Здравствуйте, @getUserInfoDto.Name  @getUserInfoDto.Surname   @getUserInfoDto.Patronymic</h1>
 <h2>@getUserInfoDto.SubdivisionName - @getUserInfoDto.PositonName</h2>
-
-    Welcome to your new app.
-
-    <SurveyPrompt Title="How is Blazor working for you?" />
 
 @code{
 
     //private string Username;
-    private GetUserInfoDto getUserInfoDto = new GetUserInfoDto();
+    private GetUserInfoDto getUserInfoDto = new();
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();

@@ -1,16 +1,16 @@
 ﻿@page "/Test"
 @using Microsoft.Extensions.Logging;
 @using System.ComponentModel.DataAnnotations;
-@inject ILogger<Test> Logger
 @using System
 @using System.IO
 @using System.Linq
 @using System.Net.Http.Headers
 @using System.Text.Json
+@inject ILogger<Test> Logger
 @inject IHttpClientFactory ClientFactory
 @inject HttpClient Http
 
-<h3>Test</h3>
+<h3>Тест</h3>
 
 <h6>Введите название документа</h6>
 <EditForm Model="@exampleModel" OnValidSubmit="@HandleValidSubmit">
