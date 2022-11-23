@@ -4,165 +4,67 @@
 @inject ILogger<Test> Logger
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
 @using WorkflowAutomation.Shared
+@using WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
+@using WorkflowAutomation.Application.DocType.Queries.GetDocumentTypeListQuery
+@using WorkflowAutomation.Application.Users.Queries.GetAllowedUsers
 @attribute [Authorize]
 @inject HttpClient Http
 
-<h3>Создать новый документ</h3>
 
-<h6>Введите название документа</h6>
-@*<EditForm Model="@exampleModel" OnValidSubmit="@HandleValidSubmit">
+<EditForm Model="@createNewDocumentDto" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <InputText id="name" @bind-Value="exampleModel.Title" />    
+    <h3>Создать новый документ</h3>
+    <h6>Введите название документа</h6>
+    <h6>Тема</h6>
+
+    <InputText id="Title" @bind-Value="createNewDocumentDto.Title" />
+
+    <h6>Выберите получателя</h6>
+    <InputSelect id="selectAllowedUsers" class="form-control" @bind-Value="@createNewDocumentDto.ReceiverUserId">
+
+        @foreach (var doc in allowedUsers.AllowedUsers)
+        {
+            <option value="@doc.Id"> @doc.Name @doc.Surname @doc.Patronymic @doc.SubdivisionName @doc.PositonName </option>
+        }
+    </InputSelect>
+
+    <h6>Выберите тип документа</h6>
+    <InputSelect id="selectedDocTypes" class="form-control" @bind-Value="@createNewDocumentDto.DocumentTypeId">
+
+        @foreach (var doc in docTypes.DocumentTypes)
+        {
+            <option value="@doc.Id"> @doc.Name</option>
+        }
+    </InputSelect>
+
+    <br />
 </EditForm>
-<br/>*@
-
-<h6>Выберите получателя</h6>
-<select class="form-control" @bind="@receiverDto.Id">
-
-    
-    @foreach (var rec in receivers)
-    {
-        <option value="@rec.Id"> @rec.FullName, должность @rec.Position  </option>
-    }
-    }
-
-</select>
-
-<h6>Выберите тип документа</h6>
-<select class="form-control" @bind="@docTypeDto.Id">
-
-    
-    @foreach (var doc in docTypes)
-    {
-        <option value="@doc.Id"> @doc.Name</option>
-    }
-    }
-
-</select>
 <br />
 
-
-
 @code {
+    // DocTypeDto docTypeDto = new DocTypeDto();
+    CreateNewDocumentDto createNewDocumentDto = new CreateNewDocumentDto();
 
-    ReceiverDto receiverDto = new ReceiverDto();
-    DocTypeDto docTypeDto = new DocTypeDto();
-
-
-    private ReceiverDto[]? receivers;
-
-    private DocTypeDto[]? docTypes;
+    private DocumentTypeListVm docTypes = new();
+    private AllowedUserListVm allowedUsers = new();
 
     protected override async Task OnInitializedAsync()
     {
-        try
-        {
-            receivers = new ReceiverDto[]{
-                new ReceiverDto{
-                    Id = Guid.NewGuid(),
-                    FullName = "ВВВ",
-                    Position = "BBBFree" },
-                new ReceiverDto{
-                    Id = Guid.NewGuid(),
-                    FullName = "AAA",
-                    Position = "AAAFree" },
-                new ReceiverDto{
-                    Id = Guid.NewGuid(),
-                    FullName = "CCC",
-                    Position = "CCCFree" },
+        docTypes.DocumentTypes = new List<DocumentTypeListLookupDto>();
+        allowedUsers.AllowedUsers = new List<GetAllowedUserListDto>();
 
-
-
-        };
-        // receivers = await Http.GetFromJsonAsync<ReceiverDto[]>("ReceiverDto");
-        }
-        catch (AccessTokenNotAvailableException exception)
-        {
-            exception.Redirect();
-        }
-
-        try
-        {
-            docTypes = new DocTypeDto[] { new DocTypeDto { Id = 1, Name = "Служеная записка" }, new DocTypeDto { Id = 2, Name = "Приказ" } };
-            //docTypes = await Http.GetFromJsonAsync<DocTypeDto[]>("DocTypeDto");
-        }
-        catch (AccessTokenNotAvailableException exception)
-        {
-            exception.Redirect();
-        }
-    }
-
-    public class NewDocDto
-    {
-        [Required]
-        [StringLength(10, ErrorMessage = "Name is too long.")]
-        public string? Title { get; set; }
-
-        [Required]
-        [StringLength(10, ErrorMessage = "Name is too long.")]
-        public Guid ReceiverId { get; set; }
-
-        public int DoctypeId { get; set; }
+        docTypes = await Http.GetFromJsonAsync<DocumentTypeListVm>("DocumentType");
+        allowedUsers = await Http.GetFromJsonAsync<AllowedUserListVm>("GetAllowedUsers");
 
     }
-   
-
-    public class ReceiverDto
-    { 
-        public Guid Id { get; set;}
-
-        public string FullName { get; set; }
-
-        public string Position { get; set; }
-
-    }
-
-    public class DocTypeDto
-
-    {
-        public int Id { get; set; }
-
-        public string Name { get; set; }    
-    }
-
-   // private ExampleModel exampleModel = new();
-
     private void HandleValidSubmit()
     {
         Logger.LogInformation("HandleValidSubmit called");
-
-        // Process the valid form
     }
-
-   //string selectedCountryID;
-
-   // string SelectedCountryID
-   // {
-   //     get => selectedCountryID;
-   //     set
-   //     {
-   //         selectedCountryID = value;
-
-   //     }
-   // }
-
-   // List<Country> CountryList = new List<Country>() { new Country ("Кощеев Михаил Валерьевич", "Студент"),
-   //                                                   new Country ("Школин Максим Аркадьевич", "Студент") };
-
-   // public class Country
-   // {
-
-   //     public Country(string code, string name)
-   //     {
-   //         Code = code;
-   //         Name = name;
-   //     }
-   //     public string Code { get; set; }
-   //     public string Name { get; set; }
-
-    }
+}
 
 
