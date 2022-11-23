@@ -4,10 +4,11 @@
 @inject ILogger<Test> Logger
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList;
+@using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
 @using WorkflowAutomation.Shared
 @using WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
-@using WorkflowAutomation.Application.DocType.Queries.GetDocumentTypeListQuery;
+@using WorkflowAutomation.Application.DocType.Queries.GetDocumentTypeListQuery
+@using WorkflowAutomation.Application.Users.Queries.GetAllowedUsers
 @attribute [Authorize]
 @inject HttpClient Http
 
@@ -23,19 +24,18 @@
 <InputText id="Title" @bind-Value="createNewDocumentDto.Title" />
 
     <h6>Выберите получателя</h6>
-    @*<select class="form-control" @bind="@createNewDocumentDto.ReceiverUserId">
+   <InputSelect id="selectAllowedUsers" class="form-control" @bind-Value="@createNewDocumentDto.ReceiverUserId" >
 
-
-        @foreach (var rec in receivers)
+        @foreach (var doc in allowedUsers.AllowedUsers)
         {
-            <option value="@rec.Id"> @rec.FullName, должность @rec.Position  </option>
+            <option  value="@doc.Id">
+                <p> @doc.Name @doc.Surname @doc.Patronymic </p>
+                <p> @doc.SubdivisionName @doc.PositonName </p> </option>
         }
-        }
-
-    </select>*@
+    </InputSelect>
 
     <h6>Выберите тип документа</h6>
-    <InputSelect id="selectValue" class="form-control" @bind-Value="@createNewDocumentDto.DocumentTypeId" >
+    <InputSelect id="selectedDocTypes" class="form-control" @bind-Value="@createNewDocumentDto.DocumentTypeId" >
 
         @foreach (var doc in docTypes.DocumentTypes)
         {
@@ -47,80 +47,26 @@
 </EditForm>
 <br/>
 
-
-
-
-
-
-
-
 @code {
     // DocTypeDto docTypeDto = new DocTypeDto();
     CreateNewDocumentDto createNewDocumentDto = new CreateNewDocumentDto();
 
     private DocumentTypeListVm docTypes = new();
+    private AllowedUserListVm allowedUsers = new();
 
     protected override async Task OnInitializedAsync()
     {
         docTypes.DocumentTypes = new List<DocumentTypeListLookupDto>();
-        // try
-       // {
-       //     receivers = new ReceiverDto[]{
-       //         new ReceiverDto{
-       //             Id = Guid.NewGuid(),
-       //             FullName = "ВВВ",
-       //             Position = "BBBFree" },
-       //         new ReceiverDto{
-       //             Id = Guid.NewGuid(),
-       //             FullName = "AAA",
-       //             Position = "AAAFree" },
-       //         new ReceiverDto{
-       //             Id = Guid.NewGuid(),
-       //             FullName = "CCC",
-       //             Position = "CCCFree" },
-       //
-       //
-       //
-       // };
-       // // receivers = await Http.GetFromJsonAsync<ReceiverDto[]>("ReceiverDto");
-       // }
-       // catch (AccessTokenNotAvailableException exception)
-       // {
-       //     exception.Redirect();
-       // }
+        allowedUsers.AllowedUsers = new List<GetAllowedUserListDto>();
 
-       // try
-       // {
-         //   docTypes = new DocTypeDto[] { new DocTypeDto { Id = 1, Name = "Служеная записка" }, new DocTypeDto { Id = 2, Name = "Приказ" } };
         docTypes = await Http.GetFromJsonAsync<DocumentTypeListVm>("DocumentType");
-      //  }
-       // catch (AccessTokenNotAvailableException exception)
-       // {
-       //     exception.Redirect();
-       // }
+        allowedUsers = await Http.GetFromJsonAsync<AllowedUserListVm>("GetAllowedUsers");
+     
     }
-
-  //  public class NewDocDto
-  //  {
-  //      [Required]
-  //      [StringLength(10, ErrorMessage = "Name is too long.")]
-  //      public string? Title { get; set; }
-  //
-  //      [Required]
-  //      [StringLength(10, ErrorMessage = "Name is too long.")]
-  //      public Guid ReceiverId { get; set; }
-  //
-  //      public int DoctypeId { get; set; }
-  //
-  //  }
-
-
     private void HandleValidSubmit()
     {
         Logger.LogInformation("HandleValidSubmit called");
-
     }
-
-    }
+}
 
 

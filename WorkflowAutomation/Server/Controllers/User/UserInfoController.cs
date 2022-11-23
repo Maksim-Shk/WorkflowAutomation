@@ -52,7 +52,7 @@ namespace WorkflowAutomation.Server.Controllers
         [Authorize]
         public async Task<ActionResult<GetUserInfoDto>> GetUserInfo()
         {
-            var command = new GetUserInfoCommand
+            var command = new GetUserInfoQuery
             {
                 UserId = UserId
             };

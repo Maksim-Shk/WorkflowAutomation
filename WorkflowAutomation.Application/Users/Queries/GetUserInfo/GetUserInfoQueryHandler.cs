@@ -12,17 +12,17 @@ using WorkflowAutomation.Domain;
 
 namespace WorkflowAutomation.Application.Users.Queries.GetUserInfo
 {
-    public class GetUserInfoCommandHandler
-        : IRequestHandler<GetUserInfoCommand, GetUserInfoDto>
+    public class GetUserInfoQueryHandler
+        : IRequestHandler<GetUserInfoQuery, GetUserInfoDto>
     {
         private readonly IDocumentUserDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public GetUserInfoCommandHandler(IDocumentUserDbContext dbContext,
+        public GetUserInfoQueryHandler(IDocumentUserDbContext dbContext,
             IMapper mapper) =>
             (_dbContext, _mapper) = (dbContext, mapper);
 
-        public async Task<GetUserInfoDto> Handle(GetUserInfoCommand request,
+        public async Task<GetUserInfoDto> Handle(GetUserInfoQuery request,
             CancellationToken cancellationToken)
         {
             GetUserInfoDto getUserInfoDto = new GetUserInfoDto();
