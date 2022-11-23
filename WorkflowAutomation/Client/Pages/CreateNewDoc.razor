@@ -41,6 +41,8 @@
         }
     </InputSelect>
 
+   <button type="submit" class="btn btn-primary"> Создать документ </button>
+
     <br />
 </EditForm>
 <br />
@@ -61,8 +63,9 @@
         allowedUsers = await Http.GetFromJsonAsync<AllowedUserListVm>("GetAllowedUsers");
 
     }
-    private void HandleValidSubmit()
+    private async Task HandleValidSubmit()
     {
+        var httpResponse = await Http.PostAsJsonAsync<CreateNewDocumentDto>("/Document", createNewDocumentDto);
         Logger.LogInformation("HandleValidSubmit called");
     }
 }
