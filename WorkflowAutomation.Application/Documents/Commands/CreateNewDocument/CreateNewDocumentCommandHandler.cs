@@ -23,7 +23,6 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
             {
                 IdDocumentType = request.DocumentTypeId,
                 Title = request.Title,
-                
                 CreateDate = DateTime.Now,
                 UpdateDate = null,
                 RemoveDate = null,
@@ -42,7 +41,7 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
 
             };
 
-            // Добавить DocumentContent
+            // TODO : Добавить DocumentContent
 
 
             await _dbContext.Documents.AddAsync(document, cancellationToken);
