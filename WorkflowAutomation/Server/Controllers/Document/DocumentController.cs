@@ -49,7 +49,17 @@ namespace WorkflowAutomation.Server.Controllers
 
             return Ok(docId);
         }
-
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<DocumentListVm>> GetAllowedDocuments()
+        {
+            var query = new GetDocumentListQuery
+            {
+                UserId = UserId
+            };
+            var vm = await Mediator.Send(query);
+            return Ok(vm);
+        }
 
         //
         //   [HttpPost]
