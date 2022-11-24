@@ -294,8 +294,8 @@ namespace WorkflowAutomation.Persistence
                 entity.HasIndex(e => e.IdUser, "fki_document_status_id_user_fkey");
 
                 entity.Property(e => e.IdDocumentStatus)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id_document_status");
+                    .HasColumnName("id_document_status")
+                    .UseIdentityAlwaysColumn();
 
                 entity.Property(e => e.AppropriationDate)
                     .HasColumnType("timestamp without time zone")
