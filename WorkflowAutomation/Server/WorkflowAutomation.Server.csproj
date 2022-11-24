@@ -30,7 +30,6 @@
     <ProjectReference Include="..\..\WorkflowAutomation.Application\WorkflowAutomation.Application.csproj" />
     <ProjectReference Include="..\..\WorkflowAutomation.Persistence\WorkflowAutomation.Persistence.csproj" />
     <ProjectReference Include="..\Client\WorkflowAutomation.Client.csproj" />
-    <ProjectReference Include="..\Shared\WorkflowAutomation.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

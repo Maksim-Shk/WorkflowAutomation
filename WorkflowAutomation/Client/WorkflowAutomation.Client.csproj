@@ -15,8 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\WorkflowAutomation.Domain\WorkflowAutomation.Domain.csproj" />
-    <ProjectReference Include="..\Shared\WorkflowAutomation.Shared.csproj" />
+    <ProjectReference Include="..\..\WorkflowAutomation.Application\WorkflowAutomation.Application.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>

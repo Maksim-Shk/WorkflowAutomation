@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkflowAutomation.Server",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkflowAutomation.Client", "WorkflowAutomation\Client\WorkflowAutomation.Client.csproj", "{7279D6A9-721B-403C-83A6-BE5A449C8C66}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkflowAutomation.Shared", "WorkflowAutomation\Shared\WorkflowAutomation.Shared.csproj", "{A68339F6-2642-404F-A17A-31F21E7366E7}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{26AC090A-CD7A-47BB-9DDF-F18C733B48C2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkflowAutomation.Application", "WorkflowAutomation.Application\WorkflowAutomation.Application.csproj", "{E457D519-27C8-479C-BC19-0B50E8FBA560}"
@@ -39,10 +37,6 @@ Global
 		{7279D6A9-721B-403C-83A6-BE5A449C8C66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7279D6A9-721B-403C-83A6-BE5A449C8C66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7279D6A9-721B-403C-83A6-BE5A449C8C66}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A68339F6-2642-404F-A17A-31F21E7366E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A68339F6-2642-404F-A17A-31F21E7366E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A68339F6-2642-404F-A17A-31F21E7366E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A68339F6-2642-404F-A17A-31F21E7366E7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E457D519-27C8-479C-BC19-0B50E8FBA560}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E457D519-27C8-479C-BC19-0B50E8FBA560}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E457D519-27C8-479C-BC19-0B50E8FBA560}.Release|Any CPU.ActiveCfg = Release|Any CPU
