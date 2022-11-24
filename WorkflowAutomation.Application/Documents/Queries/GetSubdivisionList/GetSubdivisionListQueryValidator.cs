@@ -7,7 +7,7 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
     {
         public GetSimpleDocumentListQueryValidator()
         {
-
+            RuleFor(getSimpleDocumentListQueryValidator => getSimpleDocumentListQueryValidator.UserId).NotEmpty();
         }
     }
 }
