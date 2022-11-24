@@ -13,7 +13,9 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
 {
     public class CreateNewDocumentDto : IMapWith<CreateNewDocumentCommand>
     {
-        [Required]
+        [Required(ErrorMessage = "Введите тему документа")]
+        [StringLength(50, ErrorMessage = "Тема документа должно быть не более 256-ти символов")]
+     
         public string Title { get; set; }
         [Required]
         public int DocumentTypeId { get; set; }
@@ -30,5 +32,7 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
                    .ForMember(docCommand => docCommand.ReceiverUserId,
                     opt => opt.MapFrom(docDto => docDto.ReceiverUserId));
         }
+
+        
     }
 }
