@@ -41,7 +41,7 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentList
                 dto.SenderInfo = sender.Name + " " + sender.Surname + " " + sender.Patronymic;
 
                 var reciever = await _dbContext.Users.FirstAsync(t => t.IdUser == doc.IdReceiver);
-                dto.SenderInfo = reciever.Name + " " + reciever.Surname + " " + reciever.Patronymic;
+                dto.RecieverInfo = reciever.Name + " " + reciever.Surname + " " + reciever.Patronymic;
 
                 listLookupDtos.Add(dto);
             }
