@@ -9,6 +9,7 @@ using WorkflowAutomation.Application.Documents.Queries.GetDocumentList;
 using WorkflowAutomation.Application.Documents.Commands.UserInfoCommand;
 using WorkflowAutomation.Server.Models;
 using WorkflowAutomation.Server.Controllers;
+using WorkflowAutomation.Shared;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using WorkflowAutomation.Domain;

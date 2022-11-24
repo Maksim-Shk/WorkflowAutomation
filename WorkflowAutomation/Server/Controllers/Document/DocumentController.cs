@@ -9,6 +9,8 @@ using System.Threading;
 using System.Reflection;
 using AutoMapper.QueryableExtensions;
 using Microsoft.Extensions.Logging;
+
+using WorkflowAutomation.Shared;
 using WorkflowAutomation.Server.Models;
 using WorkflowAutomation.Application.Interfaces;
 using WorkflowAutomation.Domain;
