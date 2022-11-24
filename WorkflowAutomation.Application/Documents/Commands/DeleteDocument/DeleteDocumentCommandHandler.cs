@@ -34,7 +34,7 @@ namespace WorkflowAutomation.Application.Documents.Commands.DeleteDocument
                 _dbContext.Statuses.Add(st);
                 _dbContext.Save(cancellationToken);
                     }
-
+            
             Status status = await _dbContext.Statuses.FirstAsync(y => y.Name == "Удалено");
 
             var documentStatus = new DocumentStatus

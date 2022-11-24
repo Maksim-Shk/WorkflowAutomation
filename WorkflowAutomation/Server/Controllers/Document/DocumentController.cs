@@ -62,15 +62,12 @@ namespace WorkflowAutomation.Server.Controllers
             return Ok(vm);
         }
 
-        [HttpDelete("{id}")]
+        [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> Delete(int DocumentId)
+        public async Task<ActionResult> DeleteUpdate(int id, [FromBody] DeleteDocumentDto deleteDocumentDto)
         {
-            var command = new DeleteDocumentCommand
-            {
-                DocumentId = DocumentId,
-                UserId = UserId
-            };
+            var command = _mapper.Map<DeleteDocumentCommand>(deleteDocumentDto);
+            command.UserId = UserId;
             await Mediator.Send(command);
             return NoContent();
         }

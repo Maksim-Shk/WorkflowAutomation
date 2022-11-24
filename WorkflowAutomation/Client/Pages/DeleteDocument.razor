@@ -1,0 +1,61 @@
+﻿@page "/DeleteDocument"
+@using Microsoft.Extensions.Logging
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using WorkflowAutomation.Application.Documents.Queries.GetDocumentList
+@using WorkflowAutomation.Application.Documents.Commands.DeleteDocument
+@attribute [Authorize]
+@inject ILogger<Test> Logger
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject SignOutSessionStateManager SignOutManager
+
+<EditForm Model="@deleteDocumentDto" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <h6>Выберите документ для удаления</h6>
+    <InputSelect id="selectDoc" class="form-control" @bind-Value="@deleteDocumentDto.DocumentId">
+
+        @foreach (var doc in documentListVm.Documents)
+        {
+            @if (doc.RemoveDate !=null){
+                <option value="@doc.Id"> " @doc.Title " Отправитель: @doc.SenderInfo Получатель: @doc.RecieverInfo 
+                    Тип - @doc.DocumentType</option>
+            }
+        }
+    </InputSelect>
+   <button type="submit" class="btn btn-primary"> Удалить документ </button>
+
+    <br />
+</EditForm>
+<br />
+
+@code {
+    // DocTypeDto docTypeDto = new DocTypeDto();
+    DeleteDocumentDto deleteDocumentDto = new ();
+
+    private DocumentListVm documentListVm = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        documentListVm.Documents = new List<GetDocumentListLookupDto>();
+        documentListVm = await Http.GetFromJsonAsync<DocumentListVm>("Document");
+
+        //foreach (var doc in documentListVm.Documents)
+        //{
+        //    if (doc.RemoveDate != null)
+        //        documentListVm.Documents.Remove(doc);
+        //}
+
+    }
+    private async Task HandleValidSubmit()
+    {
+        var httpResponse = await Http.PutAsJsonAsync("Document/" + deleteDocumentDto.DocumentId, deleteDocumentDto);
+        Logger.LogInformation("HandleValidSubmit called");
+        //NavigationManager.NavigateTo("/ViewDocumentList");
+    }
+}
+
+

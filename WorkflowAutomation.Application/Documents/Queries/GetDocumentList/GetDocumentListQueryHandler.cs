@@ -33,6 +33,7 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentList
                 dto.Id = doc.IdDocument;
                 dto.Title = doc.Title;
                 dto.CreateDate = doc.CreateDate;
+                dto.RemoveDate = doc.RemoveDate;
 
                 var docType = await _dbContext.DocumentTypes.FirstAsync(t => t.IdDocumentType == doc.IdDocumentType);
                 dto.DocumentType = docType.Name;
