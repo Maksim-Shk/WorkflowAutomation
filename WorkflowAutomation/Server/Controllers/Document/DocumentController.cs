@@ -16,6 +16,7 @@ using WorkflowAutomation.Application.Interfaces;
 using WorkflowAutomation.Domain;
 using WorkflowAutomation.Application.Documents.Commands.CreateNewDocument;
 using WorkflowAutomation.Application.Documents.Queries.GetDocumentList;
+using WorkflowAutomation.Application.Documents.Commands.DeleteDocument;
 
 
 namespace WorkflowAutomation.Server.Controllers
@@ -60,6 +61,20 @@ namespace WorkflowAutomation.Server.Controllers
             var vm = await Mediator.Send(query);
             return Ok(vm);
         }
+
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<IActionResult> Delete(int DocumentId)
+        {
+            var command = new DeleteDocumentCommand
+            {
+                DocumentId = DocumentId,
+                UserId = UserId
+            };
+            await Mediator.Send(command);
+            return NoContent();
+        }
+
 
         //
         //   [HttpPost]

@@ -36,4 +36,8 @@
     <ProjectReference Include="..\WorkflowAutomation.Domain\WorkflowAutomation.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Documents\Commands\DeleteDocument\" />
+  </ItemGroup>
+
 </Project>
