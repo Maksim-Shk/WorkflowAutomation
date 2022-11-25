@@ -7,6 +7,7 @@
 @using System.Security.Claims
 
 @using WorkflowAutomation.Application.Users.Queries.GetUserInfo
+@using WorkflowAutomation.Application.Documents.Queries.GetRecentActivityDocuments
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
@@ -18,20 +19,45 @@
 <h1>Здравствуйте, @getUserInfoDto.Name  @getUserInfoDto.Surname   @getUserInfoDto.Patronymic</h1>
 <h2>@getUserInfoDto.SubdivisionName - @getUserInfoDto.PositonName</h2>
 
-@code{
+@*<table class="table">
+    <thead>
+        <tr>
+            <th>Тема</th>
+            <th>Дата</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var doc in recentActivityDocumentListVm.RecentDocuments)
+        {
+            <tr>
+                <td>@doc.Titile</td>
+                <td>@doc.LastActivityDate</td>
+            </tr>
+        }
+    </tbody>
+</table>*@
 
+
+@code{
     //private string Username;
+    private RecentActivityDocumentListVm recentActivityDocumentListVm = new();
     private GetUserInfoDto getUserInfoDto = new();
     protected override async Task OnInitializedAsync()
     {
+        recentActivityDocumentListVm.RecentDocuments = new List<RecentActivityDocumentLookupDto>();
+
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
+
+       
         if (!user.Identity.IsAuthenticated)
         {
             NavigationManager.NavigateTo("authentication/login");
         }
         else
         {
+          //  recentActivityDocumentListVm = await Http.GetFromJsonAsync<RecentActivityDocumentListVm>("ActivityDocument");
+
             getUserInfoDto = await Http.GetFromJsonAsync<GetUserInfoDto>("UserInfo");
            // Username = user.Identity.Name;
         }

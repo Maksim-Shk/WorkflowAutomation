@@ -31,7 +31,7 @@ namespace WorkflowAutomation.Application.Users.Queries.GetUserInfo
             AllowedUserListVm allowedUserListVm = new();
             allowedUserListVm.AllowedUsers = new List<GetAllowedUserListDto>();
 
-            foreach (var User in _dbContext.Users.ToList())
+            foreach (var User in _dbContext.Users.Where(u=>u.IdUser!=request.UserId).ToList())
             {
                 GetAllowedUserListDto userListDto = new GetAllowedUserListDto();
                 userListDto.Id = User.IdUser;

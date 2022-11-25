@@ -20,7 +20,7 @@
 
         @foreach (var doc in documentListVm.Documents)
         {
-            @if (doc.RemoveDate !=null){
+            @if (doc.RemoveDate ==null){
                 <option value="@doc.Id"> " @doc.Title " Отправитель: @doc.SenderInfo Получатель: @doc.RecieverInfo 
                     Тип - @doc.DocumentType</option>
             }
