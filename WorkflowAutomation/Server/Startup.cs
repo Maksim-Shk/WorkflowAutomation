@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -9,27 +12,29 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using System.Reflection;
 //using Swashbuckle.AspNetCore.SwaggerGen;
+
+using WorkflowAutomation.Server.Services;
+using Serilog.Events;
+using Serilog;
+
+using MediatR;
+
+
 using WorkflowAutomation.Application;
 using WorkflowAutomation.Application.Common.Mappings;
 using WorkflowAutomation.Application.Interfaces;
 using WorkflowAutomation.Persistence;
 using WorkflowAutomation.Server.Middleware;
-using WorkflowAutomation.Server.Services;
-using Serilog.Events;
-using Serilog;
-using Microsoft.EntityFrameworkCore;
 using WorkflowAutomation.Server.Data;
-using Microsoft.AspNetCore.Authentication;
 using WorkflowAutomation.Server.Models;
-using MediatR;
-
+using Microsoft.AspNetCore.Identity;
 
 namespace WorkflowAutomation.Server
 {
     public class Startup
     {
         public IConfiguration Configuration { get; }
-       
+
 
         public Startup(IConfiguration configuration)
         {
@@ -42,12 +47,12 @@ namespace WorkflowAutomation.Server
             {
                 config.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
                 config.AddProfile(new AssemblyMappingProfile(typeof(IDocumentUserDbContext).Assembly));
-         
+
             });
 
             services.AddApplication();
             //Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-           // services.AddMediatR(Assembly.GetExecutingAssembly());
+            // services.AddMediatR(Assembly.GetExecutingAssembly());
 
             var connectionString = Configuration["DbConnection"];
             services.AddDbContext<AuthDbContext>(options =>
@@ -66,7 +71,8 @@ namespace WorkflowAutomation.Server
                 });
             });
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<AuthDbContext>();
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<AuthDbContext>();
 
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, AuthDbContext>();
@@ -77,18 +83,18 @@ namespace WorkflowAutomation.Server
             services.AddControllersWithViews();
             services.AddRazorPages();
 
-           // services.AddAuthentication(config =>
-           // {
-           //     config.DefaultAuthenticateScheme =
-           //         JwtBearerDefaults.AuthenticationScheme;
-           //     config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-           // })
-           //     .AddJwtBearer("Bearer", options =>
-           //     {
-           //         options.Authority = "https://localhost:7153/";
-           //         options.Audience = "WorkflowAutomationWebAPI";
-           //         options.RequireHttpsMetadata = false;
-           //     });
+            // services.AddAuthentication(config =>
+            // {
+            //     config.DefaultAuthenticateScheme =
+            //         JwtBearerDefaults.AuthenticationScheme;
+            //     config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            // })
+            //     .AddJwtBearer("Bearer", options =>
+            //     {
+            //         options.Authority = "https://localhost:7153/";
+            //         options.Audience = "WorkflowAutomationWebAPI";
+            //         options.RequireHttpsMetadata = false;
+            //     });
 
             //services.AddVersionedApiExplorer(options =>
             //    options.GroupNameFormat = "'v'VVV");
@@ -97,7 +103,7 @@ namespace WorkflowAutomation.Server
             //  services.AddSwaggerGen();
             //  services.AddApiVersioning();
 
-           // services.AddSingleton<ICurrentUserService, CurrentUserService>();
+            // services.AddSingleton<ICurrentUserService, CurrentUserService>();
 
             //services.AddHttpContextAccessor();
         }
@@ -105,7 +111,7 @@ namespace WorkflowAutomation.Server
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env
             //,IApiVersionDescriptionProvider provider
             )
-        { 
+        {
             if (env.IsDevelopment())
             {
                 app.UseMigrationsEndPoint();
@@ -130,7 +136,7 @@ namespace WorkflowAutomation.Server
             //         config.RoutePrefix = string.Empty;
             //     }
             // });
-          
+
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
 
@@ -142,7 +148,7 @@ namespace WorkflowAutomation.Server
             app.UseAuthentication();
             app.UseAuthorization();
             // app.UseApiVersioning();
-         
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
