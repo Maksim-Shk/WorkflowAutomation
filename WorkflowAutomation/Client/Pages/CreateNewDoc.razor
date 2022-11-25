@@ -81,7 +81,6 @@
     private string FirstUpper(string str)
     {
         str = str.ToLower();
-        str = str.Replace(" ", "");
         return str.Substring(0, 1).ToUpper() + (str.Length > 1 ? str.Substring(1) : "");
     }
 }

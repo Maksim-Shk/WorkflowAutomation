@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using WorkflowAutomation.Server.Models;
+using WorkflowAutomation.Client.Pages;
 
 namespace WorkflowAutomation.Server.Areas.Identity.Pages.Account
 {
