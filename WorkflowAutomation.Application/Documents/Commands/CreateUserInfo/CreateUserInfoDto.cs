@@ -8,14 +8,17 @@ namespace WorkflowAutomation.Application.Documents.Commands.UserInfoCommand
     {
         [Required(ErrorMessage = "Введите имя")]
         [StringLength(50, MinimumLength = 2, ErrorMessage = "Имя должно быть не менее 2-х символов и не более 50-ти")]
+        [RegularExpression(@"^([а-яА-я \.\&\'\-]+)$", ErrorMessage = "В имнени должна быть ипользована только кириллица")]
         public string Name { get; set; } = null;
 
         [Required(ErrorMessage = "Введите фамилию")]
         [StringLength(50, MinimumLength = 2, ErrorMessage = "Фамилия должно быть не менее 2-х символов и не более 50-ти")]
+        [RegularExpression(@"^([а-яА-я \.\&\'\-]+)$", ErrorMessage = "В фамилии должна быть ипользована только кириллица")]
         public string Surname { get; set; } = null;
 
         [Required(ErrorMessage = "Введите отчество")]
         [StringLength(50, MinimumLength = 2, ErrorMessage = "Отчество должно быть не менее 2-х символов и не более 50-ти")]
+        [RegularExpression(@"^([а-яА-я \.\&\'\-]+)$", ErrorMessage = "В отчестве должна быть ипользована только кириллица")]
         public string Patronymic { get; set; } = null;
         [Required(ErrorMessage = "Введите подразделение")]
         public int IdSubdivision { get; set; }
