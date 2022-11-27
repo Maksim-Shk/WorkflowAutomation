@@ -82,7 +82,11 @@ namespace WorkflowAutomation.Server
                 policy.RequireClaim("Зарегистрированный пользователь"));
             });
             services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, AuthDbContext>(
+                .AddApiAuthorization<ApplicationUser, AuthDbContext>(options =>
+                {
+                    options.IdentityResources["openid"].UserClaims.Add("role");
+                    options.ApiResources.Single().UserClaims.Add("role");
+                }
                 );
 
             services.AddAuthentication()
