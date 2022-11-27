@@ -2,15 +2,17 @@
 
 @using WorkflowAutomation.Application.Roles.Queries.GetRolesList
 @using WorkflowAutomation.Application.Users.Queries.GetAllowedUsers
-@*@using Microsoft.AspNetCore.Identity.EntityFrameworkCore
-@using Microsoft.AspNetCore.Identity*@
+@using Microsoft.AspNetCore.Identity.EntityFrameworkCore
+@using Microsoft.AspNetCore.Identity
 @using Microsoft.Extensions.Logging;
 @using System.ComponentModel.DataAnnotations;
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using System.Security.Claims
+
 @inject HttpClient Http
 @inject SignOutSessionStateManager SignOutManager
+@*@inject UserManager<IdentityUser> _userManager*@
 
 @*@inject SignInManager<IdentityUser> _signInManager*@
 

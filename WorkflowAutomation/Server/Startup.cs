@@ -1,24 +1,28 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using System.Reflection;
+﻿
+//using Microsoft.AspNetCore.Components.Authorization;
+//using Microsoft.AspNetCore.Builder;
+//using Microsoft.AspNetCore;
+//using Microsoft.AspNetCore.Hosting;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.Extensions.DependencyInjection;
+//using Microsoft.Extensions.Hosting;
+//using Microsoft.Extensions.Configuration;
+//using Microsoft.Extensions.Options;
+//using Microsoft.AspNetCore.Mvc.ApiExplorer;
+
 //using Swashbuckle.AspNetCore.SwaggerGen;
 
-using WorkflowAutomation.Server.Services;
-using Serilog.Events;
-using Serilog;
-
+//using WorkflowAutomation.Server.Services;
+//using Serilog.Events;
+//using Serilog;
+//
 using MediatR;
 
+using System.Reflection;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 
 using WorkflowAutomation.Application;
 using WorkflowAutomation.Application.Common.Mappings;
@@ -27,7 +31,7 @@ using WorkflowAutomation.Persistence;
 using WorkflowAutomation.Server.Middleware;
 using WorkflowAutomation.Server.Data;
 using WorkflowAutomation.Server.Models;
-using Microsoft.AspNetCore.Identity;
+
 
 namespace WorkflowAutomation.Server
 {
@@ -35,11 +39,8 @@ namespace WorkflowAutomation.Server
     {
         public IConfiguration Configuration { get; }
 
-
-        public Startup(IConfiguration configuration)
-        {
+        public Startup(IConfiguration configuration) =>
             Configuration = configuration;
-        }
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -47,9 +48,7 @@ namespace WorkflowAutomation.Server
             {
                 config.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
                 config.AddProfile(new AssemblyMappingProfile(typeof(IDocumentUserDbContext).Assembly));
-
             });
-
             services.AddApplication();
             //Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
             // services.AddMediatR(Assembly.GetExecutingAssembly());
@@ -70,18 +69,29 @@ namespace WorkflowAutomation.Server
                     policy.AllowAnyOrigin();
                 });
             });
+            //Это ОК
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<AuthDbContext>();
-           // services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, UserClaimsPrincipalFactory<ApplicationUser, IdentityRole>>();
+            // services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, UserClaimsPrincipalFactory<ApplicationUser, IdentityRole>>();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminPolicy", policy =>
+                policy.RequireClaim("Админ"));
+                options.AddPolicy("RegisterUserPolicy", policy =>
+                policy.RequireClaim("Зарегистрированный пользователь"));
+            });
             services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, AuthDbContext>();
+                .AddApiAuthorization<ApplicationUser, AuthDbContext>(
+                );
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
-
+        
             services.AddControllersWithViews();
             services.AddRazorPages();
+
+         
 
             // services.AddAuthentication(config =>
             // {
@@ -108,34 +118,15 @@ namespace WorkflowAutomation.Server
             //services.AddHttpContextAccessor();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env
-            //,IApiVersionDescriptionProvider provider
-            )
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseMigrationsEndPoint();
                 app.UseWebAssemblyDebugging();
-
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                //app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-            // app.UseSwagger();
-            // app.UseSwaggerUI(config =>
-            // {
-            //     foreach (var description in provider.ApiVersionDescriptions)
-            //     {
-            //         config.SwaggerEndpoint(
-            //             $"/swagger/{description.GroupName}/swagger.json",
-            //             description.GroupName.ToUpperInvariant());
-            //         config.RoutePrefix = string.Empty;
-            //     }
-            // });
+            else { app.UseHsts(); }
 
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
@@ -147,7 +138,6 @@ namespace WorkflowAutomation.Server
             app.UseIdentityServer();
             app.UseAuthentication();
             app.UseAuthorization();
-            // app.UseApiVersioning();
 
             app.UseEndpoints(endpoints =>
             {

@@ -17,5 +17,10 @@ builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().Cre
 //    builder.Configuration.Bind("oidc", options.ProviderOptions);
 //});
 builder.Services.AddApiAuthorization();
+builder.Services.AddAuthorizationCore(o =>
+{
+    o.AddPolicy("AdminPolicy", policy => policy.RequireClaim("Админ"));
+    o.AddPolicy("RegisterUserPolicy", policy => policy.RequireClaim("Зарегистрированный пользователь"));
+});
 
 await builder.Build().RunAsync();

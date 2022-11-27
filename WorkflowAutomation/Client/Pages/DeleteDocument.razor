@@ -10,7 +10,8 @@
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject SignOutSessionStateManager SignOutManager
-@attribute [Authorize(Roles = "Админ")]
+@*@attribute [Authorize(Roles = "Админ")]*@
+@attribute [Authorize(Policy = "AdminPolicy")]
 
 <EditForm Model="@deleteDocumentDto" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
