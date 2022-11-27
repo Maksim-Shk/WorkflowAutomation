@@ -73,7 +73,7 @@ namespace WorkflowAutomation.Server
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<AuthDbContext>();
-
+           // services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, UserClaimsPrincipalFactory<ApplicationUser, IdentityRole>>();
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, AuthDbContext>();
 

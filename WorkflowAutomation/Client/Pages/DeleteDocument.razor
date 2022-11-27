@@ -5,11 +5,12 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using WorkflowAutomation.Application.Documents.Queries.GetDocumentList
 @using WorkflowAutomation.Application.Documents.Commands.DeleteDocument
-@attribute [Authorize]
+
 @inject ILogger<Test> Logger
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject SignOutSessionStateManager SignOutManager
+@attribute [Authorize(Roles = "Админ")]
 
 <EditForm Model="@deleteDocumentDto" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />

@@ -19,7 +19,7 @@ namespace WorkflowAutomation.Persistence
         public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; } = null!;
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; } = null!;
         public virtual DbSet<AspNetUserToken> AspNetUserTokens { get; set; } = null!;
-        public virtual DbSet<DeviceCode> DeviceCodes { get; set; } = null!;
+        public virtual DbSet<DeviceCode> AspNetDeviceCodes { get; set; } = null!;
         public virtual DbSet<Document> Documents { get; set; } = null!;
         public virtual DbSet<DocumentContent> DocumentContents { get; set; } = null!;
         public virtual DbSet<DocumentStatus> DocumentStatuses { get; set; } = null!;

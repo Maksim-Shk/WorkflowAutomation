@@ -39,4 +39,8 @@
     <PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="6.0.10" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\Role\" />
+  </ItemGroup>
+
 </Project>

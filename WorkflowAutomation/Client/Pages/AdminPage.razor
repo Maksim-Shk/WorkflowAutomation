@@ -1,15 +1,112 @@
 ﻿@page "/adminpage"
 
-@using Microsoft.AspNetCore.Identity.EntityFrameworkCore
-@using Microsoft.AspNetCore.Identity
+@using WorkflowAutomation.Application.Roles.Queries.GetRolesList
+@using WorkflowAutomation.Application.Users.Queries.GetAllowedUsers
+@*@using Microsoft.AspNetCore.Identity.EntityFrameworkCore
+@using Microsoft.AspNetCore.Identity*@
+@using Microsoft.Extensions.Logging;
+@using System.ComponentModel.DataAnnotations;
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using System.Security.Claims
-@inject UserManager<IdentityUser> _userManager
-@inject SignInManager<IdentityUser> _signInManager
+@inject HttpClient Http
+@inject SignOutSessionStateManager SignOutManager
+
+@*@inject SignInManager<IdentityUser> _signInManager*@
+
+    <EditForm Model="@roleDto" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <h6>Выберите пользователя</h6>
+   <InputSelect id="selectAllowedUser" class="form-control" @bind-Value="@roleDto.UserId">
+
+        @foreach (var user in UsersVm.AllowedUsers)
+        {
+            <option value="@user.Id"> @user.Name @user.Surname @user.Patronymic @user.SubdivisionName @user.PositonName </option>
+        }
+    </InputSelect>
+    <h6>Выберите роль</h6>
+    <InputSelect id="selectRole" class="form-control" @bind-Value="@roleDto.RoleId">
+
+        @foreach (var role in RolesVm.Roles)
+        {
+            <option value="@role.RoleId"> @role.Name </option>
+        }
+    </InputSelect>
+   <button type="submit" class="btn btn-primary"> Присвоить роль </button>
+
+    <br />
+</EditForm>
 
 
-     
+
+
+      @*<AuthorizeView>
+                <Authorizing>
+                    <span>Вход в систему...</span>
+                </Authorizing>
+                <NotAuthorized>
+                    @if (context.User.Identity?.IsAuthenticated != true)
+                    {
+                        <RedirectToLogin/>
+                    }
+                    else
+                    {
+                        <p role="alert">У вас нет прав доступа для этого ресурса</p>
+                    }
+                </NotAuthorized>
+            </AuthorizeView>*@
+
+
+
 <h3>AdminPage</h3>
 
+@*<EditForm Model="newUser" OnValidSubmit="@AddUserWithRole">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+
+    </EditForm>*@
+
 @code {
+    public class RoleDto
+    {
+        public string RoleId{ get; set; }
+
+        public string RoleName{ get; set; }
+
+        public string UserId{ get; set; }
+
+        public string WhoGave{ get; set; }
+    }
+    AllowedUserListVm UsersVm = new();
+    RolesListVm RolesVm = new();
+    RoleDto roleDto = new();
+
+
+    //var a = _userManager.AddToRoleAsync
+    protected override async Task OnInitializedAsync()
+    {
+
+        try
+        {
+            UsersVm.AllowedUsers = new List<GetAllowedUserListDto>();
+            RolesVm.Roles = new List<RolesListLookupDto>();
+            UsersVm = await Http.GetFromJsonAsync<AllowedUserListVm>("GetAllowedUsers");
+            RolesVm = await Http.GetFromJsonAsync<RolesListVm>("Role");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+
+    }
+
+    private async Task HandleValidSubmit()
+    {
+       // var httpResponse = await Http.PutAsJsonAsync("Document/" + deleteDocumentDto.DocumentId, deleteDocumentDto);
+       // Logger.LogInformation("HandleValidSubmit called");
+        //NavigationManager.NavigateTo("/ViewDocumentList");
+    }
 
 }
