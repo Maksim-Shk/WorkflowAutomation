@@ -77,9 +77,10 @@ namespace WorkflowAutomation.Server
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("AdminPolicy", policy =>
-                policy.RequireClaim("Админ"));
+                policy.RequireRole("Админ"));
+                //policy.RequireClaim("Админ"));
                 options.AddPolicy("RegisterUserPolicy", policy =>
-                policy.RequireClaim("Зарегистрированный пользователь"));
+                policy.RequireRole("Зарегистрированный пользователь"));
             });
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, AuthDbContext>(options =>

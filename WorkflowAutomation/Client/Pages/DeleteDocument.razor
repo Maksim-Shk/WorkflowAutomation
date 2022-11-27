@@ -11,8 +11,8 @@
 @inject NavigationManager NavigationManager
 @inject SignOutSessionStateManager SignOutManager
 @*@attribute [Authorize(Roles = "Админ")]*@
-@attribute [Authorize(Policy = "AdminPolicy")]
-
+@*@attribute [Authorize(Policy = "AdminPolicy")]*@
+@attribute [Authorize(Roles = "Админ")]
 <EditForm Model="@deleteDocumentDto" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
