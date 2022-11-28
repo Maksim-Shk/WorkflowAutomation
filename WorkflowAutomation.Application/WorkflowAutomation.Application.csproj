@@ -38,6 +38,7 @@
 
   <ItemGroup>
     <Folder Include="Documents\Commands\DeleteDocument\" />
+    <Folder Include="Roles\Commands\SetRoleToUser\" />
   </ItemGroup>
 
 </Project>

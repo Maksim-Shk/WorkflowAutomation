@@ -2,12 +2,15 @@
 
 @using WorkflowAutomation.Application.Roles.Queries.GetRolesList
 @using WorkflowAutomation.Application.Users.Queries.GetAllowedUsers
+@using WorkflowAutomation.Application.Roles.Commands.SetRoleToUser;
+
 @using Microsoft.AspNetCore.Identity.EntityFrameworkCore
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.Extensions.Logging;
 @using System.ComponentModel.DataAnnotations;
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
 @using System.Security.Claims
 
 @inject HttpClient Http
@@ -71,19 +74,10 @@
     </EditForm>*@
 
 @code {
-    public class RoleDto
-    {
-        public string RoleId{ get; set; }
-
-        public string RoleName{ get; set; }
-
-        public string UserId{ get; set; }
-
-        public string WhoGave{ get; set; }
-    }
+    
     AllowedUserListVm UsersVm = new();
     RolesListVm RolesVm = new();
-    RoleDto roleDto = new();
+    SetRoleToUserDto roleDto = new();
 
 
     //var a = _userManager.AddToRoleAsync
@@ -106,6 +100,7 @@
 
     private async Task HandleValidSubmit()
     {
+        var httpResponse = await Http.PutAsJsonAsync("Role/", roleDto);
        // var httpResponse = await Http.PutAsJsonAsync("Document/" + deleteDocumentDto.DocumentId, deleteDocumentDto);
        // Logger.LogInformation("HandleValidSubmit called");
         //NavigationManager.NavigateTo("/ViewDocumentList");
