@@ -32,6 +32,14 @@ using WorkflowAutomation.Server.Middleware;
 using WorkflowAutomation.Server.Data;
 using WorkflowAutomation.Server.Models;
 
+using AutoMapper;
+using System.Text;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerUI;
+using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using WorkflowAutomation.Server.Extensions;
+
 
 namespace WorkflowAutomation.Server
 {
@@ -96,7 +104,8 @@ namespace WorkflowAutomation.Server
             services.AddControllersWithViews();
             services.AddRazorPages();
 
-         
+            services.ConfigureSwagger();
+            services.AddSwaggerGen();
 
             // services.AddAuthentication(config =>
             // {
@@ -139,6 +148,19 @@ namespace WorkflowAutomation.Server
             app.UseCustomExceptionHandler();
             app.UseRouting();
             app.UseHttpsRedirection();
+
+            //
+            //bool isSwaggerShow = Configuration["SwaggerShow"];
+            //if (isSwaggerShow)
+           // {
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("v1.0/swagger.json", "Main API");
+                });
+          //  }
+            //
+
             app.UseCors("AllowAll");
             app.UseIdentityServer();
             app.UseAuthentication();
