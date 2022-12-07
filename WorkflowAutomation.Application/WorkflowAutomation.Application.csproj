@@ -38,6 +38,7 @@
 
   <ItemGroup>
     <Folder Include="Documents\Commands\DeleteDocument\" />
+    <Folder Include="Documents\Queries\Clusteranalyse\" />
     <Folder Include="Roles\Commands\SetRoleToUser\" />
   </ItemGroup>
 
