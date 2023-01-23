@@ -12,18 +12,6 @@ namespace WorkflowAutomation.Application.Interfaces
     /// </summary>
     public interface IDocumentUserDbContext
     {
-        // DbSet<Document> Documents { get; set; }
-        // DbSet<DocumentContent> DocumentContents { get; set; }
-        // DbSet<DocumentType> DocumentTypes { get; set; }
-        // DbSet<DocumentStatus> DocumentStatuses { get; set; }
-        // DbSet<Position> Positions { get; set; }
-        // DbSet<Status> Statuses { get; set; }
-        // DbSet<Subdivision> Subdivisions { get; set; }
-        // DbSet<AppUser> Users { get; set; }
-        // DbSet<UserPosition> UserPositions { get; set; }
-        // DbSet<UserSubdivision> UserSubdivisions { get; set; }
-
-
         DbSet<AppUser> Users { get; set; } 
         DbSet<Document> Documents { get; set; } 
         DbSet<DocumentContent> DocumentContents { get; set; } 
