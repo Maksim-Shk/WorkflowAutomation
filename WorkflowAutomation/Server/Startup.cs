@@ -104,8 +104,8 @@ namespace WorkflowAutomation.Server
             services.AddControllersWithViews();
             services.AddRazorPages();
 
-            services.ConfigureSwagger();
-            services.AddSwaggerGen();
+            //services.ConfigureSwagger();
+            //services.AddSwaggerGen();
 
             // services.AddAuthentication(config =>
             // {
@@ -153,11 +153,11 @@ namespace WorkflowAutomation.Server
             //bool isSwaggerShow = Configuration["SwaggerShow"];
             //if (isSwaggerShow)
            // {
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("v1.0/swagger.json", "Main API");
-                });
+                //app.UseSwagger();
+                //app.UseSwaggerUI(c =>
+                //{
+                //    c.SwaggerEndpoint("v1.0/swagger.json", "Main API");
+                //});
           //  }
             //
 
