@@ -3,7 +3,6 @@
 @using System.ComponentModel.DataAnnotations;
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-
 @using WorkflowAutomation.Domain
 @using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
 @using WorkflowAutomation.Application.Documents.Queries.GetPositionList
@@ -112,8 +111,7 @@
     private CreateUserInfoDto createUserInfoDto = new();
     private SubdivisionListVm subdivisionListVm = new();
     private PositionListVm positionListVm = new();
-
-
+   
     protected override async Task OnInitializedAsync()
     {
 
