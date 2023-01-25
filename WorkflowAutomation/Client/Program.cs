@@ -2,6 +2,10 @@ using WorkflowAutomation.Client;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Blazored.LocalStorage;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Components.Authorization;
+using WorkflowAutomation.Client.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -16,11 +20,14 @@ builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().Cre
 //{
 //    builder.Configuration.Bind("oidc", options.ProviderOptions);
 //});
-builder.Services.AddApiAuthorization();
+builder.Services.AddBlazoredLocalStorage();
+//builder.Services.AddApiAuthorization();
 builder.Services.AddAuthorizationCore(o =>
 {
     o.AddPolicy("AdminPolicy", policy => policy.RequireClaim("Админ"));
     o.AddPolicy("RegisterUserPolicy", policy => policy.RequireClaim("Зарегистрированный пользователь"));
 });
+builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 await builder.Build().RunAsync();

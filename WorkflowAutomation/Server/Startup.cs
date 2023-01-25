@@ -1,44 +1,26 @@
-﻿
-//using Microsoft.AspNetCore.Components.Authorization;
-//using Microsoft.AspNetCore.Builder;
-//using Microsoft.AspNetCore;
-//using Microsoft.AspNetCore.Hosting;
-//using Microsoft.AspNetCore.Authentication.JwtBearer;
-//using Microsoft.Extensions.DependencyInjection;
-//using Microsoft.Extensions.Hosting;
-//using Microsoft.Extensions.Configuration;
-//using Microsoft.Extensions.Options;
-//using Microsoft.AspNetCore.Mvc.ApiExplorer;
-
-//using Swashbuckle.AspNetCore.SwaggerGen;
-
-//using WorkflowAutomation.Server.Services;
-//using Serilog.Events;
-//using Serilog;
-//
-using MediatR;
-
-using System.Reflection;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
-
-using WorkflowAutomation.Application;
+﻿using WorkflowAutomation.Application;
 using WorkflowAutomation.Application.Common.Mappings;
 using WorkflowAutomation.Application.Interfaces;
 using WorkflowAutomation.Persistence;
 using WorkflowAutomation.Server.Middleware;
 using WorkflowAutomation.Server.Data;
 using WorkflowAutomation.Server.Models;
+using WorkflowAutomation.Server.Extensions;
 
-using AutoMapper;
 using System.Text;
+using System.Reflection;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using WorkflowAutomation.Server.Extensions;
+using AutoMapper;
+using MediatR;
 
 
 namespace WorkflowAutomation.Server
@@ -78,9 +60,10 @@ namespace WorkflowAutomation.Server
                 });
             });
             //Это ОК
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<AuthDbContext>();
+
             // services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, UserClaimsPrincipalFactory<ApplicationUser, IdentityRole>>();
             services.AddAuthorization(options =>
             {
@@ -90,46 +73,27 @@ namespace WorkflowAutomation.Server
                 options.AddPolicy("RegisterUserPolicy", policy =>
                 policy.RequireRole("Зарегистрированный пользователь"));
             });
-            services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, AuthDbContext>(options =>
-                {
-                    options.IdentityResources["openid"].UserClaims.Add("role");
-                    options.ApiResources.Single().UserClaims.Add("role");
-                }
-                );
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                  .AddJwtBearer(options =>
+                  {
+                      options.TokenValidationParameters = new TokenValidationParameters
+                      {
+                          ValidateIssuer = true,
+                          ValidateAudience = true,
+                          ValidateLifetime = true,
+                          ValidateIssuerSigningKey = true,
+                          ValidIssuer = Configuration["JwtIssuer"],
+                          ValidAudience = Configuration["JwtAudience"],
+                          IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtSecurityKey"]))
+                      };
+                  });
 
-            services.AddAuthentication()
-                .AddIdentityServerJwt();
-        
             services.AddControllersWithViews();
             services.AddRazorPages();
 
             services.ConfigureSwagger();
             services.AddSwaggerGen();
 
-            // services.AddAuthentication(config =>
-            // {
-            //     config.DefaultAuthenticateScheme =
-            //         JwtBearerDefaults.AuthenticationScheme;
-            //     config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            // })
-            //     .AddJwtBearer("Bearer", options =>
-            //     {
-            //         options.Authority = "https://localhost:7153/";
-            //         options.Audience = "WorkflowAutomationWebAPI";
-            //         options.RequireHttpsMetadata = false;
-            //     });
-
-            //services.AddVersionedApiExplorer(options =>
-            //    options.GroupNameFormat = "'v'VVV");
-            //services.AddTransient<IConfigureOptions<SwaggerGenOptions>,
-            //        ConfigureSwaggerOptions>();
-            //  services.AddSwaggerGen();
-            //  services.AddApiVersioning();
-
-            // services.AddSingleton<ICurrentUserService, CurrentUserService>();
-
-            //services.AddHttpContextAccessor();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -149,20 +113,14 @@ namespace WorkflowAutomation.Server
             app.UseRouting();
             app.UseHttpsRedirection();
 
-            //
-            //bool isSwaggerShow = Configuration["SwaggerShow"];
-            //if (isSwaggerShow)
-           // {
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("v1.0/swagger.json", "Main API");
-                });
-          //  }
-            //
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("v1.0/swagger.json", "Main API");
+            });
 
             app.UseCors("AllowAll");
-            app.UseIdentityServer();
+            //app.UseIdentityServer();
             app.UseAuthentication();
             app.UseAuthorization();
 
