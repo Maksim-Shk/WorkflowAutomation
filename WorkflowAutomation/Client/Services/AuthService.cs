@@ -27,7 +27,8 @@ namespace WorkflowAutomation.Client.Services
 
         public async Task<RegisterResult> Register(RegisterDto registerDto)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/accounts", registerDto);
+
+            var response = await _httpClient.PostAsJsonAsync("/Accounts", registerDto);
 
             var registerResult = JsonSerializer.Deserialize<RegisterResult>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
@@ -37,7 +38,7 @@ namespace WorkflowAutomation.Client.Services
         public async Task<LoginResult> Login(LoginDto loginDto)
         {
             var loginAsJson = JsonSerializer.Serialize(loginDto);
-            var response = await _httpClient.PostAsync("api/Login", new StringContent(loginAsJson, Encoding.UTF8, "application/json"));
+            var response = await _httpClient.PostAsync("/Login", new StringContent(loginAsJson, Encoding.UTF8, "application/json"));
             var loginResult = JsonSerializer.Deserialize<LoginResult>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
             if (!response.IsSuccessStatusCode)

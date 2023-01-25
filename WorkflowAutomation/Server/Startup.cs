@@ -65,14 +65,14 @@ namespace WorkflowAutomation.Server
                 .AddEntityFrameworkStores<AuthDbContext>();
 
             // services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, UserClaimsPrincipalFactory<ApplicationUser, IdentityRole>>();
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("AdminPolicy", policy =>
-                policy.RequireRole("Админ"));
-                //policy.RequireClaim("Админ"));
-                options.AddPolicy("RegisterUserPolicy", policy =>
-                policy.RequireRole("Зарегистрированный пользователь"));
-            });
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("AdminPolicy", policy =>
+            //    policy.RequireRole("Админ"));
+            //    //policy.RequireClaim("Админ"));
+            //    options.AddPolicy("RegisterUserPolicy", policy =>
+            //    policy.RequireRole("Зарегистрированный пользователь"));
+            //});
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                   .AddJwtBearer(options =>
                   {

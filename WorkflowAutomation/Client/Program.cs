@@ -15,7 +15,9 @@ builder.Services.AddHttpClient("WorkflowAutomation.ServerAPI", client => client.
     .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
 // Supply HttpClient instances that include access tokens when making requests to the server project
-builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("WorkflowAutomation.ServerAPI"));
+
+//builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("WorkflowAutomation.ServerAPI"));
+
 //builder.Services.AddOidcAuthentication(options =>
 //{
 //    builder.Configuration.Bind("oidc", options.ProviderOptions);
@@ -27,6 +29,7 @@ builder.Services.AddAuthorizationCore(o =>
     o.AddPolicy("AdminPolicy", policy => policy.RequireClaim("Админ"));
     o.AddPolicy("RegisterUserPolicy", policy => policy.RequireClaim("Зарегистрированный пользователь"));
 });
+builder.Services.AddScoped<SignOutSessionStateManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 

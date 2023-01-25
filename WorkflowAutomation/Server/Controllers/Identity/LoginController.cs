@@ -12,7 +12,7 @@ using WorkflowAutomation.Shared.Identity;
 
 namespace WorkflowAutomation.Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class LoginController : ControllerBase
     {
