@@ -16,12 +16,12 @@ namespace WorkflowAutomation.Client.Services
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly ILocalStorageService _localStorage;
 
-        public AuthService(HttpClient httpClient,
-                           AuthenticationStateProvider authenticationStateProvider,
-                           ILocalStorageService localStorage, IHttpClientFactory httpClientFactory)
+        public AuthService(
+            AuthenticationStateProvider authenticationStateProvider,
+            ILocalStorageService localStorage, 
+            IHttpClientFactory httpClientFactory)
         {
-            // _httpClient = httpClient;
-            _httpClient = httpClientFactory.CreateClient("WorkflowAutomation.ServerAPI");
+            _httpClient = httpClientFactory.CreateClient("Authentication");
             _authenticationStateProvider = authenticationStateProvider;
             _localStorage = localStorage;
         }

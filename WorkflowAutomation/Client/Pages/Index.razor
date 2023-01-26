@@ -12,9 +12,9 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
 @inject SignOutSessionStateManager SignOutManager
-@inject HttpClient Http
+@inject HttpClient httpClient
 
-    <PageTitle>Документооборот ОГУ</PageTitle>
+<PageTitle>Документооборот ОГУ</PageTitle>
 
 <h1>Здравствуйте, @getUserInfoDto.Name  @getUserInfoDto.Surname   @getUserInfoDto.Patronymic</h1>
 <h2>@getUserInfoDto.SubdivisionName - @getUserInfoDto.PositonName</h2>
@@ -42,6 +42,7 @@
     //private string Username;
     private RecentActivityDocumentListVm recentActivityDocumentListVm = new();
     private GetUserInfoDto getUserInfoDto = new();
+
     protected override async Task OnInitializedAsync()
     {
         recentActivityDocumentListVm.RecentDocuments = new List<RecentActivityDocumentLookupDto>();
@@ -49,19 +50,12 @@
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
-       
         if (!user.Identity.IsAuthenticated)
         {
-            //NavigationManager.NavigateTo("authentication/login");
-
             NavigationManager.NavigateTo("/login");
         }
-        else
-        {
-          //  recentActivityDocumentListVm = await Http.GetFromJsonAsync<RecentActivityDocumentListVm>("ActivityDocument");
 
-            getUserInfoDto = await Http.GetFromJsonAsync<GetUserInfoDto>("UserInfo");
-           // Username = user.Identity.Name;
-        }
+        getUserInfoDto = await httpClient.GetFromJsonAsync<GetUserInfoDto>("/UserInfo");
+        throw new Exception("ПИЗДЕЦ");
     }
 }
