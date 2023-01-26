@@ -1,21 +1,8 @@
-using AutoMapper;
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using System.Threading;
-using System.Reflection;
-using AutoMapper.QueryableExtensions;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 using WorkflowAutomation.Server.Models;
-using WorkflowAutomation.Application.Interfaces;
-using WorkflowAutomation.Domain;
-using WorkflowAutomation.Application.Roles.Queries.GetRolesList;
-using WorkflowAutomation.Application.Roles.Commands.SetRoleToUser;
 using WorkflowAutomation.Shared.Identity;
 
 namespace WorkflowAutomation.Server.Controllers

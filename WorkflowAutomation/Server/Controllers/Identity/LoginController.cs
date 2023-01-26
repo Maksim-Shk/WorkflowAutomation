@@ -1,15 +1,15 @@
-using WorkflowAutomation.Shared;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
-using WorkflowAutomation.Application;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+
 using WorkflowAutomation.Server.Models;
+using WorkflowAutomation.Shared.Identity;
+using WorkflowAutomation.Server.Options;
+using Microsoft.Extensions.Options;
 
 namespace WorkflowAutomation.Server.Controllers
 {
@@ -17,13 +17,14 @@ namespace WorkflowAutomation.Server.Controllers
     [Route("[controller]")]
     public class LoginController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public LoginController(IConfiguration configuration,
+        private readonly AuthJwtOptions _authenticationSettings;
+
+        public LoginController(IOptions<AuthJwtOptions> authenticationOptions,
                                SignInManager<ApplicationUser> signInManager)
         {
-            _configuration = configuration;
+            _authenticationSettings = authenticationOptions.Value;
             _signInManager = signInManager;
         }
 
@@ -36,16 +37,17 @@ namespace WorkflowAutomation.Server.Controllers
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, login.Email)
+                new Claim(ClaimTypes.Name, login.Email),
+                new Claim(ClaimTypes.NameIdentifier, login.Email)
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSecurityKey"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticationSettings.JwtSecurityKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expiry = DateTime.Now.AddDays(Convert.ToInt32(_configuration["JwtExpiryInDays"]));
+            var expiry = DateTime.Now.AddDays(Convert.ToInt32(_authenticationSettings.JwtExpiryInDays));
 
             var token = new JwtSecurityToken(
-                _configuration["JwtIssuer"],
-                _configuration["JwtAudience"],
+                _authenticationSettings.JwtIssuer,
+                _authenticationSettings.JwtAudience,
                 claims,
                 expires: expiry,
                 signingCredentials: creds
