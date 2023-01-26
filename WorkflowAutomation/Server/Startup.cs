@@ -57,9 +57,14 @@ namespace WorkflowAutomation.Server
                     policy.AllowAnyOrigin();
                 });
             });
-            //Это ОК
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
-                .AddRoles<IdentityRole>()
+
+            services
+                .AddIdentity<ApplicationUser, IdentityRole>(options => 
+                {
+                    options.SignIn.RequireConfirmedAccount = false;
+
+                    options.Password.RequireNonAlphanumeric = false;
+                })
                 .AddEntityFrameworkStores<AuthDbContext>();
 
             // services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, UserClaimsPrincipalFactory<ApplicationUser, IdentityRole>>();
@@ -71,6 +76,7 @@ namespace WorkflowAutomation.Server
             //    options.AddPolicy("RegisterUserPolicy", policy =>
             //    policy.RequireRole("Зарегистрированный пользователь"));
             //});
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                   .AddJwtBearer(options =>
                   {

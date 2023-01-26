@@ -25,9 +25,9 @@ namespace WorkflowAutomation.Server.Controllers
     [Route("[controller]")]
     public class AccountsController : BaseController
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AccountsController(UserManager<IdentityUser> userManager)
+        public AccountsController(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
         }
@@ -35,7 +35,7 @@ namespace WorkflowAutomation.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] RegisterDto dto)
         {
-            var newUser = new IdentityUser { UserName = dto.Email, Email = dto.Email };
+            var newUser = new ApplicationUser { UserName = dto.Email, Email = dto.Email };
 
             var result = await _userManager.CreateAsync(newUser, dto.Password);
 

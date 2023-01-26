@@ -8,7 +8,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using WorkflowAutomation.Shared.Identity;
+using WorkflowAutomation.Application;
+using WorkflowAutomation.Server.Models;
 
 namespace WorkflowAutomation.Server.Controllers
 {
@@ -17,10 +18,10 @@ namespace WorkflowAutomation.Server.Controllers
     public class LoginController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
         public LoginController(IConfiguration configuration,
-                               SignInManager<IdentityUser> signInManager)
+                               SignInManager<ApplicationUser> signInManager)
         {
             _configuration = configuration;
             _signInManager = signInManager;
