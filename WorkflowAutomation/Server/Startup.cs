@@ -1,25 +1,21 @@
-﻿using WorkflowAutomation.Application;
-using WorkflowAutomation.Application.Common.Mappings;
-using WorkflowAutomation.Application.Interfaces;
+﻿using System.Text;
+using System.Reflection;
+
+using WorkflowAutomation.Application;
 using WorkflowAutomation.Persistence;
-using WorkflowAutomation.Server.Middleware;
 using WorkflowAutomation.Server.Data;
 using WorkflowAutomation.Server.Models;
+using WorkflowAutomation.Server.Middleware;
 using WorkflowAutomation.Server.Extensions;
-using System.Text;
-using System.Reflection;
-using Microsoft.OpenApi.Models;
+using WorkflowAutomation.Application.Interfaces;
+using WorkflowAutomation.Application.Common.Mappings;
+
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Swashbuckle.AspNetCore.SwaggerUI;
-using Swashbuckle.AspNetCore.Swagger;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using AutoMapper;
-using MediatR;
+using Duende.IdentityServer.Configuration;
+using WorkflowAutomation.Server.Options;
 
 namespace WorkflowAutomation.Server
 {
@@ -59,15 +55,14 @@ namespace WorkflowAutomation.Server
             });
 
             services
-                .AddIdentity<ApplicationUser, IdentityRole>(options => 
+                .AddIdentity<ApplicationUser, IdentityRole>(options =>
                 {
                     options.SignIn.RequireConfirmedAccount = false;
-
                     options.Password.RequireNonAlphanumeric = false;
                 })
                 .AddEntityFrameworkStores<AuthDbContext>();
 
-            // services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, UserClaimsPrincipalFactory<ApplicationUser, IdentityRole>>();
+            //services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, UserClaimsPrincipalFactory<ApplicationUser, IdentityRole>>();
             //services.AddAuthorization(options =>
             //{
             //    options.AddPolicy("AdminPolicy", policy =>
@@ -77,27 +72,36 @@ namespace WorkflowAutomation.Server
             //    policy.RequireRole("Зарегистрированный пользователь"));
             //});
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                  .AddJwtBearer(options =>
-                  {
-                      options.TokenValidationParameters = new TokenValidationParameters
-                      {
-                          ValidateIssuer = true,
-                          ValidateAudience = true,
-                          ValidateLifetime = true,
-                          ValidateIssuerSigningKey = true,
-                          ValidIssuer = Configuration["JwtIssuer"],
-                          ValidAudience = Configuration["JwtAudience"],
-                          IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtSecurityKey"]))
-                      };
-                  });
+            services.AddOptions();
+            services.Configure<AuthJwtOptions>(Configuration.GetSection("JwtSettings"));
+
+            var authSettings = Configuration.GetSection("JwtSettings").Get<AuthJwtOptions>();
+
+            services
+                .AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = authSettings.JwtIssuer,
+                        ValidAudience = authSettings.JwtAudience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.JwtSecurityKey))
+                    };
+                });
 
             services.AddControllersWithViews();
             services.AddRazorPages();
 
             services.ConfigureSwagger();
             services.AddSwaggerGen();
-
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
