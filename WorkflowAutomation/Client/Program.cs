@@ -6,16 +6,21 @@ using Blazored.LocalStorage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Components.Authorization;
 using WorkflowAutomation.Client.Services;
+using Microsoft.Net.Http.Headers;
+using System.Net.Http;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services
-    .AddHttpClient("WorkflowAutomation.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+    .AddHttpClient(WorkflowHttpClientDefaults.Default, client => 
+    {
+        client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+    })
     .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
-builder.Services.AddHttpClient("Authentication", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+//builder.Services.AddHttpClient("Authentication", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
 // Supply HttpClient instances that include access tokens when making requests to the server project
 

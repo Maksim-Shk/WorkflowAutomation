@@ -21,7 +21,7 @@ namespace WorkflowAutomation.Client.Services
             ILocalStorageService localStorage, 
             IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClientFactory.CreateClient("Authentication");
+            _httpClient = httpClientFactory.CreateClient(WorkflowHttpClientDefaults.Default);
             _authenticationStateProvider = authenticationStateProvider;
             _localStorage = localStorage;
         }

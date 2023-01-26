@@ -13,6 +13,7 @@
 @inject NavigationManager NavigationManager
 @inject SignOutSessionStateManager SignOutManager
 @inject HttpClient httpClient
+@inject IHttpClientFactory httpClientFactory
 
 <PageTitle>Документооборот ОГУ</PageTitle>
 
@@ -54,8 +55,11 @@
         {
             NavigationManager.NavigateTo("/login");
         }
+        else
+        {
+            var client = httpClientFactory.CreateClient(WorkflowHttpClientDefaults.Default);
+            getUserInfoDto = await client.GetFromJsonAsync<GetUserInfoDto>("UserInfo");
+        }
 
-        getUserInfoDto = await httpClient.GetFromJsonAsync<GetUserInfoDto>("/UserInfo");
-        throw new Exception("ПИЗДЕЦ");
     }
 }

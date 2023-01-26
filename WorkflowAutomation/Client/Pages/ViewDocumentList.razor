@@ -6,7 +6,7 @@
 @using WorkflowAutomation.Application.Documents.Queries.GetDocumentList
 
 @attribute [Authorize]
-@inject HttpClient Http
+@inject IHttpClientFactory httpClientFactory
 @inject NavigationManager NavigationManager
 @inject SignOutSessionStateManager SignOutManager
 
@@ -49,10 +49,10 @@
     {
         try
         {
-            documentListVm.Documents = new List<GetDocumentListLookupDto>();
-            documentListVm = await Http.GetFromJsonAsync<DocumentListVm>("Document");
-           
+            var client = httpClientFactory.CreateClient(WorkflowHttpClientDefaults.Default);
 
+            documentListVm.Documents = new List<GetDocumentListLookupDto>();
+            documentListVm = await client.GetFromJsonAsync<DocumentListVm>("Document");
         }
         catch (AccessTokenNotAvailableException exception)
         {
