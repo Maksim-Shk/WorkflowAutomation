@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace WorkflowAutomation.Server.Migrations
 {
-    public partial class AddIdentityContext : Migration
+    public partial class AuthDbContextMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

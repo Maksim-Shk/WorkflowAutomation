@@ -12,8 +12,8 @@ using WorkflowAutomation.Shared.Identity;
 
 namespace WorkflowAutomation.Server.Controllers
 {
-    [Route("[controller]")]
     [ApiController]
+    [Route("[controller]")]
     public class LoginController : ControllerBase
     {
         private readonly IConfiguration _configuration;

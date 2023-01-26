@@ -6,7 +6,6 @@ using WorkflowAutomation.Server.Middleware;
 using WorkflowAutomation.Server.Data;
 using WorkflowAutomation.Server.Models;
 using WorkflowAutomation.Server.Extensions;
-
 using System.Text;
 using System.Reflection;
 using Microsoft.OpenApi.Models;
@@ -21,7 +20,6 @@ using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using AutoMapper;
 using MediatR;
-
 
 namespace WorkflowAutomation.Server
 {
@@ -128,6 +126,7 @@ namespace WorkflowAutomation.Server
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
+               //endpoints.MapDefaultControllerRoute();
                 endpoints.MapFallbackToFile("index.html");
             });
         }

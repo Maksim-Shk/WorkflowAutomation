@@ -12,14 +12,14 @@ using WorkflowAutomation.Server.Data;
 namespace WorkflowAutomation.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20221118201138_AddIdentityContext")]
-    partial class AddIdentityContext
+    [Migration("20230126150329_AuthDbContextMigration")]
+    partial class AuthDbContextMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.9")
+                .HasAnnotation("ProductVersion", "6.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);

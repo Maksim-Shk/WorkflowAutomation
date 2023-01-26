@@ -18,18 +18,18 @@ namespace WorkflowAutomation.Client.Services
 
         public AuthService(HttpClient httpClient,
                            AuthenticationStateProvider authenticationStateProvider,
-                           ILocalStorageService localStorage)
+                           ILocalStorageService localStorage, IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClient;
+            // _httpClient = httpClient;
+            _httpClient = httpClientFactory.CreateClient("WorkflowAutomation.ServerAPI");
             _authenticationStateProvider = authenticationStateProvider;
             _localStorage = localStorage;
         }
 
         public async Task<RegisterResult> Register(RegisterDto registerDto)
         {
-
-            var response = await _httpClient.PostAsJsonAsync("/Accounts", registerDto);
-
+            var registerAsJson = JsonSerializer.Serialize(registerDto);
+            var response = await _httpClient.PostAsync("/Accounts", new StringContent(registerAsJson, Encoding.UTF8, "application/json"));
             var registerResult = JsonSerializer.Deserialize<RegisterResult>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
             return registerResult;
