@@ -1,38 +1,24 @@
-using WorkflowAutomation.Client;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Blazored.LocalStorage;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using WorkflowAutomation.Client;
 using WorkflowAutomation.Client.Services;
-using Microsoft.Net.Http.Headers;
-using System.Net.Http;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services
-    .AddHttpClient(WorkflowHttpClientDefaults.Default, client => 
+    .AddHttpClient(WorkflowHttpClientDefaults.Default, client =>
     {
         client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
-    })
-    .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+    });
 
-//builder.Services.AddHttpClient("Authentication", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
-
-// Supply HttpClient instances that include access tokens when making requests to the server project
-
-//builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("WorkflowAutomation.ServerAPI"));
-
-//builder.Services.AddOidcAuthentication(options =>
-//{
-//    builder.Configuration.Bind("oidc", options.ProviderOptions);
-//});
+builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(WorkflowHttpClientDefaults.Default));
 
 builder.Services.AddBlazoredLocalStorage();
-//builder.Services.AddApiAuthorization();
 builder.Services.AddAuthorizationCore(o =>
 {
     o.AddPolicy("AdminPolicy", policy => policy.RequireClaim("Админ"));

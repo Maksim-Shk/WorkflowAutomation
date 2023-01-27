@@ -43,7 +43,7 @@ namespace WorkflowAutomation.Server.Controllers
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticationSettings.JwtSecurityKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expiry = DateTime.Now.AddDays(Convert.ToInt32(_authenticationSettings.JwtExpiryInDays));
+            var expiry = DateTime.Now.AddMinutes(Convert.ToInt32(_authenticationSettings.JwtExpiryInMinutes));
 
             var token = new JwtSecurityToken(
                 _authenticationSettings.JwtIssuer,
