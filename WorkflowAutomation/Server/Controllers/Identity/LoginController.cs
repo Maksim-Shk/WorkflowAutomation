@@ -18,14 +18,18 @@ namespace WorkflowAutomation.Server.Controllers
     public class LoginController : ControllerBase
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         private readonly AuthJwtOptions _authenticationSettings;
 
-        public LoginController(IOptions<AuthJwtOptions> authenticationOptions,
-                               SignInManager<ApplicationUser> signInManager)
+        public LoginController(
+            IOptions<AuthJwtOptions> authenticationOptions,
+            SignInManager<ApplicationUser> signInManager,
+            UserManager<ApplicationUser> userManager)
         {
             _authenticationSettings = authenticationOptions.Value;
             _signInManager = signInManager;
+            _userManager = userManager;
         }
 
         [HttpPost]
@@ -35,10 +39,12 @@ namespace WorkflowAutomation.Server.Controllers
 
             if (!result.Succeeded) return BadRequest(new LoginResult { Successful = false, Error = "Username and password are invalid." });
 
+            var user = await _userManager.FindByEmailAsync(login.Email);
+
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name, login.Email),
-                new Claim(ClaimTypes.NameIdentifier, login.Email)
+                new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticationSettings.JwtSecurityKey));

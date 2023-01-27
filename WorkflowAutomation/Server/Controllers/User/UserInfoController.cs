@@ -21,7 +21,6 @@ using WorkflowAutomation.Application.Users.Queries.GetUserInfo;
 namespace WorkflowAutomation.Server.Controllers
 {
     [Authorize]
-    [ApiController]
     [Route("[controller]")]
     public class UserInfoController : BaseController
     {
@@ -37,7 +36,6 @@ namespace WorkflowAutomation.Server.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<ActionResult<string>> CreateUserInfo([FromBody] CreateUserInfoDto createUsertDto)
         {
             //Task<ActionResult<Guid> 
@@ -49,7 +47,6 @@ namespace WorkflowAutomation.Server.Controllers
             return Ok(userId);
         }
         [HttpGet]
-        [Authorize]
         public async Task<ActionResult<GetUserInfoDto>> GetUserInfo()
         {
             var command = new GetUserInfoQuery

@@ -17,6 +17,5 @@ namespace WorkflowAutomation.Server.Controllers
         internal string UserId => !User.Identity.IsAuthenticated
               ? string.Empty
               : User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            //: Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
     }
 }
