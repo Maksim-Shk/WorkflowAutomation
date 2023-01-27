@@ -10,7 +10,6 @@
 @attribute [Authorize]
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
-@inject SignOutSessionStateManager SignOutManager
 
 <EditForm Model="@createUserInfoDto" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />

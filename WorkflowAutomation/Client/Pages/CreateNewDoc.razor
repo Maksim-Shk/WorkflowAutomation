@@ -1,7 +1,6 @@
 ﻿@page "/CreateNewDoc"
 @using Microsoft.Extensions.Logging;
 @using System.ComponentModel.DataAnnotations;
-@inject ILogger<Test> Logger
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
@@ -9,8 +8,10 @@
 @using WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
 @using WorkflowAutomation.Application.DocType.Queries.GetDocumentTypeListQuery
 @using WorkflowAutomation.Application.Users.Queries.GetAllowedUsers
+
 @attribute [Authorize]
 @inject HttpClient Http
+@inject ILogger<Test> Logger
 
 
 <EditForm Model="@createNewDocumentDto" OnValidSubmit="@HandleValidSubmit">

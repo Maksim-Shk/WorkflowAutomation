@@ -8,8 +8,8 @@
 @using System.Net.Http.Headers
 @using System.Text.Json
 @inject ILogger<Test> Logger
-@inject IHttpClientFactory ClientFactory
-@inject HttpClient Http
+@inject HttpClient httpClient
+
 @attribute [Authorize(Roles ="Админ")]
 <h3>Тест</h3>
 
@@ -167,10 +167,8 @@
 
         if (upload)
         {
-            var client = ClientFactory.CreateClient();
-
             var response =
-                await client.PostAsync("https://localhost:7225/FileSavee",
+                await httpClient.PostAsync("https://localhost:7225/FileSavee",
                 content);
            
             if (response.IsSuccessStatusCode)

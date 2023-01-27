@@ -14,10 +14,6 @@
 @using System.Security.Claims
 
 @inject HttpClient Http
-@inject SignOutSessionStateManager SignOutManager
-@*@inject UserManager<IdentityUser> _userManager*@
-
-@*@inject SignInManager<IdentityUser> _signInManager*@
 
     <EditForm Model="@roleDto" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
