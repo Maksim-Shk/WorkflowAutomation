@@ -7,7 +7,7 @@ using WorkflowAutomation.Shared.Identity;
 
 namespace WorkflowAutomation.Server.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("[controller]")]
     public class AccountsController : BaseController

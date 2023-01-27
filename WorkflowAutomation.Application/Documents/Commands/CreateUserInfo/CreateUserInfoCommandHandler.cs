@@ -21,48 +21,48 @@ namespace WorkflowAutomation.Application.Documents.Commands.UserInfoCommand
         public async Task<string> Handle(CreateUserInfoCommand request,
             CancellationToken cancellationToken)
         {
-            var user = new AppUser
+            if (_dbContext.Users.Contains(_dbContext.Users.FirstOrDefault(user => user.IdUser == request.UserId)))
             {
-                IdUser = request.UserId,
-                Name = request.Name,
-                Surname = request.Surname,
-                Patronymic = request.Patronymic,
-                RegisterDate = DateTime.Now,
-                LastOnline = DateTime.Now,
-                RemovalDate = null
-            };
-
-            var userSubdivision = new UserSubdivision
-            {
-                //TODO: Сделать id добавившего пользователя
-                IdUser = request.UserId,
-                IdSubdivision = request.IdSubdivision,
-                AppointmentDate = DateTime.Now,
-                RemovalDate = null
-            };
-
-            var userPosition = new UserPosition
-            {
-                //TODO: Сделать id добавившего пользователя
-                IdUser = request.UserId,
-                IdPosition = request.IdPositon,
-                AppointmentDate = DateTime.Now,
-                RemovalDate = null
-            };
-
+                return null;
+            }
             try
             {
-                if (!_dbContext.Users.Contains(_dbContext.Users.FirstOrDefault(user => user.IdUser == request.UserId)))
+                var user = new AppUser
                 {
-                    await _dbContext.Users.AddAsync(user, cancellationToken);
-                    await _dbContext.UserSubdivisions.AddAsync(userSubdivision, cancellationToken);
-                    await _dbContext.UserPositions.AddAsync(userPosition, cancellationToken);
-                    await _dbContext.Save(cancellationToken);
-                }
-                //else request.UserId;
+                    IdUser = request.UserId,
+                    Name = request.Name,
+                    Surname = request.Surname,
+                    Patronymic = request.Patronymic,
+                    RegisterDate = DateTime.Now,
+                    LastOnline = DateTime.Now,
+                    RemovalDate = null
+                };
 
+                var userSubdivision = new UserSubdivision
+                {
+                    //TODO: Сделать id добавившего пользователя
+                    IdUser = request.UserId,
+                    IdSubdivision = request.IdSubdivision,
+                    AppointmentDate = DateTime.Now,
+                    RemovalDate = null
+                };
+
+                var userPosition = new UserPosition
+                {
+                    //TODO: Сделать id добавившего пользователя
+                    IdUser = request.UserId,
+                    IdPosition = request.IdPositon,
+                    AppointmentDate = DateTime.Now,
+                    RemovalDate = null
+                }; 
+                
+                await _dbContext.Users.AddAsync(user, cancellationToken);
+                await _dbContext.UserSubdivisions.AddAsync(userSubdivision, cancellationToken);
+                await _dbContext.UserPositions.AddAsync(userPosition, cancellationToken);
+                await _dbContext.Save(cancellationToken);
             }
-            catch(Exception ex)
+
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex);
             }
