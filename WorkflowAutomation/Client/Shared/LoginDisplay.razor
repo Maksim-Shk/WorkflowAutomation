@@ -15,9 +15,21 @@
     </NotAuthorized>
 </AuthorizeView>*@
 
+
+@using WorkflowAutomation.Application.Users.Queries.GetUserInfo
+@inject HttpClient httpClient
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
 <AuthorizeView>
     <Authorized>
-        Здравствуйте, @context.User.Identity.Name!
+        @if (getUserInfoDto.Name != null)
+        {
+            <p> Здравствуйте, @getUserInfoDto.Name! @getUserInfoDto.Patronymic</p>
+        }
+        else 
+        {
+            <p> Здравствуйте, @context.User.Identity.Name!</p>
+        }
         <a href="LogOut">Выход</a>
     </Authorized>
     <NotAuthorized>
@@ -25,7 +37,6 @@
         <a href="Login">Вход</a>
     </NotAuthorized>
 </AuthorizeView>
-
 
 @*@code{
     private async Task BeginSignOut(MouseEventArgs args)
@@ -35,3 +46,18 @@
     }
 }
 *@
+@code {
+    //private string Username;
+    private GetUserInfoDto getUserInfoDto = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            getUserInfoDto = await httpClient.GetFromJsonAsync<GetUserInfoDto>("UserInfo");
+        }
+    }
+}
