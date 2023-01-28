@@ -1,13 +1,17 @@
 ﻿@page "/CreateNewUserInfo"
-@using Microsoft.Extensions.Logging;
+
 @using System.ComponentModel.DataAnnotations;
+@using Microsoft.Extensions.Logging;
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using WorkflowAutomation.Client.Models;
 @using WorkflowAutomation.Domain
 @using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
 @using WorkflowAutomation.Application.Documents.Queries.GetPositionList
 @using WorkflowAutomation.Application.Documents.Commands.UserInfoCommand
+
 @attribute [Authorize]
+
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
@@ -95,25 +99,19 @@
             </div>
         </div>
     </div>
-
     <button type="submit" class="btn btn-primary">Отправить данные</button>
 </EditForm>
 
-
-
-
-
 @code {
+    [CascadingParameter]
+    protected UserInfo? CurrentUserInformation { get; set; }
 
-
-    // private CreateUserInfoDto model = new();
     private CreateUserInfoDto createUserInfoDto = new();
     private SubdivisionListVm subdivisionListVm = new();
     private PositionListVm positionListVm = new();
-   
+
     protected override async Task OnInitializedAsync()
     {
-
         try
         {
             subdivisionListVm.Subdivisions = new List<SubdivisionListLookupDto>();
@@ -131,9 +129,15 @@
     private async void HandleValidSubmit()
     {
         var httpResponse = await Http.PostAsJsonAsync<CreateUserInfoDto>("/UserInfo", createUserInfoDto);
-
+        if (httpResponse.IsSuccessStatusCode)
+        {
+            CurrentUserInformation.Name = createUserInfoDto.Name;
+            CurrentUserInformation.Patronomic = createUserInfoDto.Patronymic;
+            CurrentUserInformation.IsInfoFull = true;
+        }
         NavigationManager.NavigateTo("/");
     }
+
     private void NameChanged(string value)
     {
         createUserInfoDto.Name = FirstUpper(value);
@@ -148,13 +152,13 @@
     {
         createUserInfoDto.Patronymic = FirstUpper(value);
     }
+
     private string FirstUpper(string str)
     {
         str = str.ToLower();
         str = str.Replace(" ", "");
         return str.Substring(0, 1).ToUpper() + (str.Length > 1 ? str.Substring(1) : "");
     }
-
 }
 
 

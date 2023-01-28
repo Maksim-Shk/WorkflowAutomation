@@ -1,16 +1,8 @@
-using WorkflowAutomation.Shared;
-using Blazored.LocalStorage;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
-using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using System.Net.Http.Json;
-using WorkflowAutomation.Shared.Identity;
 using System.Security.Claims;
+using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Components.Authorization;
+using Blazored.LocalStorage;
 
 namespace WorkflowAutomation.Client
 {

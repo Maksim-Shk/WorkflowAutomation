@@ -1,11 +1,16 @@
 @page "/login"
+
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HttpClient httpClient
 
+@using WorkflowAutomation.Client.Models
 @using WorkflowAutomation.Shared.Identity
 @using WorkflowAutomation.Client.Services
+@using WorkflowAutomation.Application.Users.Queries.GetUserInfo
 
-<h1>Login</h1>
+<h1>¬ход в систему</h1>
 
 @if (ShowErrors)
 {
@@ -37,8 +42,11 @@
 </div>
 
 @code {
+    [CascadingParameter]
+    protected UserInfo? _currentUserInformation { get; set; }
 
     private LoginDto loginModel = new LoginDto();
+
     private bool ShowErrors;
     private string Error = "";
 
@@ -50,6 +58,7 @@
 
         if (result.Successful)
         {
+            await RefreshUserInfo();
             NavigationManager.NavigateTo("/");
         }
         else
@@ -59,4 +68,26 @@
         }
     }
 
+    public async Task RefreshUserInfo()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user?.Identity == null) return;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            try
+            {
+                var userInfo = await httpClient.GetFromJsonAsync<GetUserInfoDto>("UserInfo");
+
+                if (userInfo == null) return;
+
+                _currentUserInformation.Name = userInfo.Name;
+                _currentUserInformation.Patronomic = userInfo.Patronymic;
+                _currentUserInformation.IsInfoFull = true;
+            }
+            catch { }
+        }
+    }
 }

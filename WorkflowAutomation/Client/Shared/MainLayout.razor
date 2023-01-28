@@ -1,4 +1,10 @@
-﻿@inherits LayoutComponentBase
+﻿@using WorkflowAutomation.Client.Models;
+@using WorkflowAutomation.Application.Users.Queries.GetUserInfo;
+
+@inherits LayoutComponentBase
+
+@inject HttpClient httpClient
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <div class="page">
     <div class="sidebar">
@@ -7,12 +13,40 @@
 
     <main>
         <div class="top-row px-4 auth">
-            <LoginDisplay />
-           @* <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>*@
+            <LoginDisplay 
+                UserName="@(_currentUserInformation.Name)" 
+                UserPatronomic="@(_currentUserInformation.Patronomic)" 
+                IsFullInfo=@(_currentUserInformation.IsInfoFull) />
         </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
+        <CascadingValue Value="_currentUserInformation">
+            <article class="content px-4">
+                @Body
+            </article>
+        </CascadingValue>
     </main>
 </div>
+
+@code {
+    private UserInfo _currentUserInformation = new UserInfo (){ IsInfoFull = false };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user?.Identity == null) return;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            try
+            {
+                var userInfo = await httpClient.GetFromJsonAsync<GetUserInfoDto>("UserInfo");
+                _currentUserInformation.IsInfoFull = true;
+
+                _currentUserInformation.Name = userInfo.Name;
+                _currentUserInformation.Patronomic = userInfo.Patronymic;
+            }
+            catch{}
+        }
+    }
+}

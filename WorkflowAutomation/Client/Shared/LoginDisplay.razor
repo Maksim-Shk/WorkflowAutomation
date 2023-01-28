@@ -1,34 +1,15 @@
-﻿@*@using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-
-@inject NavigationManager Navigation
-@inject SignOutSessionStateManager SignOutManager
+﻿@using WorkflowAutomation.Application.Users.Queries.GetUserInfo
+@using WorkflowAutomation.Client.Models
 
 <AuthorizeView>
     <Authorized>
-        <a href="authentication/profile">Здравствуйте, @context.User.Identity?.Name!</a>
-        <button class="nav-link btn btn-link" @onclick="BeginSignOut">Выйти</button>
-    </Authorized>
-    <NotAuthorized>
-        <a href="authentication/register">Регистрация</a>
-        <a href="authentication/login">Вход</a>
-    </NotAuthorized>
-</AuthorizeView>*@
-
-
-@using WorkflowAutomation.Application.Users.Queries.GetUserInfo
-@inject HttpClient httpClient
-@inject AuthenticationStateProvider AuthenticationStateProvider
-
-<AuthorizeView>
-    <Authorized>
-        @if (getUserInfoDto.Name != null)
+        @if (IsFullInfo)
         {
-            <p> Здравствуйте, @getUserInfoDto.Name! @getUserInfoDto.Patronymic</p>
+            <p>Вы вошли как: @UserName @UserPatronomic</p>
         }
         else 
         {
-            <p> Здравствуйте, @context.User.Identity.Name!</p>
+            <p>Вы вошли как: @context.User.Identity.Name</p>
         }
         <a href="LogOut">Выход</a>
     </Authorized>
@@ -38,26 +19,13 @@
     </NotAuthorized>
 </AuthorizeView>
 
-@*@code{
-    private async Task BeginSignOut(MouseEventArgs args)
-    {
-        await SignOutManager.SetSignOutState();
-        Navigation.NavigateTo("authentication/logout");
-    }
-}
-*@
 @code {
-    //private string Username;
-    private GetUserInfoDto getUserInfoDto = new();
+    [Parameter]
+    public string? UserName { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
+    [Parameter]
+    public string? UserPatronomic { get; set; }
 
-        if (user.Identity.IsAuthenticated)
-        {
-            getUserInfoDto = await httpClient.GetFromJsonAsync<GetUserInfoDto>("UserInfo");
-        }
-    }
+    [Parameter]
+    public bool IsFullInfo { get; set; }
 }

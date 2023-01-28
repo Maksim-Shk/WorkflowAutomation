@@ -9,14 +9,17 @@
 @using WorkflowAutomation.Application.Users.Queries.GetUserInfo
 @using WorkflowAutomation.Application.Documents.Queries.GetRecentActivityDocuments
 
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject NavigationManager NavigationManager
 @inject HttpClient httpClient
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Документооборот ОГУ</PageTitle>
 
-<h1>Здравствуйте, @getUserInfoDto.Name  @getUserInfoDto.Surname   @getUserInfoDto.Patronymic</h1>
-<h2>@getUserInfoDto.SubdivisionName - @getUserInfoDto.PositonName</h2>
+@if (!string.IsNullOrEmpty(getUserInfoDto.Name))
+{
+    <h1>Здравствуйте, @getUserInfoDto.Name  @getUserInfoDto.Surname  @getUserInfoDto.Patronymic</h1>
+    <h2>@getUserInfoDto.SubdivisionName - @getUserInfoDto.PositonName</h2>
+}
 
 @*<table class="table">
     <thead>
@@ -36,9 +39,7 @@
     </tbody>
 </table>*@
 
-
 @code{
-    //private string Username;
     private RecentActivityDocumentListVm recentActivityDocumentListVm = new();
     private GetUserInfoDto getUserInfoDto = new();
 
@@ -57,6 +58,5 @@
         {
             getUserInfoDto = await httpClient.GetFromJsonAsync<GetUserInfoDto>("UserInfo");
         }
-
     }
 }

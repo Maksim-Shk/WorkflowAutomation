@@ -2,13 +2,19 @@
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
 
+@using WorkflowAutomation.Client.Models;
 @using WorkflowAutomation.Client.Services
 
 @code {
 
+    [CascadingParameter]
+    protected UserInfo? CurrentUserInformation { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         await AuthService.Logout();
+        CurrentUserInformation?.Clear();
+
         NavigationManager.NavigateTo("/");
     }
 

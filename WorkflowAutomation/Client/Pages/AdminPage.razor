@@ -40,41 +40,14 @@
     <br />
 </EditForm>
 
-
-
-
-      @*<AuthorizeView>
-                <Authorizing>
-                    <span>Вход в систему...</span>
-                </Authorizing>
-                <NotAuthorized>
-                    @if (context.User.Identity?.IsAuthenticated != true)
-                    {
-                        <RedirectToLogin/>
-                    }
-                    else
-                    {
-                        <p role="alert">У вас нет прав доступа для этого ресурса</p>
-                    }
-                </NotAuthorized>
-            </AuthorizeView>*@
-
-
-
 <h3>AdminPage</h3>
 
-@*<EditForm Model="newUser" OnValidSubmit="@AddUserWithRole">
-        <DataAnnotationsValidator/>
-        <ValidationSummary/>
-
-    </EditForm>*@
 
 @code {
     
     AllowedUserListVm UsersVm = new();
     RolesListVm RolesVm = new();
     SetRoleToUserDto roleDto = new();
-
 
     //var a = _userManager.AddToRoleAsync
     protected override async Task OnInitializedAsync()
