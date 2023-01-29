@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Npgsql;
+using System.Data;
 using WorkflowAutomation.Application.Interfaces;
 using WorkflowAutomation.Domain;
+using WorkflowAutomation.Domain.Database;
 using WorkflowAutomation.Persistence.EntityTypeConfigurations;
 
 namespace WorkflowAutomation.Persistence
@@ -31,18 +34,26 @@ namespace WorkflowAutomation.Persistence
         public virtual DbSet<Subdivision> Subdivisions { get; set; } = null!;
         public virtual DbSet<UserPosition> UserPositions { get; set; } = null!;
         public virtual DbSet<UserSubdivision> UserSubdivisions { get; set; } = null!;
+        private DbSet<AllowedSubdivisions> AllowedSubdivisions { get; set; } = null!;
 
-//        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//        {
-//            if (!optionsBuilder.IsConfigured)
-//            {
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//                optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=workflow_automation;Username=postgres;Password=101001Zeus");
-//            }
-//        }
+        public List<AllowedSubdivisions> GetAllowedSubdivisions(int a)
+        {
+            NpgsqlParameter totalParameter = new NpgsqlParameter()
+            {
+                ParameterName = "@a",
+                DbType = DbType.Int32,
+               // Direction = ParameterDirection.Input
+                Value = a
+            };
+            var result = AllowedSubdivisions.FromSqlRaw("CALL public.findallowedsubdivisions @a)",totalParameter).ToList();
+            //var result = AllowedSubdivisions.FromSqlRaw($"WITH RECURSIVE r AS ( SELECT id_subdivision, id_subordination, name FROM subdivision WHERE id_subdivision = {a} UNION SELECT subdivision.id_subdivision, subdivision.id_subordination, subdivision.name  FROM subdivision   JOIN r  ON subdivision.id_subordination = r.id_subdivision) SELECT * FROM r;").ToList();
+            return result;
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AllowedSubdivisions>().HasNoKey();
+
             modelBuilder.Entity<AppUser>(entity =>
             {
                 entity.HasKey(e => e.IdUser)

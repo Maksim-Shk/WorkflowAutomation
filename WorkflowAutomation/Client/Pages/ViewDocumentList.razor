@@ -3,6 +3,7 @@
 @using System.ComponentModel.DataAnnotations;
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentList;
 @using WorkflowAutomation.Application.Documents.Queries.GetDocumentList
 
 @attribute [Authorize]
@@ -11,7 +12,7 @@
 
 <h3>Просмотр документов</h3>
 
-<EditForm Model="@documentListVm">
+<EditForm Model="@allowedDocumentListVm">
     <DataAnnotationsValidator />
 
     <table class="table">
@@ -26,7 +27,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var doc in documentListVm.Documents)
+            @foreach (var doc in allowedDocumentListVm.AllowedDocuments)
             {
                     <tr>
                         <td>@doc.Title</td>
@@ -42,14 +43,15 @@
 
 </EditForm>
 @code {
-    DocumentListVm documentListVm = new();
+    AllowedDocumentListVm allowedDocumentListVm = new();
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            documentListVm.Documents = new List<GetDocumentListLookupDto>();
-            documentListVm = await httpClient.GetFromJsonAsync<DocumentListVm>("Document");
+            allowedDocumentListVm.AllowedDocuments = new List<GetAllowedDocumentListLookupDto>();
+            //documentListVm = await httpClient.GetFromJsonAsync<DocumentListVm>("Document/GetAllDocuments");
+            allowedDocumentListVm = await httpClient.GetFromJsonAsync<AllowedDocumentListVm>("Document/GetAllowedDocuments");
         }
         catch (AccessTokenNotAvailableException exception)
         {

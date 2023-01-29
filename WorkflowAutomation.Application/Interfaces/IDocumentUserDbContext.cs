@@ -1,9 +1,12 @@
-﻿using System.Threading;
+﻿using System.Data;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using Npgsql;
 using WorkflowAutomation.Domain;
+using WorkflowAutomation.Domain.Database;
 
 namespace WorkflowAutomation.Application.Interfaces
 {
@@ -28,6 +31,7 @@ namespace WorkflowAutomation.Application.Interfaces
         DbSet<AspNetUserClaim> AspNetUserClaims { get; set; } 
         DbSet<AspNetUserLogin> AspNetUserLogins { get; set; } 
         DbSet<AspNetUserToken> AspNetUserTokens { get; set; }
+        List<AllowedSubdivisions> GetAllowedSubdivisions(int a);
 
         Task<int> Save(CancellationToken cancellationToken);
         DatabaseFacade Database { get { return this.Database; } }

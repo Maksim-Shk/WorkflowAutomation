@@ -17,7 +17,7 @@ using WorkflowAutomation.Domain;
 using WorkflowAutomation.Application.Documents.Commands.CreateNewDocument;
 using WorkflowAutomation.Application.Documents.Queries.GetDocumentList;
 using WorkflowAutomation.Application.Documents.Commands.DeleteDocument;
-
+using WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentList;
 
 namespace WorkflowAutomation.Server.Controllers
 {
@@ -50,9 +50,22 @@ namespace WorkflowAutomation.Server.Controllers
 
             return Ok(docId);
         }
-        [HttpGet]
+
+        [HttpGet("GetAllowedDocuments")]
         [Authorize]
         public async Task<ActionResult<DocumentListVm>> GetAllowedDocuments()
+        {
+            var query = new GetAllowedDocumentListQuery
+            {
+                UserId = UserId
+            };
+            var vm = await Mediator.Send(query);
+            return Ok(vm);
+        }
+
+        [HttpGet("GetAllDocuments")]
+        [Authorize]
+        public async Task<ActionResult<DocumentListVm>> GetAllDocuments()
         {
             var query = new GetDocumentListQuery
             {
