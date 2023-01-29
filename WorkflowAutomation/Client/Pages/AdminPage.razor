@@ -55,7 +55,7 @@
 
         try
         {
-            UsersVm.AllowedUsers = new List<GetAllowedUserListDto>();
+            UsersVm.AllowedUsers = new List<GetAllUsersListDto>();
             RolesVm.Roles = new List<RolesListLookupDto>();
             UsersVm = await Http.GetFromJsonAsync<AllowedUserListVm>("GetAllowedUsers");
             RolesVm = await Http.GetFromJsonAsync<RolesListVm>("Role");

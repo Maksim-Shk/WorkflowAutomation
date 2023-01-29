@@ -7,6 +7,6 @@ namespace WorkflowAutomation.Application.Users.Queries.GetAllowedUsers
 {
     public class AllowedUserListVm
     {
-        public IList<GetAllowedUserListDto> AllowedUsers { get; set; }
+        public IList<GetAllUsersListDto> AllowedUsers { get; set; }
     }
 }

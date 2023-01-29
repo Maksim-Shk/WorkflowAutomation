@@ -14,49 +14,78 @@ using WorkflowAutomation.Domain;
 
 namespace WorkflowAutomation.Application.Users.Queries.GetUserInfo
 {
-    public class GetAllowedUserListQueryHadler
+    public class GetAllUsersListQueryHadler
         : IRequestHandler<GetAllowedUserListQuery, AllowedUserListVm>
     {
         private readonly IDocumentUserDbContext _dbContext;
         private readonly IMapper _mapper;
+        List<Subdivision> SubdivisionsList;
 
-        public GetAllowedUserListQueryHadler(IDocumentUserDbContext dbContext,
+        public GetAllUsersListQueryHadler(IDocumentUserDbContext dbContext,
             IMapper mapper) =>
             (_dbContext, _mapper) = (dbContext, mapper);
 
-
+        List<Subdivision> GoDownRecursive(int SubdivisionId)
+        {
+            var res = new List<Subdivision>();
+            foreach (var childSubdivision in SubdivisionsList.Where(c => c.IdSubordination == SubdivisionId))
+            {
+                res.Add(childSubdivision);
+                res.AddRange(GoDownRecursive(childSubdivision.IdSubdivision));
+            }
+            return res;
+        }
         public async Task<AllowedUserListVm> Handle(GetAllowedUserListQuery request,
             CancellationToken cancellationToken)
         {
-            AllowedUserListVm allowedUserListVm = new();
-            allowedUserListVm.AllowedUsers = new List<GetAllowedUserListDto>();
+            SubdivisionsList = await _dbContext.Subdivisions.ToListAsync();
+            //Подразделение пользователя из запроса
+            var requstSubdivision = await _dbContext.Subdivisions
+                .FirstOrDefaultAsync(subdivision => subdivision.IdSubdivision == _dbContext.UserSubdivisions
+                .FirstOrDefault(user => user.IdUser == request.UserId).IdSubdivision);
 
-            foreach (var User in _dbContext.Users.Where(u=>u.IdUser!=request.UserId).ToList())
+            //Подразделения, ниже стоящие в иерархии подразделения пользователя
+            List<Subdivision> allowedSubdivision = new List<Subdivision>();
+            allowedSubdivision = GoDownRecursive(requstSubdivision.IdSubdivision);
+
+            // Все пользователи найденных подразделений - здесь могут иметься повторы
+            List<AppUser> bufallowedUsers = new List<AppUser>();
+            foreach (var subdivision in allowedSubdivision)
             {
-                GetAllowedUserListDto userListDto = new GetAllowedUserListDto();
-                userListDto.Id = User.IdUser;
+                //все записи в таблице UserSubdivisions (многие ко многим), соответсвующие текущему подразделению
+                var userSubdivisions = await _dbContext.UserSubdivisions
+                  .Where(userSubdivision => userSubdivision.IdSubdivision == subdivision.IdSubdivision).ToListAsync();
 
-                //createUserInfoDto.Name = _dbContext.Users.First(x => x.IdUser == request.UserId).Name;
-                //createUserInfoDto.Surname = _dbContext.Users.First(x => x.IdUser == request.UserId).Surname;
-                //createUserInfoDto.Patronymic = _dbContext.Users.First(x => x.IdUser == request.UserId).Patronymic;
+                //добавление пользователей из полученных записей в смежной таблице
+                foreach (var userSubdivision in userSubdivisions)
+                {
+                    bufallowedUsers.Add(await _dbContext.Users.FirstOrDefaultAsync(u => u.IdUser == userSubdivision.IdUser));
+                }
+
+            }
+            // Все пользователи найденных подразделений без повторов
+            var allowedUsers = bufallowedUsers.GroupBy(x => x.IdUser).Select(x => x.First()).ToList();
+            allowedUsers.Remove(allowedUsers.FirstOrDefault(user => user.IdUser == request.UserId));
+
+            AllowedUserListVm allowedUserListVm = new();
+            allowedUserListVm.AllowedUsers = new List<GetAllUsersListDto>();
+
+            foreach (var User in allowedUsers)
+            {
+                GetAllUsersListDto userListDto = new GetAllUsersListDto();
+                userListDto.Id = User.IdUser;
                 userListDto.Name = User.Name;
                 userListDto.Surname = User.Surname;
                 userListDto.Patronymic = User.Patronymic;
 
-                // createUserInfoDto.SubdivisionName = _dbContext.Subdivisions
-                //     .First(y => y.IdSubordination == _dbContext.UserSubdivisions
-                //     .First(x => x.IdUser == request.UserId && x.RemovalDate == null).IdSubdivision).Name;
-
-
+                //TODO: FirstAsync не соотвествует связи многие ко многим!
                 var UserSubdivision = await _dbContext.UserSubdivisions
-                  .FirstAsync(us => us.IdUser == User.IdUser && us.RemovalDate == null, cancellationToken);
+                    .FirstAsync(us => us.IdUser == User.IdUser && us.RemovalDate == null, cancellationToken);
+                //TODO: FirstAsync не соотвествует связи многие ко многим!
                 var Subdivision = await _dbContext.Subdivisions
                     .FirstAsync(p => p.IdSubdivision == UserSubdivision.IdSubdivision, cancellationToken);
                 userListDto.SubdivisionName = Subdivision.Name;
 
-                // createUserInfoDto.PositonName = _dbContext.Positions
-                //    .First(y => y.IdPosition == _dbContext.UserPositions
-                //    .First(x => x.IdUser == request.UserId && x.RemovalDate == null).IdPosition).Name;
                 var UserPosition = await _dbContext.UserPositions.FirstAsync(up => up.IdUser == User.IdUser && up.RemovalDate == null, cancellationToken);
                 var Positon = await _dbContext.Positions.FirstAsync(p => p.IdPosition == UserPosition.IdPosition, cancellationToken);
                 userListDto.PositonName = Positon.Name;

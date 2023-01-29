@@ -7,7 +7,7 @@
 
 @using WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
 @using WorkflowAutomation.Application.DocType.Queries.GetDocumentTypeListQuery
-@using WorkflowAutomation.Application.Users.Queries.GetAllowedUsers
+@using WorkflowAutomation.Application.Users.Queries.GetAllUsers
 
 @attribute [Authorize]
 @inject HttpClient Http
@@ -31,7 +31,7 @@
     <h6>Выберите получателя</h6>
     <InputSelect id="selectAllowedUsers" class="form-control" @bind-Value="@createNewDocumentDto.ReceiverUserId">
 
-        @foreach (var doc in allowedUsers.AllowedUsers)
+        @foreach (var doc in allUsers.AllUsers)
         {
             <option value="@doc.Id"> @doc.Name @doc.Surname @doc.Patronymic @doc.SubdivisionName @doc.PositonName </option>
         }
@@ -57,15 +57,17 @@
     CreateNewDocumentDto createNewDocumentDto = new CreateNewDocumentDto();
 
     private DocumentTypeListVm docTypes = new();
-    private AllowedUserListVm allowedUsers = new();
+    private AllUsersListVm allUsers = new();
 
     protected override async Task OnInitializedAsync()
     {
         docTypes.DocumentTypes = new List<DocumentTypeListLookupDto>();
-        allowedUsers.AllowedUsers = new List<GetAllowedUserListDto>();
+        allUsers.AllUsers = new List<GetAllUsersListDto>();
 
         docTypes = await Http.GetFromJsonAsync<DocumentTypeListVm>("DocumentType");
-        allowedUsers = await Http.GetFromJsonAsync<AllowedUserListVm>("GetAllowedUsers");
+        allUsers = await Http.GetFromJsonAsync<AllUsersListVm>("GetUsers/GetAllUsers");
+
+
 
     }
     private async Task HandleValidSubmit()

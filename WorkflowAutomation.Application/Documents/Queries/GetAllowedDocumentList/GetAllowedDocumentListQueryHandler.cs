@@ -28,12 +28,12 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentLis
         List<Subdivision> GoDownRecursive(int SubdivisionId)
         {
             var res = new List<Subdivision>();
+            res.Add(SubdivisionsList.FirstOrDefault(subdivision => subdivision.IdSubdivision == SubdivisionId));
             foreach (var childSubdivision in SubdivisionsList.Where(c => c.IdSubordination == SubdivisionId))
             {
                 res.Add(childSubdivision);
                 res.AddRange(GoDownRecursive(childSubdivision.IdSubdivision));
             }
-
             return res;
         }
         public async IAsyncEnumerable<List<Document>> GetAllowedDocumentsAsync(AppUser allowedUser)
@@ -46,7 +46,6 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentLis
         public async Task<AllowedDocumentListVm> Handle(GetAllowedDocumentListQuery request,
             CancellationToken cancellationToken)
         {
-            List<GetAllowedDocumentListLookupDto> listLookupDtos = new List<GetAllowedDocumentListLookupDto>();
             SubdivisionsList = await _dbContext.Subdivisions.ToListAsync();
             //Подразделение пользователя из запроса
             var requstSubdivision = await _dbContext.Subdivisions
@@ -98,6 +97,7 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentLis
             // }
             //  var AllowedDocuments = _dbContext.Documents.SelectMany(x=>x.IdSender == allowedUsers.)
 
+            List<GetAllowedDocumentListLookupDto> listLookupDtos = new List<GetAllowedDocumentListLookupDto>();
             foreach (var doc in allowedDocuments)
             {
                 GetAllowedDocumentListLookupDto dto = new GetAllowedDocumentListLookupDto();
