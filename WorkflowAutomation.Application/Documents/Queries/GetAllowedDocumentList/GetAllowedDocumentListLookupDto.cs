@@ -7,8 +7,8 @@
         public DateTime CreateDate { get; set; }
         public DateTime? RemoveDate { get; set; }
         public string DocumentType { get; set; }
-        public string SenderInfo { get; set; }
-        public string RecieverInfo { get; set; }
+        public ShortUserInfo SenderInfo { get; set; }
+        public ShortUserInfo RecieverInfo { get; set; }
         //TODO ещё чего
 
     }

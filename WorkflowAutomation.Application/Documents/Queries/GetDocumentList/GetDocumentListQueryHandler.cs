@@ -39,10 +39,12 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentList
                 dto.DocumentType = docType.Name;
 
                 var sender = await _dbContext.Users.FirstAsync(t => t.IdUser == doc.IdSender);
-                dto.SenderInfo = sender.Name + " " + sender.Surname + " " + sender.Patronymic;
+                dto.SenderInfo.UserInfo = sender.Name + " " + sender.Surname + " " + sender.Patronymic;
+                dto.SenderInfo.UserId = sender.IdUser;
 
                 var reciever = await _dbContext.Users.FirstAsync(t => t.IdUser == doc.IdReceiver);
-                dto.RecieverInfo = reciever.Name + " " + reciever.Surname + " " + reciever.Patronymic;
+                dto.RecieverInfo.UserInfo = reciever.Name + " " + reciever.Surname + " " + reciever.Patronymic;
+                dto.RecieverInfo.UserId= reciever.IdUser;
 
                 listLookupDtos.Add(dto);
             }
