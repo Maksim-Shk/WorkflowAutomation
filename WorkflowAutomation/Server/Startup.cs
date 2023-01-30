@@ -16,7 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Duende.IdentityServer.Configuration;
 using WorkflowAutomation.Server.Options;
-
+using WorkflowAutomation.Application.Documents;
 namespace WorkflowAutomation.Server
 {
     public class Startup
@@ -72,8 +72,12 @@ namespace WorkflowAutomation.Server
             //    policy.RequireRole("Зарегистрированный пользователь"));
             //});
 
+            services.AddScoped<IDocumentRepository, DocumentRepository>();
+
             services.AddOptions();
             services.Configure<AuthJwtOptions>(Configuration.GetSection("JwtSettings"));
+
+
 
             var authSettings = Configuration.GetSection("JwtSettings").Get<AuthJwtOptions>();
 
