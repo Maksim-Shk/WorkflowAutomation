@@ -1,0 +1,90 @@
+﻿@page "/ShowDocument/{Id:int}"
+@using Microsoft.Extensions.Logging;
+@using System.ComponentModel.DataAnnotations;
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using WorkflowAutomation.Application.Documents.Queries.GetDocumentList
+
+@attribute [Authorize]
+@inject NavigationManager NavigationManager
+@inject HttpClient httpClient
+
+
+
+<EditForm Model="@documentListVm">
+    <DataAnnotationsValidator />
+    <h4>Сведения о документе @Id </h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            Название документа
+        </dt>
+        <dd class = "col-sm-10">
+            doc.Title
+        </dd>
+        <dt class="col-sm-2">
+            Отправитель
+        </dt>
+        <dd class="col-sm-10">
+             <a href="ShowUser"> doc.Sender </a>
+        </dd>
+        <dt class="col-sm-2">
+            Получатель
+        </dt>
+        <dd class="col-sm-10">
+            <a href="ShowUser"> doc.Reciever </a>
+        </dd>
+        <dt class="col-sm-2">
+            Дата создания
+        </dt>
+        <dd class="col-sm-10">
+            doc.Create
+        </dd>
+        <dt class="col-sm-2">
+            Дата удаления
+        </dt>
+        <dd class="col-sm-10">
+            doc.Delete
+        </dd>
+        <hr/>
+        <dt class="col-sm-2">
+            Прикрепленный файл
+        </dt>
+        <dd class="col-sm-10">            
+            <dl class="row">
+            @foreach(var file in list )
+            { <div>@file</div>  }
+             </dl>
+        </dd>
+        <hr />
+        </dl>
+
+</EditForm>
+
+
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    //Название, отправитель, получатаель. тип. дата создание. дата удаления(Если есть).приерпленные фаилы(как в мудле)
+    DocumentListVm documentListVm = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            list = new List<string>(){
+                "1","2","3","4"
+            };
+            documentListVm.Documents = new List<GetDocumentListLookupDto>();
+            documentListVm = await httpClient.GetFromJsonAsync<DocumentListVm>("Document");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+
+    List<string> list;
+}

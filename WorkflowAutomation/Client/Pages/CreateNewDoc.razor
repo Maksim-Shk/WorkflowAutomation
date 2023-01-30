@@ -18,20 +18,17 @@
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <h3>Создать новый документ</h3>
+    <h3>Создать новый документ</h3> 
    
-    <div class="form-group row">
-        <label for="firstName" class="col-sm-2 col-form-label">
-            Тема
-        </label>
-    <div class="col-sm-10">
+         <h6>Тема</h6>          
+    
     <InputText id="Title" class="form-control" Value="@createNewDocumentDto.Title" ValueChanged="NameChanged" ValueExpression="() => createNewDocumentDto.Title" />
-        </div>
-        </div>
+        
     <h6>Выберите получателя</h6>
-    <InputSelect id="selectAllowedUsers" class="form-control" @bind-Value="@createNewDocumentDto.ReceiverUserId">
+    <InputSelect id="selectAllowedUsers" class="form-control"  @bind-Value="@createNewDocumentDto.ReceiverUserId">
 
-        @foreach (var doc in allUsers.AllUsers)
+         <option selected disabled="disabled">Выберите получателя....</option>
+        @foreach (var doc in allowedUsers.AllowedUsers)
         {
             <option value="@doc.Id"> @doc.Name @doc.Surname @doc.Patronymic @doc.SubdivisionName @doc.PositonName </option>
         }
@@ -40,12 +37,20 @@
     <h6>Выберите тип документа</h6>
     <InputSelect id="selectedDocTypes" class="form-control" @bind-Value="@createNewDocumentDto.DocumentTypeId">
 
+        
+        <option selected disabled="disabled">Выберите тип документа....</option>
         @foreach (var doc in docTypes.DocumentTypes)
         {
             <option value="@doc.Id"> @doc.Name</option>
         }
     </InputSelect>
 
+    <div class="mb-3">
+        <label for="formFile" class="form-label">Прикрипите файл</label>
+        <input class="form-control" type="file" id="formFile">
+    </div>
+
+    <br/>
    <button type="submit" class="btn btn-primary"> Создать документ </button>
 
     <br />
