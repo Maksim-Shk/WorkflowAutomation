@@ -28,7 +28,7 @@
     <InputSelect id="selectAllowedUsers" class="form-control"  @bind-Value="@createNewDocumentDto.ReceiverUserId">
 
          <option selected disabled="disabled">Выберите получателя....</option>
-        @foreach (var doc in allowedUsers.AllowedUsers)
+        @foreach (var doc in allUsers.AllUsers)
         {
             <option value="@doc.Id"> @doc.Name @doc.Surname @doc.Patronymic @doc.SubdivisionName @doc.PositonName </option>
         }
