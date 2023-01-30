@@ -14,7 +14,7 @@
 <EditForm Model="@documentListVm">
     <DataAnnotationsValidator />
 
-    <table class="table">
+    <table class="table table-hover">
         <thead>
             <tr>
                 <th>Тема</th>
@@ -29,10 +29,10 @@
             @foreach (var doc in documentListVm.Documents)
             {
                     <tr>
-                        <td>@doc.Title</td>
+                    <td> <a href="ShowDocument/@doc.Id">@doc.Title</a></td>
                         <td>@doc.DocumentType</td>
-                        <td>@doc.SenderInfo</td>
-                        <td>@doc.RecieverInfo</td>
+                        <td> <a href="ShowUser/@doc.SenderInfo">@doc.SenderInfo</a></td>
+                        <td> <a href="ShowUser/@doc.RecieverInfo">@doc.RecieverInfo</a></td>
                         <td>@doc.CreateDate</td>
                     <td>@doc.RemoveDate</td>
                     </tr>
