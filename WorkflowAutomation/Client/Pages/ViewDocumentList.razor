@@ -21,7 +21,9 @@
                 <th>Тема</th>
                 <th>Тип документа</th>
                 <th>Отправитель</th>
-                <th>Получатель</th>
+                <th>ID Отправитель</th>
+                <th>Получатель</th
+                     <th>ID Получатель</th>
                 <th>Дата создания</th>
                 <th>Дата удаления (если есть)</th>
             </tr>
@@ -29,14 +31,16 @@
         <tbody>
             @foreach (var doc in allowedDocumentListVm.AllowedDocuments)
             {
-                    <tr>
-                        <td>@doc.Title</td>
-                        <td>@doc.DocumentType</td>
-                        <td>@doc.SenderInfo</td>
-                        <td>@doc.RecieverInfo</td>
-                        <td>@doc.CreateDate</td>
+                <tr>
+                    <td>@doc.Title</td>
+                    <td>@doc.DocumentType</td>
+                    <td>@doc.SenderInfo.UserInfo</td>
+                    <td>@doc.SenderInfo.UserId</td>
+                    <td>@doc.RecieverInfo.UserInfo</td>
+                    <td>@doc.SenderInfo.UserId</td>
+                    <td>@doc.CreateDate</td>
                     <td>@doc.RemoveDate</td>
-                    </tr>
+                </tr>
             }
         </tbody>
     </table>
