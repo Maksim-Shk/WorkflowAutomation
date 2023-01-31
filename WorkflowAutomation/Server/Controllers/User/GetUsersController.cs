@@ -39,17 +39,17 @@ namespace WorkflowAutomation.Server.Controllers
             var vm = await Mediator.Send(query);
             return Ok(vm);
         }
-    //   [HttpGet("GetFullUserInfo/{id}")]
-    //   [Authorize]
-    //   public async Task<ActionResult<FullUserInfoDto>> GetFullUserInfo(string id)
-    //   {
-    //       var query = new GetFullUserInfoQuery
-    //       {
-    //           RequestedUserId = id,
-    //           RequestingUserId = UserId
-    //       };
-    //       var vm = await Mediator.Send(query);
-    //       return Ok(vm);
-    //   }
+        [HttpGet("GetFullUserInfo/{id}")]
+        [Authorize]
+        public async Task<ActionResult<FullUserInfoDto>> GetFullUserInfo(string id)
+        {
+            var query = new GetFullUserInfoQuery
+            {
+                RequestedUserId = id,
+                RequestingUserId = UserId
+            };
+            var vm = await Mediator.Send(query);
+            return Ok(vm);
+        }
     }
 }
