@@ -1,4 +1,5 @@
 using System.Data;
+using System.Globalization;
 using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -23,19 +24,22 @@ namespace WorkflowAutomation.Application.Users.Queries.GetFullUserInfo
 
         private class PositionAndSubdivision
         {
+            public int Id { get; set; }
             public string Type { get; set; }
             public string Name { get; set; }
             public DateTime? DismissalDate { get; set; }
             public DateTime EmploymentDate { get; set; }
             public string WorkTime { get; set; }
+
         }
+
 
         public async Task<FullUserInfoDto> Handle(GetFullUserInfoQuery request,
             CancellationToken cancellationToken)
         {
 
             FullUserInfoDto dto = new();
-            dto.UserSubdivisionHistory = new();
+            dto.UserSubdivisionHistory = new List<UserSubdivisionHistory>();
 
             // var allowedUsers = _documentRepository.GetAllowedUsers(request.UserId);
 
@@ -64,6 +68,9 @@ namespace WorkflowAutomation.Application.Users.Queries.GetFullUserInfo
 
             dto.UserSubdivisionHistory = null;
 
+            //TODO присвоить роль пользователя
+            dto.RoleName = "Название роли пользователя";
+
             var userSubdivisions = await _dbContext.UserSubdivisions.Where(us => us.IdUser == request.RequestedUserId).ToListAsync();
             var userPosition = await _dbContext.UserPositions.Where(up => up.IdUser == request.RequestedUserId).ToListAsync();
 
@@ -75,6 +82,7 @@ namespace WorkflowAutomation.Application.Users.Queries.GetFullUserInfo
                 dto.UserSubdivisionHistory = new List<UserSubdivisionHistory>();
                 PositionAndSubdivision pas = new PositionAndSubdivision
                 {
+                    Id = us.IdSubdivision,
                     Type = "Subdivision",
                     Name = subdivision.Name,
                     EmploymentDate = us.AppointmentDate,
@@ -92,6 +100,7 @@ namespace WorkflowAutomation.Application.Users.Queries.GetFullUserInfo
                 var position = await _dbContext.Positions.FirstOrDefaultAsync(s => s.IdPosition == up.IdPosition);
                 PositionAndSubdivision pas = new PositionAndSubdivision
                 {
+                    Id = up.IdPosition,
                     Type = "Position",
                     Name = position.Name,
                     EmploymentDate = up.AppointmentDate,
@@ -109,25 +118,63 @@ namespace WorkflowAutomation.Application.Users.Queries.GetFullUserInfo
             //     
             // }
             PositionAndSubdivisionList.OrderBy(pas => pas.EmploymentDate).ToList();
-            foreach (var pas in PositionAndSubdivisionList) { 
+            foreach (var pas in PositionAndSubdivisionList)
+            {
 
                 UserSubdivisionHistory positionAndSubdivision = new UserSubdivisionHistory();
-                positionAndSubdivision.SubdivisionId = 1;
-                positionAndSubdivision.SubdivisionName = "Подразделение";
-                positionAndSubdivision.DismissalDate = DateTime.Now;
-                positionAndSubdivision.EmploymentDate = DateTime.Now;
-                positionAndSubdivision.WorkingTime = (pas.EmploymentDate.Subtract(DateTime.Now)).ToString();
-                positionAndSubdivision.PositionName = "Должность";
-                positionAndSubdivision.PositonId = 1;
+                if (pas.Type == "Subdivision")
+                {
+                    positionAndSubdivision.SubdivisionId = pas.Id;
+                    positionAndSubdivision.SubdivisionName = pas.Name;
+                    positionAndSubdivision.EmploymentDate = pas.EmploymentDate;
+                    positionAndSubdivision.DismissalDate = pas.DismissalDate;
+                    var userpositions = _dbContext.UserPositions.FirstOrDefault(userPos => userPos.IdUser == request.RequestedUserId
+                                                                       && userPos.AppointmentDate.Date <= pas.EmploymentDate.Date
+                                                                       && ( userPos.RemovalDate >= pas.EmploymentDate || userPos.RemovalDate == null));
+                    positionAndSubdivision.PositionName = _dbContext.Positions.FirstOrDefault(pos => pos.IdPosition == userpositions.IdPosition).Name;
+                    positionAndSubdivision.PositonId = userpositions.IdPosition;
+                }
+                else
+                {
+                    positionAndSubdivision.PositonId = pas.Id;
+                    positionAndSubdivision.PositionName = pas.Name;
+                    positionAndSubdivision.EmploymentDate = pas.EmploymentDate;
+                    positionAndSubdivision.DismissalDate = pas.DismissalDate;
+                    var usersubdivision = _dbContext.UserSubdivisions.FirstOrDefault(userSub => userSub.IdUser == request.RequestedUserId
+                                                                       && userSub.AppointmentDate.Date <= pas.EmploymentDate.Date
+                                                                        && (userSub.RemovalDate >= pas.EmploymentDate || userSub.RemovalDate == null));
+                    positionAndSubdivision.SubdivisionName = _dbContext.Subdivisions.FirstOrDefault(sub => sub.IdSubdivision == usersubdivision.IdSubdivision).Name;
+                    positionAndSubdivision.SubdivisionId = usersubdivision.IdSubdivision;
+                }
+               
+
+                CultureInfo russian = new CultureInfo("ru-RU");
+                if (pas.DismissalDate != null)
+                {
+                    var time = (((DateTime)pas.DismissalDate).Subtract(pas.EmploymentDate));
+                    //.ToString("yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+                    positionAndSubdivision.WorkingTime = ConvertDateForUser.ToReadableString(time);
+                }
+                else {
+                    var time = (DateTime.Now.Subtract(pas.EmploymentDate));
+                    positionAndSubdivision.WorkingTime = ConvertDateForUser.ToReadableString(time);
+                }
                 // UserSubdivisionHistory positionAndSubdivision = new UserSubdivisionHistory();
                 // if (pas == "Subdivision")
                 // {
                 //
                 // }
                 // dto.UserSubdivisionHistory.Add();
-
+                int a = 2 + 2;
                 dto.UserSubdivisionHistory.Add(positionAndSubdivision);
+                int ass = 2 + 2;
             }
+            //Distinct с тремя полями SubdivisionName и PositionName
+            if (dto.UserSubdivisionHistory != null)
+            dto.UserSubdivisionHistory = dto.UserSubdivisionHistory
+               .GroupBy(m => new { m.SubdivisionName, m.PositionName,})
+               .Select(group => group.First())  // instead of First you can also apply your logic here what you want to take, for example an OrderBy
+               .ToList();
             return dto;
         }
     }

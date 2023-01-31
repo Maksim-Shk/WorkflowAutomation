@@ -6,7 +6,7 @@ namespace WorkflowAutomation.Application.Users.Queries.GetFullUserInfo
         public string PositionName { get; set; }
         public int PositonId { get; set; }
         public int SubdivisionId { get; set; }
-        public DateTime DismissalDate { get; set; }
+        public DateTime? DismissalDate { get; set; }
         public DateTime EmploymentDate { get; set; }
         public string WorkingTime { get; set; }
     }
