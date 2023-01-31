@@ -1,0 +1,122 @@
+﻿@page "/UserInformation/{text?}"
+
+@*<EditForm Model="@getDocumentDto">*@
+   @* <DataAnnotationsValidator />*@
+    <h2> Профиль пользователя СЭД </h2>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-3">
+            ФИО пользователя 
+        </dt>
+        <dd class="col-sm-8">
+        GetFullUserInfoDto.Name + "" + GetFullUserInfoDto.Surname + "" + GetFullUserInfoDto.Patronomyc
+        </dd>
+        <dt class="col-sm-3">
+            Подразделение
+        </dt>
+        <dd class="col-sm-8">
+        GetFullUserInfoDto.Subdivision
+        </dd>
+        <dt class="col-sm-3">
+            Должность
+        </dt>
+        <dd class="col-sm-8">
+        GetFullUserInfoDto.Position
+        </dd>
+        <dt class="col-sm-3">
+            Роль
+        </dt>
+        <dd class="col-sm-8">
+        GetFullUserInfoDto.Role
+        </dd>
+        <dt class="col-sm-3">
+            Дата регистрации
+        </dt>
+        <dd class="col-sm-8">
+        GetFullUserInfoDto.DateOfRegistration
+        </dd>   
+         <dt class="col-sm-3">
+            Дата последнего входа в систему
+        </dt>
+        <dd class="col-sm-8">
+        GetFullUserInfoDto.LastOnlineDate
+        </dd>
+        @if(true) {
+        <dt class="col-sm-3">
+            Дата увольнения
+        </dt>
+        <dd class="col-sm-8">
+            GetFullUserInfoDto.DismissalDate
+        </dd>}
+        <hr/>
+    <dt class="col-sm-3">
+        ТАБЛИЦА
+    </dt>
+
+    <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Подразделение</th>
+                    <th>Должность</th>
+                    <th>Дата начала работы</th>
+                    <th>Дата увольнения/перемещения</th>
+                    <th>Стаж работы</th>
+                </tr>
+            </thead>
+            <tbody>
+                     <tr>
+                        <td> <a href="ShowDocument/doc.Id">doc.Title</a></td>
+                        <td>doc.DocumentType</td>
+                        <td> <a href="UserInformation/doc.SenderInfo.UserId">doc.SenderInfo.UserInfo</a></td>
+                        <td> <a href="UserInformation/doc.RecieverInfo.UserId">oc.RecieverInfo.UserInfo</a></td>
+                        <td>doc.CreateDate</td>                                               
+                    </tr>
+                    <tr>
+                <td> <a href="ShowDocument/doc.Id">doc.Title</a></td>
+                <td>doc.DocumentType</td>
+                <td> <a href="UserInformation/doc.SenderInfo.UserId">doc.SenderInfo.UserInfo</a></td>
+                <td> <a href="UserInformation/doc.RecieverInfo.UserId">oc.RecieverInfo.UserInfo</a></td>
+                <td>doc.CreateDate</td>
+                    </tr>
+            <tr>
+                <td> <a href="ShowDocument/doc.Id">doc.Title</a></td>
+                <td>doc.DocumentType</td>
+                <td> <a href="UserInformation/doc.SenderInfo.UserId">doc.SenderInfo.UserInfo</a></td>
+                <td> <a href="UserInformation/doc.RecieverInfo.UserId">oc.RecieverInfo.UserInfo</a></td>
+                <td>doc.CreateDate</td>
+            </tr>
+            <tr>
+                <td> <a href="ShowDocument/doc.Id">doc.Title</a></td>
+                <td>doc.DocumentType</td>
+                <td> <a href="UserInformation/doc.SenderInfo.UserId">doc.SenderInfo.UserInfo</a></td>
+                <td> <a href="UserInformation/doc.RecieverInfo.UserId">oc.RecieverInfo.UserInfo</a></td>
+                <td>doc.CreateDate</td>
+            </tr>
+            
+            </tbody>
+        </table>
+        <hr/>
+    <dt class="col-sm-3">
+            Дата увольнения
+        </dt>
+        <dd class="col-sm-8">
+            GetFullUserInfoDto.DismissalDate
+        </dd>           
+        
+        </dl>
+       
+
+@*</EditForm>*@
+@code {
+    //ФИО, подразделение, должность, роль, дата регистриция , дата последнего входа в систему, дата увольнения(если есть), история работы(таблица)
+    [Parameter]
+    public string? Text { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Text = Text ?? "fantastic";
+    }
+
+
+
+}
