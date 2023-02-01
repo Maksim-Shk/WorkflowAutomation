@@ -19,6 +19,7 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList;
+using WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionInfo;
 using MediatR;
 
 namespace WorkflowAutomation.Server.Controllers
@@ -45,26 +46,21 @@ namespace WorkflowAutomation.Server.Controllers
         [Authorize]
         public async Task<ActionResult<List<SubdivisionListLookupDto>>> SubdivisionGet()
         {
-         //  List<Subdivision> subdivisions = new List<Subdivision>{
-         //     new Subdivision { IdSubdivision = 1, IdSubordination = 1, Name = "1111" },
-         //     new Subdivision { IdSubdivision = 2, IdSubordination = 1, Name = "22" },
-         //     new Subdivision { IdSubdivision = 3, IdSubordination = 1, Name = "33" },
-         //     new Subdivision { IdSubdivision = 4, IdSubordination = 1, Name = "44" }
-         // };
-         //
-         //
-         //  // List<Subdivision> subdivisions2 = _dbContext.Subdivisions.ToList();
-         //  // subdivisions2.Clear();
-         //  // subdivisions2 = subdivisions;
-         //  List<SubdivisionListLookupDto> subdivisions2 = _dbContext.Subdivisions
-         //      .ProjectTo<SubdivisionListLookupDto>(_mapper.ConfigurationProvider)
-         //      .ToList();
-         //
-         //  return subdivisions2;
-
             var query = new GetSubdivisionListQuery
             {
                 UserId = UserId
+            };
+            var vm = await Mediator.Send(query);
+            return Ok(vm);
+        }
+        [HttpGet("GetSubdivisionInfo/{id}")]
+        [Authorize]
+        public async Task<ActionResult<SubdivisionInfoDto>> GetSubdivisionInfo(int id)
+        {
+            var query = new GetSubdivisionInfoQuery
+            {
+                UserId = UserId,
+                SubdivisionId = id
             };
             var vm = await Mediator.Send(query);
             return Ok(vm);
