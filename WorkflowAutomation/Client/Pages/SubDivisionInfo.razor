@@ -24,7 +24,20 @@
     </dt>
 
     <dd class="col-sm-8">
-     
+        @foreach (var posId in PositionsIdList)
+        {
+            @if (posId != null)
+            {
+                @foreach (var item in subdivisionInfoDto.Users.Where(x => x.PositionId == posId).ToList())
+                {
+                    @if (item != null)
+                    {
+                        <div>@item.Name @item.Position </div>
+                    }
+                }
+                <hr/>
+            }
+        }
     </dd>
 </dl>
 
