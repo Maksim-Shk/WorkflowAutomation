@@ -1,57 +1,72 @@
 ﻿@page "/SubDivisionInfo/{text?}"
 
-<h2>Подразделение @Text</h2>
-<hr/>
-<dl class="row">
-        <dt class = "col-sm-3">
-            Название
-        </dt>
-        <dd class="col-sm-8">
-        Subdivision.Name
-        </dd>
-        <dt class="col-sm-3">
-            Дата создания 
-        </dt>
-        <dd class="col-sm-8">
-        Subdivision.Date
-        </dd>
-        <dt class="col-sm-3">
-            Сотрудники
-        </dt>
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
-        <dd class="col-sm-8">
-       @foreach (var item in person)
+<h2>Подразделение @Text</h2>
+<hr />
+<dl class="row">
+    <dt class="col-sm-3">
+        Название
+    </dt>
+    <dd class="col-sm-8">
+        Subdivision.Name
+    </dd>
+    <dt class="col-sm-3">
+        Дата создания
+    </dt>
+    <dd class="col-sm-8">
+        Subdivision.Date
+    </dd>
+    <dt class="col-sm-3">
+        Сотрудники
+    </dt>
+
+    <dd class="col-sm-8">
+        @foreach (var pos in PositionsId)
         {
-            @if (item.PositionId == 1)
-            { <div>@item.Name @item.Position </div>
-            }
-        }
-        <hr/>
-        
-   
-        @foreach (var item in person)
-        {
-            @if (item.PositionId == 2)
+            @foreach (var item in person.Where(x => x.PositionId == pos).ToList())
             {
                 <div>@item.Name @item.Position </div>
             }
+            <hr />
         }
-        <hr />
-    
-            @foreach (var item in person)
-            {
-                @if (item.PositionId == 3)
-                {
-                    <div>@item.Name @item.Position </div>
-                }
-            }
-        <hr />
-        </dd>
-        </dl>
+
+    </dd>
+</dl>
 
 @code {
     [Parameter]
     public string? Text { get; set; }
+
+    public List<int> PositionsId { get; set; }
+    public List<Person> person { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            person = new List<Person>() {
+                new Person(){Name ="Горбач",PositionId=1,Position="Зав.Каф" },
+                new Person(){Name ="Зубкова",PositionId=2,Position="Проф"},
+                new Person(){Name ="Костин",PositionId=2,Position="Проф"},
+                new Person(){Name ="Климачов",PositionId=3,Position="Препод"}, 
+                new Person(){Name ="Мы все тут инженеры",PositionId=4,Position="Инженер"},
+                new Person(){Name ="Маринка",PositionId=5,Position="Бабка вахтершка"},
+                new Person(){Name ="Гоблин",PositionId=6,Position="ЛОБОТОМИЯ"}
+            };
+
+            var positions = person.GroupBy(x => x.PositionId).Select(x => x.First()).ToList().Select(e => new { Name = e.Position, IdPosition = e.PositionId }).ToList();
+            PositionsId = new List<int>();
+            foreach (var pos in positions)
+            {
+                PositionsId.Add(pos.IdPosition);
+            }
+            Text = Text ?? "fantastic";
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
 
     protected override void OnInitialized()
     {
@@ -65,39 +80,7 @@
         public string Position { get; set; }
     }
 
-    List<Person> person = new List<Person>() {
 
-    new Person()
-    {
-    Name ="Горбач",
-    PositionId=1,
-    Position="Зав.Каф"
-    },
-     new Person()
-    {
-    Name ="Зубкова",
-    PositionId=2,
-    Position="Проф"
-    }, 
-    new Person()
-    {
-    Name ="Костин",
-    PositionId=2,
-    Position="Проф"
-    },
-     new Person()
-    {
-    Name ="Климачов",
-    PositionId=3,
-    Position="Препод"
-    },
-     new Person()
-    {
-    Name ="Шнякина",
-    PositionId=3,
-    Position="Препод"
-    },
-    };
 
-    
+
 }
