@@ -1,0 +1,103 @@
+﻿@page "/SubDivisionInfo/{text?}"
+
+<h2>Подразделение @Text</h2>
+<hr/>
+<dl class="row">
+        <dt class = "col-sm-3">
+            Название
+        </dt>
+        <dd class="col-sm-8">
+        Subdivision.Name
+        </dd>
+        <dt class="col-sm-3">
+            Дата создания 
+        </dt>
+        <dd class="col-sm-8">
+        Subdivision.Date
+        </dd>
+        <dt class="col-sm-3">
+            Сотрудники
+        </dt>
+
+        <dd class="col-sm-8">
+       @foreach (var item in person)
+        {
+            @if (item.PositionId == 1)
+            { <div>@item.Name @item.Position </div>
+            }
+        }
+        <hr/>
+        
+   
+        @foreach (var item in person)
+        {
+            @if (item.PositionId == 2)
+            {
+                <div>@item.Name @item.Position </div>
+            }
+        }
+        <hr />
+    
+            @foreach (var item in person)
+            {
+                @if (item.PositionId == 3)
+                {
+                    <div>@item.Name @item.Position </div>
+                }
+            }
+        <hr />
+        </dd>
+        </dl>
+
+@code {
+    [Parameter]
+    public string? Text { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Text = Text ?? "fantastic";
+    }
+
+    public class Person
+    {
+        public string? Name { get; set; }
+        public int PositionId { get; set; }
+        public string Position { get; set; }
+    }
+
+    List<Person> person = new List<Person>() {
+
+    new Person()
+    {
+    Name ="Горбач",
+    PositionId=1,
+    Position="Зав.Каф"
+    },
+     new Person()
+    {
+    Name ="Зубкова",
+    PositionId=2,
+    Position="Проф"
+    }, 
+    new Person()
+    {
+    Name ="Костин",
+    PositionId=2,
+    Position="Проф"
+    },
+     new Person()
+    {
+    Name ="Климачов",
+    PositionId=3,
+    Position="Препод"
+    },
+     new Person()
+    {
+    Name ="Шнякина",
+    PositionId=3,
+    Position="Препод"
+    },
+    };
+
+    
+}
