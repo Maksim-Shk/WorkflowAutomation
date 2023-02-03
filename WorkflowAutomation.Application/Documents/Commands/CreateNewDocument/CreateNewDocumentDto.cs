@@ -13,9 +13,10 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
 {
     public class CreateNewDocumentDto : IMapWith<CreateNewDocumentCommand>
     {
-        [Required(ErrorMessage = "Введите тему документа")]
-        [StringLength(50, ErrorMessage = "Тема документа должно быть не более 256-ти символов")]
-     
+        //[Required(ErrorMessage = "Введите тему документа")]
+        //[StringLength(50, ErrorMessage = "Тема документа должно быть не более 256-ти символов")]     
+        [Required]
+        [EmailAddress]
         public string Title { get; set; }
         [Required]
         public int DocumentTypeId { get; set; }

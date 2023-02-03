@@ -17,7 +17,7 @@
 
     <EditForm Model="@roleDto" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
-    <ValidationSummary />
+    
 
     <h6>Выберите пользователя</h6>
    <InputSelect id="selectAllowedUser" class="form-control" @bind-Value="@roleDto.UserId">
