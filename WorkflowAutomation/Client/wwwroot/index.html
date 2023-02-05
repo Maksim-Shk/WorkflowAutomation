@@ -17,7 +17,7 @@
             <h1>Документооборот ОГУ</h1>
             <div style="display:flex; gap:10px; justify-content:center; align-items:center">
                 <div class="spinner-border" role="status"></div>
-               Пожалуйста, подождите...
+                Пожалуйста, подождите...
             </div>
         </div>
     </div>
@@ -30,6 +30,25 @@
     </div>
     <script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js"></script>
     <script src="_framework/blazor.webassembly.js"></script>
+
+    <script>
+        window.downloadFileFromStream = async (fileName, contentStreamReference) => {
+            const arrayBuffer = await contentStreamReference.arrayBuffer();
+            const blob = new Blob([arrayBuffer]);
+            const url = URL.createObjectURL(blob);
+            const anchorElement = document.createElement('a');
+            anchorElement.href = url;
+            anchorElement.download = fileName ?? '';
+            anchorElement.click();
+            anchorElement.remove();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+    <script>
+        window.displayTickerAlert1 = (symbol, price) => {
+            alert(`${symbol}: $${price}!`);
+        };
+    </script>
 </body>
 
 </html>

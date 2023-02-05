@@ -1,32 +1,11 @@
-﻿@page "/Test"
-@using Microsoft.AspNetCore.Authorization;
-@using Microsoft.Extensions.Logging;
-@using System.ComponentModel.DataAnnotations;
-@using System
-@using System.IO
+﻿@page "/file-upload-2"
 @using System.Linq
 @using System.Net.Http.Headers
-@using System.Text.Json
-@using WorkflowAutomation.Application.Users.Queries.GetAllUsers;
-@inject ILogger<Test> Logger
-@inject HttpClient httpClient
+@using Microsoft.Extensions.Logging
+@using WorkflowAutomation.Shared
+@inject HttpClient Http
+@inject ILogger<FileUpload2> Logger
 
-@*@attribute [Authorize(Roles ="Админ")]*@
-@attribute [Authorize]
-<h3>Тест</h3>
-
-<h6>Введите название документа</h6>
-<EditForm Model="@exampleModel" OnValidSubmit="@HandleValidSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-
-    <InputText id="name" @bind-Value="exampleModel.Name" />
-
-    <button type="submit">Подтвердить</button>
-</EditForm>
-<br/>
-
-<h6>Выберите файл</h6>
 <h1>Upload Files</h1>
 
 <p>
@@ -46,7 +25,7 @@
                     <li>
                         File: @file.Name
                         <br>
-                        @if (FileUpload(uploadResults, file.Name,
+                        @if (FileUpload(uploadResults, file.Name, Logger,
                        out var result))
                         {
                             <span>
@@ -67,36 +46,7 @@
     </div>
 }
 
-
 @code {
-    protected override async Task OnInitializedAsync()
-    {
-        
-    }
-
-    public class ExampleModel
-    {
-        [StringLength(10, ErrorMessage = "Name is too long.")]
-        public string? Name { get; set; }
-        public string? File { get; set; }
-    }
-
-    private ExampleModel exampleModel = new();
-
-    private void HandleValidSubmit()
-    {
-        Logger.LogInformation("HandleValidSubmit called");
-
-        // Process the valid form
-        }
-    public class UploadResult
-    {
-        public bool Uploaded { get; set; }
-        public string? FileName { get; set; }
-        public string? StoredFileName { get; set; }
-        public int ErrorCode { get; set; }
-    }
-
     private List<File> files = new();
     private List<UploadResult> uploadResults = new();
     private int maxAllowedFiles = 3;
@@ -107,7 +57,7 @@
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
         shouldRender = false;
-        long maxFileSize = 1024 * 15;
+        long maxFileSize = 1024 * 150000;
         var upload = false;
 
         using var content = new MultipartFormDataContent();
@@ -119,13 +69,13 @@
             {
                 try
                 {
+                    files.Add(new() { Name = file.Name });
+
                     var fileContent =
                         new StreamContent(file.OpenReadStream(maxFileSize));
 
                     fileContent.Headers.ContentType =
                         new MediaTypeHeaderValue(file.ContentType);
-
-                    files.Add(new() { Name = file.Name });
 
                     content.Add(
                         content: fileContent,
@@ -136,6 +86,10 @@
                 }
                 catch (Exception ex)
                 {
+                    Logger.LogInformation(
+                        "{FileName} not uploaded (Err: 6): {Message}",
+                        file.Name, ex.Message);
+
                     uploadResults.Add(
                         new()
                             {
@@ -149,27 +103,14 @@
 
         if (upload)
         {
-            var response =
-                await httpClient.PostAsync("https://localhost:7225/Filesave",
-                content);
-           
-            if (response.IsSuccessStatusCode)
+            var response = await Http.PostAsync("/Filesave", content);
+
+            var newUploadResults = await response.Content
+                .ReadFromJsonAsync<IList<UploadResult>>();
+
+            if (newUploadResults is not null)
             {
-                var options = new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true,
-                    };
-
-                using var responseStream =
-                    await response.Content.ReadAsStreamAsync();
-
-                var newUploadResults = await JsonSerializer
-                    .DeserializeAsync<IList<UploadResult>>(responseStream, options);
-
-                if (newUploadResults is not null)
-                {
-                    uploadResults = uploadResults.Concat(newUploadResults).ToList();
-                }
+                uploadResults = uploadResults.Concat(newUploadResults).ToList();
             }
         }
 
@@ -177,12 +118,13 @@
     }
 
     private static bool FileUpload(IList<UploadResult> uploadResults,
-        string? fileName, out UploadResult result)
+        string? fileName, ILogger<FileUpload2> logger, out UploadResult result)
     {
         result = uploadResults.SingleOrDefault(f => f.FileName == fileName) ?? new();
 
         if (!result.Uploaded)
         {
+            logger.LogInformation("{FileName} not uploaded (Err: 5)", fileName);
             result.ErrorCode = 5;
         }
 
@@ -193,8 +135,4 @@
     {
         public string? Name { get; set; }
     }
-
-
-
-    
 }
