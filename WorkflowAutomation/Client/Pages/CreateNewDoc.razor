@@ -12,7 +12,7 @@
 @attribute [Authorize]
 @inject HttpClient Http
 @inject ILogger<Test> Logger
-
+@inject INotificationService NotificationService
 
     
     <h3>Создать новый документ</h3>
@@ -32,12 +32,13 @@
     
 
     
-    <h6 >Выберите получателя</h6>
+    <h6 >Получатель</h6>
     
     <Validation>
     <Select @bind-SelectedValue="@createNewDocumentDto.ReceiverUserId">
         <ChildContent>
-            <SelectItem TValue="string"></SelectItem>
+            
+            <SelectItem Disabled> Выбирите получателя....</SelectItem>
             @foreach (var user in allUsers.AllUsers)
             {
                 <SelectItem TValue="string" Value="@user.Id"> 
@@ -56,11 +57,11 @@
     </Validation>
     
 
-    <h6>Выберите тип документа</h6>
+    <h6>Тип документа</h6>
     <Validation>
     <Select @bind-SelectedValue="@createNewDocumentDto.DocumentTypeId">
         <ChildContent>
-            <SelectItem TValue="int"></SelectItem>
+            <SelectItem Disabled TValue="int"> Выберите тип документа</SelectItem>
             @foreach (var docType in docTypes.DocumentTypes)
             {
                 <SelectItem TValue="int" Value="@docType.Id">
@@ -81,8 +82,8 @@
     </Field>
 
     <br/>
-    <Button Color="Color.Primary" Clicked="@OnSaveClicked" > Создать документ </Button>
-
+<Button Color="Color.Primary" Clicked="@OnSaveClicked"> Создать документ </Button>
+<Button Color="Color.Primary" Clicked="@ShowWarningNotification"> ВААААААААААА </Button>
     <br />
 
 <br />
@@ -90,7 +91,11 @@
 @code {
     Validations? ValidationsRef { get; set; }
 
-
+    Task ShowWarningNotification()
+    {
+        
+        return NotificationService.Warning("This is a simple notification message!", "Hello");
+    }
 
     // DocTypeDto docTypeDto = new DocTypeDto();
     CreateNewDocumentDto? createNewDocumentDto{ get; set; }  
@@ -114,11 +119,17 @@
     {
         var httpResponse = await Http.PostAsJsonAsync<CreateNewDocumentDto>("/Document", createNewDocumentDto);
         Logger.LogInformation("HandleValidSubmit called");
-        
-        if ( await ValidationsRef.ValidateAll() )
+
+        if (await ValidationsRef.ValidateAll())
         {
+            await NotificationService.Success("УРА!", "Hello");
             await ValidationsRef.ClearAll();
         }
+        else
+        { 
+            await NotificationService.Warning("НеУРА!", "Hello");
+        }
+
     }
 
     private void NameChanged(string value)
