@@ -17,7 +17,7 @@
 
 <EditForm Model="@deleteDocumentDto" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
-    <ValidationSummary />
+    
 
     <h6>Выберите документ для удаления</h6>
     <InputSelect id="selectDoc" class="form-control" @bind-Value="@deleteDocumentDto.DocumentId">

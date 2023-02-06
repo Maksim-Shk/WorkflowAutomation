@@ -5,13 +5,26 @@
     <Authorized>
         @if (IsFullInfo)
         {
-            <p>Вы вошли как: @UserName @UserPatronomic</p>
+            <Dropdown > 
+                <DropdownToggle Color="Color.Light" Size="Size.Large">
+                    Вы вошли как: @UserName @UserPatronomic
+                </DropdownToggle >
+                <DropdownMenu Margin="Margin.Is0.OnDesktop">
+                    <DropdownDivider />
+                    <DropdownItem Margin="Margin.Is0.OnDesktop">
+                        <a href="UserInformation/@UserId"> Профиль пользователя СЭД</a></DropdownItem>
+                    <DropdownDivider />
+                    <DropdownItem Margin="Margin.Is0.OnDesktop">
+                        <a href="LogOut">Выход</a></DropdownItem>
+                </DropdownMenu>
+            </Dropdown>
+            
         }
         else 
         {
             <p>Вы вошли как: @context.User.Identity.Name</p>
         }
-        <a href="LogOut">Выход</a>
+        
     </Authorized>
     <NotAuthorized>
         <a href="Register">Регистрация</a>
@@ -28,4 +41,7 @@
 
     [Parameter]
     public bool IsFullInfo { get; set; }
+
+    [Parameter]
+    public string? UserId { get; set; }
 }

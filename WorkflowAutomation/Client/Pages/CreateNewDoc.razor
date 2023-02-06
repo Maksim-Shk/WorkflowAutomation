@@ -14,58 +14,93 @@
 @inject ILogger<Test> Logger
 
 
-<EditForm Model="@createNewDocumentDto" OnValidSubmit="@HandleValidSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-
-    <h3>Создать новый документ</h3> 
-   
-         <h6>Тема</h6>          
     
-    <InputText id="Title" class="form-control" Value="@createNewDocumentDto.Title" ValueChanged="NameChanged" ValueExpression="() => createNewDocumentDto.Title" />
-        
-    <h6>Выберите получателя</h6>
-    <InputSelect id="selectAllowedUsers" class="form-control"  @bind-Value="@createNewDocumentDto.ReceiverUserId">
+    <h3>Создать новый документ</h3>
+    <hr/>
 
-         <option selected disabled="disabled">Выберите получателя....</option>
-        @foreach (var doc in allUsers.AllUsers)
-        {
-            <option value="@doc.Id"> @doc.Name @doc.Surname @doc.Patronymic @doc.SubdivisionName @doc.PositonName </option>
-        }
-    </InputSelect>
+    <h6>Тема</h6>
+    
+    <Validations @ref="@ValidationsRef" Mode="ValidationMode.Manual" Model="@createNewDocumentDto" ValidateOnLoad="true"> 
+        <Validation>
+    <TextEdit id="Title" class="form-control" @bind-Text="@createNewDocumentDto.Title">
+             <Feedback >            
+            <ValidationError/>
+             </Feedback>
+        </TextEdit>
+        </Validation>
+   
+    
+
+    
+    <h6 >Выберите получателя</h6>
+    
+    <Validation>
+    <Select @bind-SelectedValue="@createNewDocumentDto.ReceiverUserId">
+        <ChildContent>
+            <SelectItem TValue="string"></SelectItem>
+            @foreach (var user in allUsers.AllUsers)
+            {
+                <SelectItem TValue="string" Value="@user.Id"> 
+                    @user.Name
+                    @user.Surname 
+                    @user.Patronymic 
+                    @user.SubdivisionName 
+                    @user.PositonName   
+                    </SelectItem>
+            }
+        </ChildContent>
+        <Feedback>
+            <ValidationError/>
+        </Feedback>    
+    </Select>
+    </Validation>
+    
 
     <h6>Выберите тип документа</h6>
-    <InputSelect id="selectedDocTypes" class="form-control" @bind-Value="@createNewDocumentDto.DocumentTypeId">
-
-        
-        <option selected disabled="disabled">Выберите тип документа....</option>
-        @foreach (var doc in docTypes.DocumentTypes)
-        {
-            <option value="@doc.Id"> @doc.Name</option>
-        }
-    </InputSelect>
-
-    <div class="mb-3">
-        <label for="formFile" class="form-label">Прикрипите файл</label>
-        <input class="form-control" type="file" id="formFile">
-    </div>
+    <Validation>
+    <Select @bind-SelectedValue="@createNewDocumentDto.DocumentTypeId">
+        <ChildContent>
+            <SelectItem TValue="int"></SelectItem>
+            @foreach (var docType in docTypes.DocumentTypes)
+            {
+                <SelectItem TValue="int" Value="@docType.Id">
+                    @docType.Name
+                </SelectItem>
+            }
+        </ChildContent>
+        <Feedback>
+            <ValidationError />
+        </Feedback>
+    </Select>
+</Validation>
+</Validations>
+    <br />
+    <h6  >Прикрепите файл </h6>
+    <Field>
+        <FileEdit Changed="@OnChanged" Multiple Filter=".docx, .pdf"  />
+    </Field>
 
     <br/>
-   <button type="submit" class="btn btn-primary"> Создать документ </button>
+    <Button Color="Color.Primary" Clicked="@OnSaveClicked" > Создать документ </Button>
 
     <br />
-</EditForm>
+
 <br />
 
 @code {
+    Validations? ValidationsRef { get; set; }
+
+
+
     // DocTypeDto docTypeDto = new DocTypeDto();
-    CreateNewDocumentDto createNewDocumentDto = new CreateNewDocumentDto();
+    CreateNewDocumentDto? createNewDocumentDto{ get; set; }  
 
     private DocumentTypeListVm docTypes = new();
     private AllUsersListVm allUsers = new();
 
     protected override async Task OnInitializedAsync()
     {
+        createNewDocumentDto = new();
         docTypes.DocumentTypes = new List<DocumentTypeListLookupDto>();
         allUsers.AllUsers = new List<GetAllUsersListDto>();
 
@@ -75,10 +110,15 @@
 
 
     }
-    private async Task HandleValidSubmit()
+    private async Task OnSaveClicked()
     {
         var httpResponse = await Http.PostAsJsonAsync<CreateNewDocumentDto>("/Document", createNewDocumentDto);
         Logger.LogInformation("HandleValidSubmit called");
+        
+        if ( await ValidationsRef.ValidateAll() )
+        {
+            await ValidationsRef.ClearAll();
+        }
     }
 
     private void NameChanged(string value)
@@ -90,6 +130,10 @@
     {
         str = str.ToLower();
         return str.Substring(0, 1).ToUpper() + (str.Length > 1 ? str.Substring(1) : "");
+    }
+    Task OnChanged(FileChangedEventArgs e)
+    {
+        return Task.CompletedTask;
     }
 }
 

@@ -18,13 +18,26 @@
 <h6>Введите название документа</h6>
 <EditForm Model="@exampleModel" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
-    <ValidationSummary />
+    
 
     <InputText id="name" @bind-Value="exampleModel.Name" />
 
     <button type="submit">Подтвердить</button>
 </EditForm>
 <br/>
+
+<h6>Выберите получателя</h6>
+<EditForm Model="@exampleModel" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+  
+    
+    <InputSelect id="receiver" @bind-Value="exampleModel.Receiver" />
+    
+  
+    <button type="submit">Submit</button>
+</EditForm>
+<br />
+
 
 <h6>Выберите файл</h6>
 <h1>Upload Files</h1>

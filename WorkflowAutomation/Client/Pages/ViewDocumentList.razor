@@ -14,33 +14,39 @@
 
 <EditForm Model="@allowedDocumentListVm">
     <DataAnnotationsValidator />
+     
+    <Table Hoverable Striped>
+        <TableHeader ThemeContrast="ThemeContrast.Light">
+            <TableRow>
+                <TableHeaderCell>Тема</TableHeaderCell>
+                <TableHeaderCell>Тип документа</TableHeaderCell>
+                <TableHeaderCell>Отправитель</TableHeaderCell>
+                <TableHeaderCell>Получатель</TableHeaderCell>
+                <TableHeaderCell>Дата создания</TableHeaderCell>
+                <TableHeaderCell>Дата удаления (если есть)</TableHeaderCell>
+            </TableRow>
+        </TableHeader>
+        <TableBody>
+            
+                @foreach (var doc in allowedDocumentListVm.AllowedDocuments)
+                        {
+            <TableRow>
+                    <TableRowCell> <a href="ShowDocument/@doc.Id">@doc.Title</a></TableRowCell>
+                    <TableRowCell> @doc.DocumentType</TableRowCell>
 
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th>Тема</th>
-                <th>Тип документа</th>
-                <th>Отправитель</th>
-                <th>Получатель</th>
-                <th>Дата создания</th>
-                <th>Дата удаления (если есть)</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var doc in allowedDocumentListVm.AllowedDocuments)
-            {
-                    <tr>
-                    <td> <a href="ShowDocument/@doc.Id">@doc.Title</a></td>
-                        <td>@doc.DocumentType</td>
-                    <td> <a href="UserInformation/@doc.SenderInfo.UserId">@doc.SenderInfo.UserInfo</a></td>
-                    <td> <a href="UserInformation/@doc.RecieverInfo.UserId">@doc.RecieverInfo.UserInfo</a></td>
-                        <td>@doc.CreateDate</td>
-                    <td>@doc.RemoveDate</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                    <TableRowCell> <a href="UserInformation/@doc.SenderInfo.UserId">@doc.SenderInfo.UserInfo</a></TableRowCell>
 
+                    <TableRowCell> <a href="UserInformation/@doc.RecieverInfo.UserId">@doc.RecieverInfo.UserInfo</a></TableRowCell>
+
+                    <TableRowCell> @doc.CreateDate</TableRowCell>
+
+                    <TableRowCell> @doc.RemoveDate</TableRowCell>
+                </TableRow>
+
+                }
+            
+        </TableBody>
+    </Table>
 </EditForm>
 @code {
     AllowedDocumentListVm allowedDocumentListVm = new();
