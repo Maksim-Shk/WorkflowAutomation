@@ -1,4 +1,4 @@
-﻿@page "/Test"
+﻿@*@page "/Test"
 @using Microsoft.AspNetCore.Authorization;
 @using Microsoft.Extensions.Logging;
 @using System.ComponentModel.DataAnnotations;
@@ -11,7 +11,7 @@
 @inject ILogger<Test> Logger
 @inject HttpClient httpClient
 
-@*@attribute [Authorize(Roles ="Админ")]*@
+@attribute [Authorize(Roles ="Админ")]
 @attribute [Authorize]
 <h3>Тест</h3>
 
@@ -211,3 +211,4 @@
 
     
 }
+*@
