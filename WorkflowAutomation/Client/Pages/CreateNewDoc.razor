@@ -1,9 +1,12 @@
 ﻿@page "/CreateNewDoc"
+@using Microsoft.AspNetCore.Http;
 @using Microsoft.Extensions.Logging;
 @using System.ComponentModel.DataAnnotations;
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
+@using System.Net.Http.Headers
+@using System.Linq
 
 @using WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
 @using WorkflowAutomation.Application.DocType.Queries.GetDocumentTypeListQuery
@@ -11,89 +14,132 @@
 
 @attribute [Authorize]
 @inject HttpClient Http
-@inject ILogger<Test> Logger
+@inject ILogger<CreateNewDoc> Logger
 
 
-    
-    <h3>Создать новый документ</h3>
-    <hr/>
 
-    <h6>Тема</h6>
-    
-    <Validations @ref="@ValidationsRef" Mode="ValidationMode.Manual" Model="@createNewDocumentDto" ValidateOnLoad="true"> 
-        <Validation>
-    <TextEdit id="Title" class="form-control" @bind-Text="@createNewDocumentDto.Title">
-             <Feedback >            
-            <ValidationError/>
-             </Feedback>
-        </TextEdit>
-        </Validation>
-   
-    
+<h3>Создать новый документ</h3>
+<hr />
 
-    
-    <h6 >Выберите получателя</h6>
-    
+<h6>Тема</h6>
+
+<Validations @ref="@ValidationsRef" Mode="ValidationMode.Manual" Model="@createNewDocumentDto" ValidateOnLoad="true">
     <Validation>
-    <Select @bind-SelectedValue="@createNewDocumentDto.ReceiverUserId">
-        <ChildContent>
-            <SelectItem TValue="string"></SelectItem>
-            @foreach (var user in allUsers.AllUsers)
-            {
-                <SelectItem TValue="string" Value="@user.Id"> 
-                    @user.Name
-                    @user.Surname 
-                    @user.Patronymic 
-                    @user.SubdivisionName 
-                    @user.PositonName   
-                    </SelectItem>
-            }
-        </ChildContent>
-        <Feedback>
-            <ValidationError/>
-        </Feedback>    
-    </Select>
+        <TextEdit id="Title" class="form-control" @bind-Text="@createNewDocumentDto.Title">
+            <Feedback>
+                <ValidationError />
+            </Feedback>
+        </TextEdit>
     </Validation>
-    
+
+
+
+
+    <h6>Выберите получателя</h6>
+
+    <Validation>
+        <Select @bind-SelectedValue="@createNewDocumentDto.ReceiverUserId">
+            <ChildContent>
+                <SelectItem TValue="string"></SelectItem>
+                @foreach (var user in allUsers.AllUsers)
+                {
+                    <SelectItem TValue="string" Value="@user.Id">
+                        @user.Name
+                        @user.Surname
+                        @user.Patronymic
+                        @user.SubdivisionName
+                        @user.PositonName
+                    </SelectItem>
+                }
+            </ChildContent>
+            <Feedback>
+                <ValidationError />
+            </Feedback>
+        </Select>
+    </Validation>
+
 
     <h6>Выберите тип документа</h6>
     <Validation>
-    <Select @bind-SelectedValue="@createNewDocumentDto.DocumentTypeId">
-        <ChildContent>
-            <SelectItem TValue="int"></SelectItem>
-            @foreach (var docType in docTypes.DocumentTypes)
-            {
-                <SelectItem TValue="int" Value="@docType.Id">
-                    @docType.Name
-                </SelectItem>
-            }
-        </ChildContent>
-        <Feedback>
-            <ValidationError />
-        </Feedback>
-    </Select>
-</Validation>
+        <Select @bind-SelectedValue="@createNewDocumentDto.DocumentTypeId">
+            <ChildContent>
+                <SelectItem TValue="int"></SelectItem>
+                @foreach (var docType in docTypes.DocumentTypes)
+                {
+                    <SelectItem TValue="int" Value="@docType.Id">
+                        @docType.Name
+                    </SelectItem>
+                }
+            </ChildContent>
+            <Feedback>
+                <ValidationError />
+            </Feedback>
+        </Select>
+    </Validation>
 </Validations>
-    <br />
-    <h6  >Прикрепите файл </h6>
+<br />
+
+
+@* <h6  >Прикрепите файл </h6>
     <Field>
-        <FileEdit Changed="@OnChanged" Multiple Filter=".docx, .pdf"  />
-    </Field>
+    <FileEdit Changed="@OnInputFileChange" Multiple Filter=".docx, .pdf" />
+    </Field>*@
+<p>
+    <label>
+        Прикрепите до @maxAllowedFiles файлов:
+        <InputFile OnChange="@OnInputFileChange" multiple />
+    </label>
+</p>
 
-    <br/>
-    <Button Color="Color.Primary" Clicked="@OnSaveClicked" > Создать документ </Button>
+@if (files.Count > 0)
+{
+    <div class="card">
+        <div class="card-body">
+            <ul>
+                @foreach (var file in files)
+                {
+                    <li>
+                        File: @file.Name
+                        <br>
+                        @if (FileUpload(uploadResults, file.Name, Logger,
+                       out var result))
+                        {
+                            <span>
+                                Stored File Name: @result.StoredFileName
+                            </span>
+                        }
+                        else
+                        {
+                            <span>
+                                There was an error uploading the file
+                                (Error: @result.ErrorCode).
+                            </span>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}
 
-    <br />
+<br />
+<Button Color="Color.Primary" Clicked="@OnSaveClicked"> Создать документ </Button>
+<br />
 
 <br />
 
 @code {
+
+    private List<File> files = new();
+    private List<UploadResult> uploadResults = new();
+    private int maxAllowedFiles = 3;
+    private bool shouldRender;
+    private bool upload = false;
+    protected override bool ShouldRender() => shouldRender;
+
+
     Validations? ValidationsRef { get; set; }
-
-
-
-    // DocTypeDto docTypeDto = new DocTypeDto();
-    CreateNewDocumentDto? createNewDocumentDto{ get; set; }  
+    CreateNewDocumentDto? createNewDocumentDto { get; set; }
 
     private DocumentTypeListVm docTypes = new();
     private AllUsersListVm allUsers = new();
@@ -107,15 +153,33 @@
         docTypes = await Http.GetFromJsonAsync<DocumentTypeListVm>("DocumentType");
         allUsers = await Http.GetFromJsonAsync<AllUsersListVm>("GetUsers/GetAllUsers");
 
-
-
     }
+
+    List<IFormFile> formFiles = new();
+
     private async Task OnSaveClicked()
     {
-        var httpResponse = await Http.PostAsJsonAsync<CreateNewDocumentDto>("/Document", createNewDocumentDto);
+
+        if (upload)
+        {
+            // var response = await Http.PostAsync("/Filesave", content);
+            var httpResponse = await Http.PostAsJsonAsync<CreateNewDocumentDto>("/Document", createNewDocumentDto);
+
+            var newUploadResults = await httpResponse.Content
+                .ReadFromJsonAsync<IList<UploadResult>>();
+
+            if (newUploadResults is not null)
+            {
+                uploadResults = uploadResults.Concat(newUploadResults).ToList();
+            }
+        }
+
+        shouldRender = true;
+
+        // var httpResponse = await Http.PostAsJsonAsync<CreateNewDocumentDto>("/Document", createNewDocumentDto);
         Logger.LogInformation("HandleValidSubmit called");
-        
-        if ( await ValidationsRef.ValidateAll() )
+
+        if (await ValidationsRef.ValidateAll())
         {
             await ValidationsRef.ClearAll();
         }
@@ -131,9 +195,76 @@
         str = str.ToLower();
         return str.Substring(0, 1).ToUpper() + (str.Length > 1 ? str.Substring(1) : "");
     }
-    Task OnChanged(FileChangedEventArgs e)
+
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
-        return Task.CompletedTask;
+        shouldRender = false;
+        long maxFileSize = 1024 * 150000;
+        upload = false;
+
+        using var content = new MultipartFormDataContent();
+
+        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+        {
+            if (uploadResults.SingleOrDefault(
+                f => f.FileName == file.Name) is null)
+            {
+                try
+                {
+                    files.Add(new() { Name = file.Name });
+
+                    var fileContent =
+                        new StreamContent(file.OpenReadStream(maxFileSize));
+
+                    fileContent.Headers.ContentType =
+                        new MediaTypeHeaderValue(file.ContentType);
+                    
+                    content.Add(
+                        content: fileContent,
+                        name: "\"files\"",
+                        fileName: file.Name);
+
+                    upload = true;
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogInformation(
+                        "{FileName} not uploaded (Err: 6): {Message}",
+                        file.Name, ex.Message);
+
+                    uploadResults.Add(
+                        new()
+                            {
+                                FileName = file.Name,
+                                ErrorCode = 6,
+                                Uploaded = false
+                            });
+                }
+            }
+        }
+
+        createNewDocumentDto.Content = content;
+
+        shouldRender = true;
+    }
+
+    private static bool FileUpload(IList<UploadResult> uploadResults,
+        string? fileName, ILogger<CreateNewDoc> logger, out UploadResult result)
+    {
+        result = uploadResults.SingleOrDefault(f => f.FileName == fileName) ?? new();
+
+        if (!result.Uploaded)
+        {
+            logger.LogInformation("{FileName} not uploaded (Err: 5)", fileName);
+            result.ErrorCode = 5;
+        }
+
+        return result.Uploaded;
+    }
+    private class File
+    {
+        public string? Name { get; set; }
     }
 }
 

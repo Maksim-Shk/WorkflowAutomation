@@ -31,24 +31,33 @@ namespace WorkflowAutomation.Server.Controllers
     public class DocumentController : BaseController
     {
         //    private readonly IMapper _mapper;
+        private readonly IWebHostEnvironment _env;
         private readonly IMapper _mapper;
         private readonly ILogger<DocumentController> _logger;
 
-        public DocumentController(IMapper mapper, ILogger<DocumentController> logger)
+        public DocumentController(IWebHostEnvironment env, IMapper mapper, ILogger<DocumentController> logger)
         {
+            _env = env;
             _mapper = mapper;
             _logger = logger;
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<int>> CreateNewDocument(CreateNewDocumentDto createNewDocumentDto)
+        public async Task<ActionResult<int>> CreateNewDocument(CreateNewDocumentDto createNewDocumentDto,[FromForm] IEnumerable<IFormFile> files)
         {
-            //Task<ActionResult<Guid> 
-            var command = _mapper.Map<CreateNewDocumentCommand>(createNewDocumentDto);
+        //Task<ActionResult<Guid> 
+        var command = _mapper.Map<CreateNewDocumentCommand>(createNewDocumentDto);
             command.UserId = UserId.ToString();
+            command.resourcePath = new Uri($"{Request.Scheme}://{Request.Host}/");
+            command.Files = files;
+            command.ContentRootPath = _env.ContentRootPath;
+            command.EnvironmentName = _env.EnvironmentName;
+            //TODO: вынести в appsettings
+            command.MaxAllowedFiles = 3;
+            command.MaxFileSize = 15 * 1024 * 1024;
             var docId = await Mediator.Send(command);
-
+            
             return Ok(docId);
         }
 
