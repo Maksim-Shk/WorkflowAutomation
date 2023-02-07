@@ -101,7 +101,7 @@
                     <li>
                         File: @file.Name
                         <br>
-                        @if (FileUpload(uploadResults, file.Name, Logger,
+                       @* @if (FileUpload(uploadResults, file.Name, Logger,
                        out var result))
                         {
                             <span>
@@ -114,7 +114,7 @@
                                 There was an error uploading the file
                                 (Error: @result.ErrorCode).
                             </span>
-                        }
+                        }*@
                     </li>
                 }
             </ul>
@@ -136,7 +136,7 @@
     private bool shouldRender;
     private bool upload = false;
     protected override bool ShouldRender() => shouldRender;
-
+    MultipartFormDataContent requestContent = new();
 
     Validations? ValidationsRef { get; set; }
     CreateNewDocumentDto? createNewDocumentDto { get; set; }
@@ -163,15 +163,18 @@
         if (upload)
         {
             // var response = await Http.PostAsync("/Filesave", content);
-            var httpResponse = await Http.PostAsJsonAsync<CreateNewDocumentDto>("/Document", createNewDocumentDto);
+            requestContent.Add(new StringContent(createNewDocumentDto.Title), "Title");
+            requestContent.Add(new StringContent(createNewDocumentDto.DocumentTypeId.ToString()), "DocumentTypeId");
+            requestContent.Add(new StringContent(createNewDocumentDto.ReceiverUserId.ToString()), "ReceiverUserId");
+            var httpResponse = await Http.PostAsync("Document/CreateNewDocument", requestContent);//createNewDocumentDto
 
-            var newUploadResults = await httpResponse.Content
-                .ReadFromJsonAsync<IList<UploadResult>>();
-
-            if (newUploadResults is not null)
-            {
-                uploadResults = uploadResults.Concat(newUploadResults).ToList();
-            }
+         // var newUploadResults = await httpResponse.Content
+         //     .ReadFromJsonAsync<IList<UploadResult>>();
+         //
+         // if (newUploadResults is not null)
+         // {
+         //     uploadResults = uploadResults.Concat(newUploadResults).ToList();
+         // }
         }
 
         shouldRender = true;
@@ -203,7 +206,7 @@
         long maxFileSize = 1024 * 150000;
         upload = false;
 
-        using var content = new MultipartFormDataContent();
+        //using var content = new MultipartFormDataContent();
 
         foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
         {
@@ -219,12 +222,13 @@
 
                     fileContent.Headers.ContentType =
                         new MediaTypeHeaderValue(file.ContentType);
-                    
-                    content.Add(
-                        content: fileContent,
-                        name: "\"files\"",
-                        fileName: file.Name);
 
+                    //content FilesToUpload
+                    // requestContent.Add(
+                    //     content: fileContent,
+                    //     name: "\"files\"",
+                    //     fileName: file.Name);
+                    requestContent.Add(fileContent, "FilesToUpload", file.Name);
                     upload = true;
                 }
                 catch (Exception ex)
@@ -244,24 +248,24 @@
             }
         }
 
-        createNewDocumentDto.Content = content;
+        // createNewDocumentDto.Content = content;
 
         shouldRender = true;
     }
 
-    private static bool FileUpload(IList<UploadResult> uploadResults,
-        string? fileName, ILogger<CreateNewDoc> logger, out UploadResult result)
-    {
-        result = uploadResults.SingleOrDefault(f => f.FileName == fileName) ?? new();
+    //private static bool FileUpload(IList<UploadResult> uploadResults,
+    //    string? fileName, ILogger<CreateNewDoc> logger, out UploadResult result)
+    //{
+    //    result = uploadResults.SingleOrDefault(f => f.FileName == fileName) ?? new();
 
-        if (!result.Uploaded)
-        {
-            logger.LogInformation("{FileName} not uploaded (Err: 5)", fileName);
-            result.ErrorCode = 5;
-        }
+    //    if (!result.Uploaded)
+    //    {
+    //        logger.LogInformation("{FileName} not uploaded (Err: 5)", fileName);
+    //        result.ErrorCode = 5;
+    //    }
 
-        return result.Uploaded;
-    }
+    //    return result.Uploaded;
+    //}
     private class File
     {
         public string? Name { get; set; }

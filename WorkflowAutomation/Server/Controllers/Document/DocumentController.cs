@@ -42,15 +42,15 @@ namespace WorkflowAutomation.Server.Controllers
             _logger = logger;
         }
 
-        [HttpPost]
+        [HttpPost("CreateNewDocument")]
         [Authorize]
-        public async Task<ActionResult<int>> CreateNewDocument(CreateNewDocumentDto createNewDocumentDto,[FromForm] IEnumerable<IFormFile> files)
+        public async Task<ActionResult<int>> CreateNewDocument([FromForm]CreateNewDocumentDto createNewDocumentDto)//, IEnumerable<IFormFile> files
         {
         //Task<ActionResult<Guid> 
         var command = _mapper.Map<CreateNewDocumentCommand>(createNewDocumentDto);
             command.UserId = UserId.ToString();
             command.resourcePath = new Uri($"{Request.Scheme}://{Request.Host}/");
-            command.Files = files;
+            command.Files = createNewDocumentDto.FilesToUpload;
             command.ContentRootPath = _env.ContentRootPath;
             command.EnvironmentName = _env.EnvironmentName;
             //TODO: вынести в appsettings

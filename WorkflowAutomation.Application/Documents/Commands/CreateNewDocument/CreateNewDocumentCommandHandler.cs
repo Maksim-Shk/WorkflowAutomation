@@ -67,7 +67,11 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
                     var filesProcessed = 0;
                     var resourcePath = new Uri($"{request.resourcePath}");
                     List<UploadResult> uploadResults = new();
-
+                    // requestContent.Add(
+                    //     content: fileContent,
+                    //     name: "\"files\"",
+                    //     fileName: file.Name); - старый формат в станице создания документа,
+                    //     теперь requestContent.Add(fileContent, "FilesToUpload", file.Name);
                     foreach (var file in request.Files)
                     {
                         var uploadResult = new UploadResult();
