@@ -22,7 +22,7 @@
             <ul>
                 @foreach (var file in files)
                 {
-                    <li>
+                    @*<li>
                         File: @file.Name
                         <br>
                         @if (FileUpload(uploadResults, file.Name, Logger,
@@ -39,7 +39,7 @@
                                 (Error: @result.ErrorCode).
                             </span>
                         }
-                    </li>
+                    </li>*@
                 }
             </ul>
         </div>
@@ -117,19 +117,19 @@
         shouldRender = true;
     }
 
-    private static bool FileUpload(IList<UploadResult> uploadResults,
-        string? fileName, ILogger<FileUpload2> logger, out UploadResult result)
-    {
-        result = uploadResults.SingleOrDefault(f => f.FileName == fileName) ?? new();
+    //private static bool FileUpload(IList<UploadResult> uploadResults,
+    //    string? fileName, ILogger<FileUpload2> logger, out UploadResult result)
+    //{
+    //    result = uploadResults.SingleOrDefault(f => f.FileName == fileName) ?? new();
 
-        if (!result.Uploaded)
-        {
-            logger.LogInformation("{FileName} not uploaded (Err: 5)", fileName);
-            result.ErrorCode = 5;
-        }
+    //    if (!result.Uploaded)
+    //    {
+    //        logger.LogInformation("{FileName} not uploaded (Err: 5)", fileName);
+    //        result.ErrorCode = 5;
+    //    }
 
-        return result.Uploaded;
-    }
+    //    return result.Uploaded;
+    //}
 
     private class File
     {

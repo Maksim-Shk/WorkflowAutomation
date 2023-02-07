@@ -3,7 +3,7 @@
 @using System.ComponentModel.DataAnnotations;
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@using WorkflowAutomation.Application.Documents.Queries.GetDocument
+@using WorkflowAutomation.Application.Documents.Queries.GetOneDocument
 
 @attribute [Authorize]
 @inject NavigationManager NavigationManager
@@ -26,13 +26,13 @@
             Отправитель
         </dt>
         <dd class="col-sm-10">
-            <a href="UserInformation/@getDocumentDto.SenderInfo.UserId"> @getDocumentDto.SenderInfo.UserInfo </a>
+            <a href="UserInformation/@getDocumentDto.SenderId"> @getDocumentDto.SenderInfo </a>
         </dd>
         <dt class="col-sm-2">
             Получатель
         </dt>
         <dd class="col-sm-10">
-            <a href="UserInformation/@getDocumentDto.RecieverInfo.UserId"> @getDocumentDto.RecieverInfo.UserInfo </a>
+            <a href="UserInformation/@getDocumentDto.RecieverId"> @getDocumentDto.RecieverInfo </a>
         </dd>
         <dt class="col-sm-2">
             Дата создания
@@ -67,20 +67,18 @@
     [Parameter]
     public int Id { get; set; }
     //Название, отправитель, получатаель. тип. дата создание. дата удаления(Если есть).приерпленные фаилы(как в мудле)
-    GetDocumentDto getDocumentDto;
-
+    DocumentDto getDocumentDto;
     protected override async Task OnInitializedAsync()
     {
         try
         {
             getDocumentDto = new();
             getDocumentDto.Files = new();
-            getDocumentDto.SenderInfo = new();
-            getDocumentDto.RecieverInfo = new();
             list = new List<string>(){
                 "Файл1.docx","Тестовый файл2.pdf","Таблица-тест.xlxs","А я томат и жизни рад.doc"
             };
-            getDocumentDto = await httpClient.GetFromJsonAsync<GetDocumentDto>("Document/GetDocument/" + Id);
+            getDocumentDto = await httpClient.GetFromJsonAsync<DocumentDto>("Document/GetDocument/" + Id);
+           
         }
         catch (AccessTokenNotAvailableException exception)
         {
