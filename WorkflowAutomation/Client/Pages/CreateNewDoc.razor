@@ -1,9 +1,12 @@
 ﻿@page "/CreateNewDoc"
+@using Microsoft.AspNetCore.Http;
 @using Microsoft.Extensions.Logging;
 @using System.ComponentModel.DataAnnotations;
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
+@using System.Net.Http.Headers
+@using System.Linq
 
 @using WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
 @using WorkflowAutomation.Application.DocType.Queries.GetDocumentTypeListQuery
@@ -11,7 +14,8 @@
 
 @attribute [Authorize]
 @inject HttpClient Http
-@inject ILogger<Test> Logger
+@inject ILogger<CreateNewDoc> Logger
+
 @inject INotificationService NotificationService
 
     
@@ -48,12 +52,12 @@
                     @user.SubdivisionName 
                     @user.PositonName   
                     </SelectItem>
-            }
-        </ChildContent>
-        <Feedback>
-            <ValidationError/>
-        </Feedback>    
-    </Select>
+                }
+            </ChildContent>
+            <Feedback>
+                <ValidationError />
+            </Feedback>
+        </Select>
     </Validation>
     
 
@@ -75,12 +79,53 @@
     </Select>
 </Validation>
 </Validations>
-    <br />
-    <h6  >Прикрепите файл </h6>
-    <Field>
-        <FileEdit Changed="@OnChanged" Multiple Filter=".docx, .pdf"  />
-    </Field>
+<br />
 
+@* <h6  >Прикрепите файл </h6>
+    <Field>
+    <FileEdit Changed="@OnInputFileChange" Multiple Filter=".docx, .pdf" />
+    </Field>*@
+<p>
+    <label>
+        Прикрепите до @maxAllowedFiles файлов:
+        <InputFile OnChange="@OnInputFileChange" multiple />
+    </label>
+</p>
+
+@if (files.Count > 0)
+{
+    <div class="card">
+        <div class="card-body">
+            <ul>
+                @foreach (var file in files)
+                {
+                    <li>
+                        File: @file.Name
+                        <br>
+                       @* @if (FileUpload(uploadResults, file.Name, Logger,
+                       out var result))
+                        {
+                            <span>
+                                Stored File Name: @result.StoredFileName
+                            </span>
+                        }
+                        else
+                        {
+                            <span>
+                                There was an error uploading the file
+                                (Error: @result.ErrorCode).
+                            </span>
+                        }*@
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+
+<br />
+<Button Color="Color.Primary" Clicked="@OnSaveClicked"> Создать документ </Button>
+<br />
     <br/>
 <Button Color="Color.Primary" Clicked="@OnSaveClicked"> Создать документ </Button>
 <Button Color="Color.Primary" Clicked="@ShowWarningNotification"> ВААААААААААА </Button>
@@ -89,6 +134,15 @@
 <br />
 
 @code {
+    //используется для отслеживания количества файлов и отображения их имен
+    private List<File> files = new();
+
+    private List<UploadResult> uploadResults = new();
+    private int maxAllowedFiles = 3;
+    private bool shouldRender;
+    private bool upload = false;
+    protected override bool ShouldRender() => shouldRender;
+    MultipartFormDataContent requestContent = new();
     Validations? ValidationsRef { get; set; }
 
     Task ShowWarningNotification()
@@ -97,8 +151,8 @@
         return NotificationService.Warning("This is a simple notification message!", "Hello");
     }
 
-    // DocTypeDto docTypeDto = new DocTypeDto();
-    CreateNewDocumentDto? createNewDocumentDto{ get; set; }  
+    Validations? ValidationsRef { get; set; }
+    CreateNewDocumentDto? createNewDocumentDto { get; set; }
 
     private DocumentTypeListVm docTypes = new();
     private AllUsersListVm allUsers = new();
@@ -112,12 +166,28 @@
         docTypes = await Http.GetFromJsonAsync<DocumentTypeListVm>("DocumentType");
         allUsers = await Http.GetFromJsonAsync<AllUsersListVm>("GetUsers/GetAllUsers");
 
-
-
     }
+
     private async Task OnSaveClicked()
     {
-        var httpResponse = await Http.PostAsJsonAsync<CreateNewDocumentDto>("/Document", createNewDocumentDto);
+        //TODO добавить валидацию (предупреждение что файл не прикреплен)
+        if (upload)
+        {
+            requestContent.Add(new StringContent(createNewDocumentDto.Title), "Title");
+            requestContent.Add(new StringContent(createNewDocumentDto.DocumentTypeId.ToString()), "DocumentTypeId");
+            requestContent.Add(new StringContent(createNewDocumentDto.ReceiverUserId.ToString()), "ReceiverUserId");
+            var httpResponse = await Http.PostAsync("Document/CreateNewDocument", requestContent);//createNewDocumentDto
+
+         // var newUploadResults = await httpResponse.Content
+         //     .ReadFromJsonAsync<IList<UploadResult>>();
+         //
+         // if (newUploadResults is not null)
+         // {
+         //     uploadResults = uploadResults.Concat(newUploadResults).ToList();
+         // }
+        }
+
+        shouldRender = true;
         Logger.LogInformation("HandleValidSubmit called");
 
         if (await ValidationsRef.ValidateAll())
@@ -142,9 +212,67 @@
         str = str.ToLower();
         return str.Substring(0, 1).ToUpper() + (str.Length > 1 ? str.Substring(1) : "");
     }
-    Task OnChanged(FileChangedEventArgs e)
+
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
-        return Task.CompletedTask;
+        shouldRender = false;
+        long maxFileSize = 1024 * 150000;
+        upload = false;
+
+        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+        {
+            if (uploadResults.SingleOrDefault(
+                f => f.FileName == file.Name) is null)
+            {
+                try
+                {
+                    files.Add(new() { Name = file.Name });
+
+                    var fileContent =
+                        new StreamContent(file.OpenReadStream(maxFileSize));
+
+                    fileContent.Headers.ContentType =
+                        new MediaTypeHeaderValue(file.ContentType);
+
+                    requestContent.Add(fileContent, "FilesToUpload", file.Name);
+                    upload = true;
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogInformation(
+                        "{FileName} not uploaded (Err: 6): {Message}",
+                        file.Name, ex.Message);
+
+                    uploadResults.Add(
+                        new()
+                            {
+                                FileName = file.Name,
+                                ErrorCode = 6,
+                                Uploaded = false
+                            });
+                }
+            }
+        }
+        shouldRender = true;
+    }
+
+    //private static bool FileUpload(IList<UploadResult> uploadResults,
+    //    string? fileName, ILogger<CreateNewDoc> logger, out UploadResult result)
+    //{
+    //    result = uploadResults.SingleOrDefault(f => f.FileName == fileName) ?? new();
+
+    //    if (!result.Uploaded)
+    //    {
+    //        logger.LogInformation("{FileName} not uploaded (Err: 5)", fileName);
+    //        result.ErrorCode = 5;
+    //    }
+
+    //    return result.Uploaded;
+    //}
+    private class File
+    {
+        public string? Name { get; set; }
     }
 }
 
