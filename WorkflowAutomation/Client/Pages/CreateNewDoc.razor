@@ -123,9 +123,7 @@
     </div>
 }
 
-<br />
-<Button Color="Color.Primary" Clicked="@OnSaveClicked"> Создать документ </Button>
-<br />
+
     <br/>
 <Button Color="Color.Primary" Clicked="@OnSaveClicked"> Создать документ </Button>
 <Button Color="Color.Primary" Clicked="@ShowWarningNotification"> ВААААААААААА </Button>
@@ -151,7 +149,6 @@
         return NotificationService.Warning("This is a simple notification message!", "Hello");
     }
 
-    Validations? ValidationsRef { get; set; }
     CreateNewDocumentDto? createNewDocumentDto { get; set; }
 
     private DocumentTypeListVm docTypes = new();
