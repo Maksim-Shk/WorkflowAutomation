@@ -16,13 +16,9 @@
 @inject HttpClient Http
 @inject ILogger<CreateNewDoc> Logger
 
-
-
 <h3>Создать новый документ</h3>
 <hr />
-
 <h6>Тема</h6>
-
 <Validations @ref="@ValidationsRef" Mode="ValidationMode.Manual" Model="@createNewDocumentDto" ValidateOnLoad="true">
     <Validation>
         <TextEdit id="Title" class="form-control" @bind-Text="@createNewDocumentDto.Title">
@@ -31,9 +27,6 @@
             </Feedback>
         </TextEdit>
     </Validation>
-
-
-
 
     <h6>Выберите получателя</h6>
 
@@ -58,7 +51,6 @@
         </Select>
     </Validation>
 
-
     <h6>Выберите тип документа</h6>
     <Validation>
         <Select @bind-SelectedValue="@createNewDocumentDto.DocumentTypeId">
@@ -78,7 +70,6 @@
     </Validation>
 </Validations>
 <br />
-
 
 @* <h6  >Прикрепите файл </h6>
     <Field>
@@ -129,8 +120,9 @@
 <br />
 
 @code {
-
+    //используется для отслеживания количества файлов и отображения их имен
     private List<File> files = new();
+
     private List<UploadResult> uploadResults = new();
     private int maxAllowedFiles = 3;
     private bool shouldRender;
@@ -155,14 +147,11 @@
 
     }
 
-    List<IFormFile> formFiles = new();
-
     private async Task OnSaveClicked()
     {
-
+        //TODO добавить валидацию (предупреждение что файл не прикреплен)
         if (upload)
         {
-            // var response = await Http.PostAsync("/Filesave", content);
             requestContent.Add(new StringContent(createNewDocumentDto.Title), "Title");
             requestContent.Add(new StringContent(createNewDocumentDto.DocumentTypeId.ToString()), "DocumentTypeId");
             requestContent.Add(new StringContent(createNewDocumentDto.ReceiverUserId.ToString()), "ReceiverUserId");
@@ -178,8 +167,6 @@
         }
 
         shouldRender = true;
-
-        // var httpResponse = await Http.PostAsJsonAsync<CreateNewDocumentDto>("/Document", createNewDocumentDto);
         Logger.LogInformation("HandleValidSubmit called");
 
         if (await ValidationsRef.ValidateAll())
@@ -206,8 +193,6 @@
         long maxFileSize = 1024 * 150000;
         upload = false;
 
-        //using var content = new MultipartFormDataContent();
-
         foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
         {
             if (uploadResults.SingleOrDefault(
@@ -223,11 +208,6 @@
                     fileContent.Headers.ContentType =
                         new MediaTypeHeaderValue(file.ContentType);
 
-                    //content FilesToUpload
-                    // requestContent.Add(
-                    //     content: fileContent,
-                    //     name: "\"files\"",
-                    //     fileName: file.Name);
                     requestContent.Add(fileContent, "FilesToUpload", file.Name);
                     upload = true;
                 }
@@ -247,9 +227,6 @@
                 }
             }
         }
-
-        // createNewDocumentDto.Content = content;
-
         shouldRender = true;
     }
 
