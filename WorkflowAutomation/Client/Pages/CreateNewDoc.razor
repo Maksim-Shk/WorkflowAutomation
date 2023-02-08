@@ -100,8 +100,14 @@
                 @foreach (var file in files)
                 {
                     <li>
-                        File: @file.Name
+                                                
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-file-earmark-word" viewBox="0 0 16 16">
+                            <path d="M5.485 6.879a.5.5 0 1 0-.97.242l1.5 6a.5.5 0 0 0 .967.01L8 9.402l1.018 3.73a.5.5 0 0 0 .967-.01l1.5-6a.5.5 0 0 0-.97-.242l-1.036 4.144-.997-3.655a.5.5 0 0 0-.964 0l-.997 3.655L5.485 6.88z" />
+                            <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
+                        </svg> File: @file.Name
                         <br>
+                        <Span> @SizeSuffix(file.Size) </Span>
+                        <Span>@file.Type</Span>
                        @* @if (FileUpload(uploadResults, file.Name, Logger,
                        out var result))
                         {
@@ -145,7 +151,7 @@
 
     Task ShowWarningNotification()
     {
-        
+
         return NotificationService.Warning("This is a simple notification message!", "Hello");
     }
 
@@ -175,13 +181,13 @@
             requestContent.Add(new StringContent(createNewDocumentDto.ReceiverUserId.ToString()), "ReceiverUserId");
             var httpResponse = await Http.PostAsync("Document/CreateNewDocument", requestContent);//createNewDocumentDto
 
-         // var newUploadResults = await httpResponse.Content
-         //     .ReadFromJsonAsync<IList<UploadResult>>();
-         //
-         // if (newUploadResults is not null)
-         // {
-         //     uploadResults = uploadResults.Concat(newUploadResults).ToList();
-         // }
+            // var newUploadResults = await httpResponse.Content
+            //     .ReadFromJsonAsync<IList<UploadResult>>();0
+            //
+            // if (newUploadResults is not null)
+            // {
+            //     uploadResults = uploadResults.Concat(newUploadResults).ToList();
+            // }
         }
 
         shouldRender = true;
@@ -224,7 +230,7 @@
             {
                 try
                 {
-                    files.Add(new() { Name = file.Name });
+                    files.Add(new() { Name = file.Name ,Type= file.ContentType, Size=file.Size});
 
                     var fileContent =
                         new StreamContent(file.OpenReadStream(maxFileSize));
@@ -270,6 +276,38 @@
     private class File
     {
         public string? Name { get; set; }
+
+        public string? Type { get; set; }
+
+        public long Size { get; set; }
+    }
+
+    static readonly string[] SizeSuffixes =
+                   { "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
+    static string SizeSuffix(long value, int decimalPlaces = 1)
+    {
+        if (decimalPlaces < 0) { throw new ArgumentOutOfRangeException("decimalPlaces"); }
+        if (value < 0) { return "-" + SizeSuffix(-value, decimalPlaces); }
+        if (value == 0) { return string.Format("{0:n" + decimalPlaces + "} bytes", 0); }
+
+        // mag is 0 for bytes, 1 for KB, 2, for MB, etc.
+        int mag = (int)Math.Log(value, 1024);
+
+        // 1L << (mag * 10) == 2 ^ (10 * mag)
+        // [i.e. the number of bytes in the unit corresponding to mag]
+        decimal adjustedSize = (decimal)value / (1L << (mag * 10));
+
+        // make adjustment when the value is large enough that
+        // it would round up to 1000 or more
+        if (Math.Round(adjustedSize, decimalPlaces) >= 1000)
+        {
+            mag += 1;
+            adjustedSize /= 1024;
+        }
+
+        return string.Format("{0:n" + decimalPlaces + "} {1}",
+            adjustedSize,
+            SizeSuffixes[mag]);
     }
 }
 

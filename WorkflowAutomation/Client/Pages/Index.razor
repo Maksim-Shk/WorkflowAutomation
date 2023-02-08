@@ -9,6 +9,8 @@
 @using WorkflowAutomation.Application.Users.Queries.GetUserInfo
 @using WorkflowAutomation.Application.Documents.Queries.GetRecentActivityDocuments
 
+
+
 @inject HttpClient httpClient
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -21,23 +23,7 @@
     <h2>@getUserInfoDto.SubdivisionName - @getUserInfoDto.PositonName</h2>
 }
 
-@*<table class="table">
-    <thead>
-        <tr>
-            <th>Тема</th>
-            <th>Дата</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var doc in recentActivityDocumentListVm.RecentDocuments)
-        {
-            <tr>
-                <td>@doc.Titile</td>
-                <td>@doc.LastActivityDate</td>
-            </tr>
-        }
-    </tbody>
-</table>*@
+
 
 @code{
     private RecentActivityDocumentListVm recentActivityDocumentListVm = new();
@@ -59,4 +45,7 @@
             getUserInfoDto = await httpClient.GetFromJsonAsync<GetUserInfoDto>("UserInfo");
         }
     }
-}
+
+
+
+   }
