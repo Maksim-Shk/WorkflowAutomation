@@ -1,7 +1,7 @@
 using System;
 using FluentValidation;
 
-namespace WorkflowAutomation.Application.Documents.Queries.GetDocument
+namespace WorkflowAutomation.Application.Documents.Queries.GetOneDocument
 {
     public class GetDocumentQueryValidator : AbstractValidator<GetDocumentQuery>
     {

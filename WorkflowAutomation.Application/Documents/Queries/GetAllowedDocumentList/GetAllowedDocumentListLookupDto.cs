@@ -1,4 +1,4 @@
-ï»¿namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentList
+namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentList
 {
     public class GetAllowedDocumentListLookupDto
     {
@@ -9,7 +9,7 @@
         public string DocumentType { get; set; }
         public ShortUserInfo SenderInfo { get; set; }
         public ShortUserInfo RecieverInfo { get; set; }
-        //TODO ÐµÑ‰Ñ‘ Ñ‡ÐµÐ³Ð¾
+        //TODO åù¸ ÷åãî
 
     }
 }
