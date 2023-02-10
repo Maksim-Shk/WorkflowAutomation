@@ -10,6 +10,6 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentLis
         public ShortUserInfo SenderInfo { get; set; }
         public ShortUserInfo RecieverInfo { get; set; }
         //TODO ещё чего
-
+        public string Status { get; set; }
     }
 }

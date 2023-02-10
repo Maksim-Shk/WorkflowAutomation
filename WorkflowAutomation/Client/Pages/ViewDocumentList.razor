@@ -22,6 +22,7 @@
                 <TableHeaderCell>Тип документа</TableHeaderCell>
                 <TableHeaderCell>Отправитель</TableHeaderCell>
                 <TableHeaderCell>Получатель</TableHeaderCell>
+                <TableHeaderCell>Статус</TableHeaderCell>
                 <TableHeaderCell>Дата создания</TableHeaderCell>
                 <TableHeaderCell>Дата удаления (если есть)</TableHeaderCell>
             </TableRow>
@@ -37,6 +38,8 @@
                     <TableRowCell> <a href="UserInformation/@doc.SenderInfo.UserId">@doc.SenderInfo.UserInfo</a></TableRowCell>
 
                     <TableRowCell> <a href="UserInformation/@doc.RecieverInfo.UserId">@doc.RecieverInfo.UserInfo</a></TableRowCell>
+
+                    <TableRowCell> @doc.Status</TableRowCell>
 
                     <TableRowCell> @doc.CreateDate</TableRowCell>
 
