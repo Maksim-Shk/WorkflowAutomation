@@ -46,14 +46,27 @@
         <dd class="col-sm-10">
             @getDocumentDto.RemoveDate
         </dd>
+
+
+        <dt class="col-sm-2">
+         Кол-во файлов
+        </dt>
+        <dd class="col-sm-10">
+            @getDocumentDto.DocumentFiles.Count()
+        </dd>
+
         <hr/>
         <dt class="col-sm-2">
             Прикрепленный файл
         </dt>
         <dd class="col-sm-10">            
             <dl class="row">
-            @foreach(var file in list )
-            { <div>@file</div>  }
+                @foreach (var file in getDocumentDto.DocumentFiles)
+            {
+                    <a href="" @onclick="@(async()=> await FileDownload(file.Name, file.Id))" @onclick:preventDefault> @file.Name</a>
+                 //<div>@file.Name</div>
+                   
+            }
              </dl>
         </dd>
         <hr />
@@ -61,24 +74,21 @@
 
 </EditForm>
 
-
-
 @code {
     [Parameter]
     public int Id { get; set; }
     //Название, отправитель, получатаель. тип. дата создание. дата удаления(Если есть).приерпленные фаилы(как в мудле)
     DocumentDto getDocumentDto;
+
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
             getDocumentDto = new();
-            getDocumentDto.Files = new();
-            list = new List<string>(){
-                "Файл1.docx","Тестовый файл2.pdf","Таблица-тест.xlxs","А я томат и жизни рад.doc"
-            };
+            getDocumentDto.DocumentFiles = new();
             getDocumentDto = await httpClient.GetFromJsonAsync<DocumentDto>("Document/GetDocument/" + Id);
-           
+
         }
         catch (AccessTokenNotAvailableException exception)
         {
@@ -86,5 +96,13 @@
         }
     }
 
-    List<string> list;
+    private async Task FileDownload(string fileName,int id)
+    {
+        
+            var fileStream = await httpClient.GetStreamAsync("/FileDownload/"+ id);
+            using var streamRef = new DotNetStreamReference(stream: fileStream);
+
+            await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+      
+    }
 }
