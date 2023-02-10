@@ -3,16 +3,21 @@
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentList;
 @using WorkflowAutomation.Application.Documents.Queries.GetDocumentList
 @using WorkflowAutomation.Application.Documents.Commands.DeleteDocument
 
 @inject ILogger<Test> Logger
-@inject HttpClient Http
+@inject HttpClient httpClient
 @inject NavigationManager NavigationManager
 
 @*@attribute [Authorize(Roles = "Админ")]*@
 @*@attribute [Authorize(Policy = "AdminPolicy")]*@ 
-@attribute [Authorize(Roles = "Админ")]
+
+
+@*@attribute [Authorize(Roles = "Админ")]*@
+
+
 @*@attribute [Authorize(Roles = "Зарегистрированный пользователь")]*@
 
 <EditForm Model="@deleteDocumentDto" OnValidSubmit="@HandleValidSubmit">
@@ -22,7 +27,7 @@
     <h6>Выберите документ для удаления</h6>
     <InputSelect id="selectDoc" class="form-control" @bind-Value="@deleteDocumentDto.DocumentId">
 
-        @foreach (var doc in documentListVm.Documents)
+        @foreach (var doc in allowedDocumentListVm.AllowedDocuments)
         {
             @if (doc.RemoveDate ==null){
                 <option value="@doc.Id"> " @doc.Title " Отправитель: @doc.SenderInfo Получатель: @doc.RecieverInfo 
@@ -40,12 +45,13 @@
     // DocTypeDto docTypeDto = new DocTypeDto();
     DeleteDocumentDto deleteDocumentDto = new ();
 
-    private DocumentListVm documentListVm = new();
+    AllowedDocumentListVm allowedDocumentListVm = new();
 
     protected override async Task OnInitializedAsync()
     {
-        documentListVm.Documents = new List<GetDocumentListLookupDto>();
-        documentListVm = await Http.GetFromJsonAsync<DocumentListVm>("Document");
+        allowedDocumentListVm.AllowedDocuments = new List<GetAllowedDocumentListLookupDto>();
+        allowedDocumentListVm = await httpClient.GetFromJsonAsync<AllowedDocumentListVm>("Document/GetAllowedDocuments");
+
 
         //foreach (var doc in documentListVm.Documents)
         //{
@@ -56,7 +62,7 @@
     }
     private async Task HandleValidSubmit()
     {
-        var httpResponse = await Http.PutAsJsonAsync("Document/" + deleteDocumentDto.DocumentId, deleteDocumentDto);
+        var httpResponse = await httpClient.PutAsJsonAsync("Document/" + deleteDocumentDto.DocumentId, deleteDocumentDto);
         Logger.LogInformation("HandleValidSubmit called");
         //NavigationManager.NavigateTo("/ViewDocumentList");
     }

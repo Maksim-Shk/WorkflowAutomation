@@ -88,10 +88,15 @@ namespace WorkflowAutomation.Server.Controllers
         [Authorize]
         public async Task<ActionResult<DocumentDto>> GetDocument(int id)
         {
+          //  string workingDirectory = Environment.CurrentDirectory;
+            // This will get the current PROJECT bin directory (ie ../bin/)
+         //   string projectDirectory = Directory.GetParent(workingDirectory).Parent.FullName;
+        //    var uploadDirectory = projectDirectory + @"\WorkflowAutomation\Server\Development\unsafe_uploads";
             var query = new GetDocumentQuery
             {
                 DocumentId = id,
-                UserId = UserId
+                UserId = UserId,
+              //  DirectoryPath = uploadDirectory
             };
             var dto = await Mediator.Send(query);
             return Ok(dto);

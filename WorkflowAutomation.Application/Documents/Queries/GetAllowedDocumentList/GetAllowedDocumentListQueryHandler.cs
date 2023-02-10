@@ -106,6 +106,16 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentLis
                 dto.CreateDate = doc.CreateDate;
                 dto.RemoveDate = doc.RemoveDate;
 
+
+                var docStatuses = await _dbContext.DocumentStatuses.Where(s => s.IdDocument == doc.IdDocument).ToListAsync();
+                var lastDocStatus = docStatuses.MaxBy(ls => ls.AppropriationDate);
+                var status = await _dbContext.Statuses.FirstOrDefaultAsync(s => s.IdStatus == lastDocStatus.IdStatus);
+                if (status != null)
+                    dto.Status = status.Name;
+                else
+                    dto.Status = "Статус не установлен";
+
+
                 var docType = await _dbContext.DocumentTypes.FirstAsync(t => t.IdDocumentType == doc.IdDocumentType);
                 dto.DocumentType = docType.Name;
 
@@ -113,18 +123,17 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentLis
                 var sender = await _dbContext.Users.FirstAsync(t => t.IdUser == doc.IdSender);
                 dto.SenderInfo = new();
                 dto.SenderInfo.UserInfo = sender.Name + " " + sender.Surname + " " + sender.Patronymic;
-                dto.SenderInfo.UserId= sender.IdUser;
+                dto.SenderInfo.UserId = sender.IdUser;
 
                 var reciever = await _dbContext.Users.FirstAsync(t => t.IdUser == doc.IdReceiver);
                 dto.RecieverInfo = new();
                 dto.RecieverInfo.UserInfo = reciever.Name + " " + reciever.Surname + " " + reciever.Patronymic;
-                dto.RecieverInfo.UserId= reciever.IdUser;
+                dto.RecieverInfo.UserId = reciever.IdUser;
 
                 listLookupDtos.Add(dto);
             }
 
             return new AllowedDocumentListVm { AllowedDocuments = listLookupDtos };
-
         }
     }
 }

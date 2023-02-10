@@ -2,6 +2,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Reflection;
 using System.Xml;
 using WorkflowAutomation.Application.Interfaces;
 using WorkflowAutomation.Domain;
@@ -24,7 +25,7 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetOneDocument
         {
             var allowedUsers = await _documentRepository.GetAllowedUsers(request.UserId);
             DocumentDto dto = new();
-            dto.Files = new();
+            dto.Statuses = new();
             var doc = _dbContext.Documents.FirstOrDefault(doc => doc.IdDocument == request.DocumentId);
             //TODO сделать экспешн
             if (doc != null && (allowedUsers.FirstOrDefault(allowedUser => allowedUser.IdUser == doc.IdSender) != null || doc.IdSender == request.UserId))
@@ -38,19 +39,44 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetOneDocument
                 dto.DocumentType = docType.Name;
 
                 var sender = await _dbContext.Users.FirstAsync(t => t.IdUser == doc.IdSender);
-               // dto.SenderInfo = new();
+                // dto.SenderInfo = new();
                 dto.SenderInfo = sender.Name + " " + sender.Surname + " " + sender.Patronymic;
                 dto.SenderId = sender.IdUser;
 
                 var reciever = await _dbContext.Users.FirstAsync(t => t.IdUser == doc.IdReceiver);
-               // dto.RecieverInfo = new();
+                // dto.RecieverInfo = new();
                 dto.RecieverInfo = reciever.Name + " " + reciever.Surname + " " + reciever.Patronymic;
                 dto.RecieverId = reciever.IdUser;
 
-               // dto.Files = new List<DocFile>();
-                //var files = _dbContext.DocumentContents.Where(file=>file.IdDocument == request.DocumentId).ToList();
-                //foreach (var file in files)
-                //    dto.Files.Add(new DocFile { Id = file.IdDocumentContent, Title = file.Name });
+                var documentStatuses = await _dbContext.DocumentStatuses.Where(ds => ds.IdDocument == request.DocumentId).ToListAsync();
+                var statuses = await  _dbContext.Statuses.ToListAsync();
+                
+                if (documentStatuses != null)
+                    dto.Statuses = documentStatuses.Select(ds => new DocStatus
+                    {
+                        Id = ds.IdStatus,
+                        Name = statuses.First(s => s.IdStatus == ds.IdStatus).Name,
+                        Date = ds.AppropriationDate
+                    }).ToList();
+
+                dto.DocumentFiles = new List<DocFile>();
+                //var directoryPath = request.DirectoryPath;
+                var files = _dbContext.DocumentContents.Where(file => file.IdDocument == request.DocumentId).ToList();
+
+                if (files.Count > 0 ) //&& directoryPath != null)
+                {
+                    foreach (var file in files)
+                    {
+                      //  var filePath = directoryPath + "\\" + file.Path;
+                        var docFile = new DocFile
+                        {
+                            Name = file.Name,
+                            Id = file.IdDocumentContent,
+                           // File = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)
+                        };
+                        dto.DocumentFiles.Add(docFile);
+                    }
+                }
             }
             return dto;
         }

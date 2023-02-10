@@ -12,18 +12,21 @@ namespace WorkflowAutomation.Application.Documents.Commands.DeleteDocument
         : IRequestHandler<DeleteDocumentCommand>
     {
         private readonly IDocumentUserDbContext _dbContext;
-
-        public DeleteNoteCommandHandler(IDocumentUserDbContext dbContext) =>
-            _dbContext = dbContext;
+        private readonly IDocumentRepository _documentRepository;
+        public DeleteNoteCommandHandler(IDocumentUserDbContext dbContext, IDocumentRepository documentRepository) =>
+            (_dbContext, _documentRepository) = (dbContext, documentRepository);
 
         public async Task<Unit> Handle(DeleteDocumentCommand request,
             CancellationToken cancellationToken)
         {
+            var allowedUsers = await _documentRepository.GetAllowedUsers(request.UserId);
             var document = await _dbContext.Documents
                 .FindAsync(new object[] { request.DocumentId }, cancellationToken);
 
-            if (document == null)
+            //проверка доступа
+            if (document == null && (allowedUsers.FirstOrDefault(allowedUser => allowedUser.IdUser == document.IdSender) != null || document.IdSender == request.UserId))
             {
+                //TODO сделать исключение
                 throw new NotFoundException(nameof(Document), request.DocumentId);
             }
 
@@ -44,7 +47,7 @@ namespace WorkflowAutomation.Application.Documents.Commands.DeleteDocument
                 IdUser = request.UserId,
                 AppropriationDate = DateTime.Now,
             };
-
+            await _dbContext.DocumentStatuses.AddAsync(documentStatus);
             await _dbContext.Save(cancellationToken);
 
             return Unit.Value;

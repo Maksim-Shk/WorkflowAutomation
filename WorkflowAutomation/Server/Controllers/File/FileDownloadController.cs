@@ -9,10 +9,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using WorkflowAutomation.Shared;
 using System.Text;
+using MediatR;
+using WorkflowAutomation.Application.Files.Queries.GetFile;
+using WorkflowAutomation.Server.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class FileDownloadController : ControllerBase
+public class FileDownloadController : BaseController
 {
     private readonly IWebHostEnvironment env;
     private readonly ILogger<FilesaveController> logger;
@@ -24,11 +27,18 @@ public class FileDownloadController : ControllerBase
         this.logger = logger;
     }
 
-    [HttpGet]
-    public async Task<ActionResult<Stream>> DownLoadFile()
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Stream>> DownLoadFile(int id)
     {
-        string path = @"..\Server\Development\unsafe_uploads\vykhfjhd.a4r";
+        // string path = @"..\Server\Development\unsafe_uploads\vykhfjhd.a4r";
+        var query = new GetFileQuery
+        {
+            FileId = id,
+            UserId = UserId
+            //  DirectoryPath = uploadDirectory
+        };
+        var dto = await Mediator.Send(query);
+        return new FileStream(dto.Path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
 
-        return new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
     }
 }

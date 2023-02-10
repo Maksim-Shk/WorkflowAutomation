@@ -52,33 +52,58 @@
         </dt>
         <dd class="col-sm-10">            
             <dl class="row">
-            @foreach(var file in list )
-            { <div>@file</div>  }
+                @foreach (var file in getDocumentDto.DocumentFiles)
+            {
+                    <a href="" @onclick="@(async()=> await FileDownload(file.Name, file.Id))" @onclick:preventDefault> @file.Name</a>
+                 //<div>@file.Name</div> 
+            }
              </dl>
         </dd>
-        <hr />
+        <hr/>
+        <dt class="col-sm-2">
+            История статусов документа
+        </dt>
+        <dd class="col-sm-10">
+            <dl class="row">
+               <Table Hoverable Striped>
+                   <TableHeader ThemeContrast="ThemeContrast.Light">
+                       <TableRow>
+                           <TableHeaderCell>Статус</TableHeaderCell>
+                           <TableHeaderCell>Дата</TableHeaderCell>
+                       </TableRow>
+                   </TableHeader>
+                   <TableBody>
+                        @foreach(var status in getDocumentDto.Statuses)
+                        {
+                         <TableRow>
+                             <TableRowCell>@status.Name</TableRowCell>
+                             <TableRowCell>@status.Date</TableRowCell>
+                         </TableRow>   
+                        }
+                    </TableBody>
+               </Table>
+            </dl>
+        </dd>
         </dl>
 
 </EditForm>
-
-
 
 @code {
     [Parameter]
     public int Id { get; set; }
     //Название, отправитель, получатаель. тип. дата создание. дата удаления(Если есть).приерпленные фаилы(как в мудле)
     DocumentDto getDocumentDto;
+
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
             getDocumentDto = new();
-            getDocumentDto.Files = new();
-            list = new List<string>(){
-                "Файл1.docx","Тестовый файл2.pdf","Таблица-тест.xlxs","А я томат и жизни рад.doc"
-            };
+            getDocumentDto.DocumentFiles = new();
+            getDocumentDto.Statuses = new();
             getDocumentDto = await httpClient.GetFromJsonAsync<DocumentDto>("Document/GetDocument/" + Id);
-           
+
         }
         catch (AccessTokenNotAvailableException exception)
         {
@@ -86,5 +111,13 @@
         }
     }
 
-    List<string> list;
+    private async Task FileDownload(string fileName,int id)
+    {
+        
+            var fileStream = await httpClient.GetStreamAsync("/FileDownload/"+ id);
+            using var streamRef = new DotNetStreamReference(stream: fileStream);
+
+            await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+      
+    }
 }

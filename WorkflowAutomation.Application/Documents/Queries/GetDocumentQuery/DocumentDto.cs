@@ -11,7 +11,8 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetOneDocument
         public string RecieverInfo { get; set; }
         public string SenderId { get; set; }
         public string RecieverId { get; set; }
-        public List<DocFile> Files { get; set; }
+        public List<DocFile> DocumentFiles { get; set; }
+        public List<DocStatus>? Statuses { get; set; }
 
     }
 }
