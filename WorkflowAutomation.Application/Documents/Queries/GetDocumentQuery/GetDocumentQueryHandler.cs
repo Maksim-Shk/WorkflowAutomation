@@ -25,6 +25,7 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetOneDocument
         {
             var allowedUsers = await _documentRepository.GetAllowedUsers(request.UserId);
             DocumentDto dto = new();
+            dto.Statuses = new();
             var doc = _dbContext.Documents.FirstOrDefault(doc => doc.IdDocument == request.DocumentId);
             //TODO сделать экспешн
             if (doc != null && (allowedUsers.FirstOrDefault(allowedUser => allowedUser.IdUser == doc.IdSender) != null || doc.IdSender == request.UserId))
@@ -47,8 +48,19 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetOneDocument
                 dto.RecieverInfo = reciever.Name + " " + reciever.Surname + " " + reciever.Patronymic;
                 dto.RecieverId = reciever.IdUser;
 
+                var documentStatuses = await _dbContext.DocumentStatuses.Where(ds => ds.IdDocument == request.DocumentId).ToListAsync();
+                var statuses = await  _dbContext.Statuses.ToListAsync();
+                
+                if (documentStatuses != null)
+                    dto.Statuses = documentStatuses.Select(ds => new DocStatus
+                    {
+                        Id = ds.IdStatus,
+                        Name = statuses.First(s => s.IdStatus == ds.IdStatus).Name,
+                        Date = ds.AppropriationDate
+                    }).ToList();
+
                 dto.DocumentFiles = new List<DocFile>();
-              //  var directoryPath = request.DirectoryPath;
+                //var directoryPath = request.DirectoryPath;
                 var files = _dbContext.DocumentContents.Where(file => file.IdDocument == request.DocumentId).ToList();
 
                 if (files.Count > 0 ) //&& directoryPath != null)
