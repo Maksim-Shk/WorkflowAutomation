@@ -6,6 +6,7 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
 {
     public class CreateNewDocumentCommand : IRequest<int>
     {
+        //TODO убрать лишние свойства
         public string UserId { get; set; }
         public string Title { get; set; }
         //public int RouteId { get; set; }
