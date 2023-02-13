@@ -1,8 +1,12 @@
 ﻿@page "/ViewDocumentList"
-@using Microsoft.Extensions.Logging;
+
+@using System.Drawing
 @using System.ComponentModel.DataAnnotations;
+@using Microsoft.Extensions.Logging;
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Blazorise.DataGrid
+
 @using WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentList;
 @using WorkflowAutomation.Application.Documents.Queries.GetDocumentList
 
@@ -12,9 +16,8 @@
 
 <h3>Просмотр документов</h3>
 
-<EditForm Model="@allowedDocumentListVm">
+<EditForm Model="@allowedDocumentListVm" Context="EditFormContext">
     <DataAnnotationsValidator />
-     
     <Table Hoverable Striped>
         <TableHeader ThemeContrast="ThemeContrast.Light">
             <TableRow>
@@ -28,16 +31,15 @@
             </TableRow>
         </TableHeader>
         <TableBody>
-            
-                @foreach (var doc in allowedDocumentListVm.AllowedDocuments)
-                        {
+                @foreach (var doc in allowedDocumentListVm.AllowedDocuments) 
+                {
             <TableRow>
                     <TableRowCell> <a href="ShowDocument/@doc.Id">@doc.Title</a></TableRowCell>
                     <TableRowCell> @doc.DocumentType</TableRowCell>
 
-                    <TableRowCell> <a href="UserInformation/@doc.SenderInfo.UserId">@doc.SenderInfo.UserInfo</a></TableRowCell>
+                    <TableRowCell> <a href="UserInformation/@doc.SenderInfo">@doc.SenderInfo</a></TableRowCell>
 
-                    <TableRowCell> <a href="UserInformation/@doc.RecieverInfo.UserId">@doc.RecieverInfo.UserInfo</a></TableRowCell>
+                    <TableRowCell> <a href="UserInformation/@doc.RecieverInfo">@doc.RecieverInfo</a></TableRowCell>
 
                     <TableRowCell> @doc.Status</TableRowCell>
 
@@ -45,11 +47,48 @@
 
                     <TableRowCell> @doc.RemoveDate</TableRowCell>
                 </TableRow>
-
                 }
-            
         </TableBody>
     </Table>
+
+    <h3>Просмотр документов 2</h3>
+    <DataGrid TItem="GetAllowedDocumentListLookupDto"
+              Data="@allowedDocumentListVm.AllowedDocuments"
+              Responsive
+              Filterable
+              Sortable
+              SortMode="DataGridSortMode.Single">
+
+        <DataGridColumn Field="@nameof(GetAllowedDocumentListLookupDto.Title)" Caption="Тема" ></DataGridColumn>
+        <DataGridColumn Field="@nameof(GetAllowedDocumentListLookupDto.DocumentType)" Caption="Тип документа" Filterable="false"></DataGridColumn>
+        <DataGridColumn Field="@nameof(GetAllowedDocumentListLookupDto.SenderInfo)" Caption="Отправитель"  Sortable="false">
+            <DisplayTemplate>
+             @{
+                    var userinfo = (context as GetAllowedDocumentListLookupDto)?.SenderInfo;
+                    var SenderId = (context as GetAllowedDocumentListLookupDto)?.SenderId;
+                    if (userinfo!=null){
+                        <a href="UserInformation/@SenderId">@userinfo</a>
+                    }
+             }
+            </DisplayTemplate>
+            </DataGridColumn>
+        <DataGridColumn Field="@nameof(GetAllowedDocumentListLookupDto.RecieverInfo)" Caption="Получатель" Sortable="false" >
+            <DisplayTemplate>
+                @{
+                    var userinfo = (context as GetAllowedDocumentListLookupDto)?.RecieverInfo;
+                    var RecieverId = (context as GetAllowedDocumentListLookupDto)?.RecieverId;
+
+                    if (userinfo != null){
+                        <a href="UserInformation/@RecieverId">@userinfo</a>
+                    }
+                }
+            </DisplayTemplate>
+            </DataGridColumn>
+        <DataGridColumn Field="@nameof(GetAllowedDocumentListLookupDto.Status)" Caption="Статус" ></DataGridColumn>
+        <DataGridColumn Field="@nameof(GetAllowedDocumentListLookupDto.CreateDate)" Caption="Дата создания" Filterable="false"></DataGridColumn>
+        <DataGridColumn Field="@nameof(GetAllowedDocumentListLookupDto.RemoveDate)" Caption="Дата удаления (если есть)" Filterable="false"></DataGridColumn>
+                
+    </DataGrid>
 </EditForm>
 @code {
     AllowedDocumentListVm allowedDocumentListVm = new();
@@ -61,6 +100,7 @@
             allowedDocumentListVm.AllowedDocuments = new List<GetAllowedDocumentListLookupDto>();
             //documentListVm = await httpClient.GetFromJsonAsync<DocumentListVm>("Document/GetAllDocuments");
             allowedDocumentListVm = await httpClient.GetFromJsonAsync<AllowedDocumentListVm>("Document/GetAllowedDocuments");
+          
         }
         catch (AccessTokenNotAvailableException exception)
         {

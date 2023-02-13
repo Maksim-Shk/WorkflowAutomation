@@ -7,8 +7,12 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentLis
         public DateTime CreateDate { get; set; }
         public DateTime? RemoveDate { get; set; }
         public string DocumentType { get; set; }
-        public ShortUserInfo SenderInfo { get; set; }
-        public ShortUserInfo RecieverInfo { get; set; }
+        public string? SenderInfo { get; set; }
+        public string? SenderId { get; set; }
+        public string? RecieverInfo { get; set; }
+        public string? RecieverId { get; set; }
+     //   public ShortUserInfo SenderInfo { get; set; }
+     //   public ShortUserInfo RecieverInfo { get; set; }
         //TODO ещё чего
         public string Status { get; set; }
     }
