@@ -38,9 +38,11 @@
   </ItemGroup>
 
   <ItemGroup>
+	  <!--TODO: выяснить необходимость ItemGroup-->
     <Folder Include="Documents\Commands\DeleteDocument\" />
     <Folder Include="Documents\Queries\Clusteranalyse\" />
     <Folder Include="Roles\Commands\SetRoleToUser\" />
+    <Folder Include="Subdivisions\Commands\CreateNewSubdivision\" />
   </ItemGroup>
 
 </Project>
