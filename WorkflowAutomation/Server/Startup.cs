@@ -1,7 +1,4 @@
-﻿using System.Text;
-using System.Reflection;
-
-using WorkflowAutomation.Application;
+﻿using WorkflowAutomation.Application;
 using WorkflowAutomation.Persistence;
 using WorkflowAutomation.Server.Data;
 using WorkflowAutomation.Server.Models;
@@ -9,14 +6,20 @@ using WorkflowAutomation.Server.Middleware;
 using WorkflowAutomation.Server.Extensions;
 using WorkflowAutomation.Application.Interfaces;
 using WorkflowAutomation.Application.Common.Mappings;
+using WorkflowAutomation.Server.Options;
+using WorkflowAutomation.Application.Documents;
+using WorkflowAutomation.Server.Hubs;
+
+using System.Text;
+using System.Reflection;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.ResponseCompression;
 using Duende.IdentityServer.Configuration;
-using WorkflowAutomation.Server.Options;
-using WorkflowAutomation.Application.Documents;
+
 namespace WorkflowAutomation.Server
 {
     public class Startup
@@ -28,6 +31,14 @@ namespace WorkflowAutomation.Server
 
         public void ConfigureServices(IServiceCollection services)
         {
+            //SignalR
+            services.AddSignalR();
+            services.AddResponseCompression(opts =>
+            {
+                opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+                    new[] { "application/octet-stream" });
+            });
+
             services.AddAutoMapper(config =>
             {
                 config.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
@@ -110,6 +121,9 @@ namespace WorkflowAutomation.Server
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            //SignalR
+            app.UseResponseCompression();
+
             if (env.IsDevelopment())
             {
                 app.UseMigrationsEndPoint();
@@ -140,7 +154,9 @@ namespace WorkflowAutomation.Server
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
-               //endpoints.MapDefaultControllerRoute();
+                //endpoints.MapDefaultControllerRoute();
+
+                endpoints.MapHub<ChatHub>("/chathub"); //SignalR
                 endpoints.MapFallbackToFile("index.html");
             });
         }
