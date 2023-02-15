@@ -28,7 +28,8 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetOneDocument
             dto.Statuses = new();
             var doc = _dbContext.Documents.FirstOrDefault(doc => doc.IdDocument == request.DocumentId);
             //TODO сделать экспешн
-            if (doc != null && (allowedUsers.FirstOrDefault(allowedUser => allowedUser.IdUser == doc.IdSender) != null || doc.IdSender == request.UserId))
+            if (doc != null && (allowedUsers.FirstOrDefault(allowedUser => allowedUser.IdUser == doc.IdSender) != null || 
+                (doc.IdSender == request.UserId) || (doc.IdReceiver == request.UserId)))
             {
                 dto.Id = doc.IdDocument;
                 dto.Title = doc.Title;

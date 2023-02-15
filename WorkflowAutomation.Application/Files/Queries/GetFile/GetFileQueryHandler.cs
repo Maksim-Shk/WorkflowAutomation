@@ -26,6 +26,7 @@ namespace WorkflowAutomation.Application.Files.Queries.GetFile
            CancellationToken cancellationToken)
         {
             var allowedUsers = await _documentRepository.GetAllowedUsers(request.UserId);
+            allowedUsers.Add(_dbContext.Users.FirstOrDefault(u=>u.IdUser==request.UserId));
             FileDto dto = new();
             var file = await _dbContext.DocumentContents.FirstOrDefaultAsync(file => file.IdDocument == request.FileId);
             var doc = await _dbContext.Documents.FirstOrDefaultAsync(doc => doc.IdDocument == file.IdDocument);
@@ -33,7 +34,8 @@ namespace WorkflowAutomation.Application.Files.Queries.GetFile
             string BasePath = @"..\Server\Development\unsafe_uploads\";
 
             //TODO сделать экспешн
-            if (file != null && (allowedUsers.FirstOrDefault(allowedUser => allowedUser.IdUser == doc.IdSender) != null || doc.IdSender == request.UserId))
+            if (file != null && (allowedUsers.FirstOrDefault(allowedUser => allowedUser.IdUser == doc.IdSender) != null 
+                || doc.IdSender == request.UserId || doc.IdReceiver == request.UserId))
             {
                 dto.Path = BasePath + file.Path;
              //   dto.FileStream = new FileStream(dto.Path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);

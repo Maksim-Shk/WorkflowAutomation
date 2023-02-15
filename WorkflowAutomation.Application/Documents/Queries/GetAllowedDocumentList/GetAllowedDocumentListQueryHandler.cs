@@ -52,7 +52,7 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentLis
                 .FirstOrDefaultAsync(subdivision => subdivision.IdSubdivision == _dbContext.UserSubdivisions
                 .FirstOrDefault(user => user.IdUser == request.UserId).IdSubdivision);
 
-            //Подразделения, ниже стоящие в иерархии подразделения пользователя
+            //Подразделения, нижестоящие в иерархии подразделения пользователя + подразделение пользователя
             List<Subdivision> allowedSubdivision = new List<Subdivision>();
             allowedSubdivision = GoDownRecursive(requstSubdivision.IdSubdivision);
 
@@ -77,13 +77,13 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentLis
             }
             // Все пользователи найденных подразделений без повторов
             var allowedUsers = bufallowedUsers.GroupBy(x => x.IdUser).Select(x => x.First()).ToList();
-
+            //allowedUsers.Add(_dbContext.Users.FirstOrDefault(u=>u.IdUser == request.UserId));
 
             List<Document> allowedDocuments = new List<Document>();
 
             foreach (var user in allowedUsers)
             {
-                allowedDocuments.AddRange(_dbContext.Documents.Where(doc => doc.IdSender == user.IdUser));
+                allowedDocuments.AddRange(_dbContext.Documents.Where(doc => doc.IdSender == user.IdUser || doc.IdReceiver == request.UserId));
             }
             //параллельный foreach
             // foreach (var user in allowedUsers)
