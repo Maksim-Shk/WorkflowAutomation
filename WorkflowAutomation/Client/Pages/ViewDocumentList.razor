@@ -17,49 +17,30 @@
 <h3>Просмотр документов</h3>
 
 <EditForm Model="@allowedDocumentListVm" Context="EditFormContext">
-    <DataAnnotationsValidator />
-    <Table Hoverable Striped>
-        <TableHeader ThemeContrast="ThemeContrast.Light">
-            <TableRow>
-                <TableHeaderCell>Тема</TableHeaderCell>
-                <TableHeaderCell>Тип документа</TableHeaderCell>
-                <TableHeaderCell>Отправитель</TableHeaderCell>
-                <TableHeaderCell>Получатель</TableHeaderCell>
-                <TableHeaderCell>Статус</TableHeaderCell>
-                <TableHeaderCell>Дата создания</TableHeaderCell>
-                <TableHeaderCell>Дата удаления (если есть)</TableHeaderCell>
-            </TableRow>
-        </TableHeader>
-        <TableBody>
-                @foreach (var doc in allowedDocumentListVm.AllowedDocuments) 
-                {
-            <TableRow>
-                    <TableRowCell> <a href="ShowDocument/@doc.Id">@doc.Title</a></TableRowCell>
-                    <TableRowCell> @doc.DocumentType</TableRowCell>
-
-                    <TableRowCell> <a href="UserInformation/@doc.SenderInfo">@doc.SenderInfo</a></TableRowCell>
-
-                    <TableRowCell> <a href="UserInformation/@doc.RecieverInfo">@doc.RecieverInfo</a></TableRowCell>
-
-                    <TableRowCell> @doc.Status</TableRowCell>
-
-                    <TableRowCell> @doc.CreateDate</TableRowCell>
-
-                    <TableRowCell> @doc.RemoveDate</TableRowCell>
-                </TableRow>
-                }
-        </TableBody>
-    </Table>
-
-    <h3>Просмотр документов 2</h3>
+       
     <DataGrid TItem="GetAllowedDocumentListLookupDto"
               Data="@allowedDocumentListVm.AllowedDocuments"
               Responsive
               Filterable
               Sortable
-              SortMode="DataGridSortMode.Single">
+              SortMode="DataGridSortMode.Multiple"
+              ShowPager
+              ShowPageSizes
+              PagerPosition="DataGridPagerPosition.Bottom"
+              PagerOptions="new(){ ButtonSize=Blazorise.Size.Medium}">
+    
+              <DataGridColumns>
+        <DataGridColumn Field="@nameof(GetAllowedDocumentListLookupDto.Title)" Caption="Тема" >
+            <DisplayTemplate>
+                @{
+                        var title = (context as GetAllowedDocumentListLookupDto)?.Title;
+                        var DocId = (context as GetAllowedDocumentListLookupDto)?.Id;
+                        if (title != null){  
+                            <a href="ShowDocument/@DocId">@title</a>
+                                       }}
+            </DisplayTemplate>
 
-        <DataGridColumn Field="@nameof(GetAllowedDocumentListLookupDto.Title)" Caption="Тема" ></DataGridColumn>
+        </DataGridColumn>
         <DataGridColumn Field="@nameof(GetAllowedDocumentListLookupDto.DocumentType)" Caption="Тип документа" Filterable="false"></DataGridColumn>
         <DataGridColumn Field="@nameof(GetAllowedDocumentListLookupDto.SenderInfo)" Caption="Отправитель"  Sortable="false">
             <DisplayTemplate>
@@ -67,7 +48,7 @@
                     var userinfo = (context as GetAllowedDocumentListLookupDto)?.SenderInfo;
                     var SenderId = (context as GetAllowedDocumentListLookupDto)?.SenderId;
                     if (userinfo!=null){
-                        <a href="UserInformation/@SenderId">@userinfo</a>
+                            <a href="UserInformation/@SenderId">@userinfo</a>
                     }
              }
             </DisplayTemplate>
@@ -79,7 +60,7 @@
                     var RecieverId = (context as GetAllowedDocumentListLookupDto)?.RecieverId;
 
                     if (userinfo != null){
-                        <a href="UserInformation/@RecieverId">@userinfo</a>
+                            <a href="UserInformation/@RecieverId">@userinfo</a>
                     }
                 }
             </DisplayTemplate>
@@ -87,7 +68,36 @@
         <DataGridColumn Field="@nameof(GetAllowedDocumentListLookupDto.Status)" Caption="Статус" ></DataGridColumn>
         <DataGridColumn Field="@nameof(GetAllowedDocumentListLookupDto.CreateDate)" Caption="Дата создания" Filterable="false"></DataGridColumn>
         <DataGridColumn Field="@nameof(GetAllowedDocumentListLookupDto.RemoveDate)" Caption="Дата удаления (если есть)" Filterable="false"></DataGridColumn>
-                
+       </DataGridColumns>
+
+       <PageButtonTemplate>
+            <Span TextColor="TextColor.Primary">
+                @context.PageNumber
+            </Span>
+       </PageButtonTemplate>
+        <NextPageButtonTemplate><Icon Name="IconName.StepForward" TextColor="TextColor.Primary" /></NextPageButtonTemplate>
+        <PreviousPageButtonTemplate><Icon Name="IconName.StepBackward" TextColor="TextColor.Primary" /></PreviousPageButtonTemplate>
+        <LastPageButtonTemplate><Icon Name="IconName.Forward" TextColor="TextColor.Primary" /></LastPageButtonTemplate>
+        <FirstPageButtonTemplate><Icon Name="IconName.Backward" TextColor="TextColor.Primary" /></FirstPageButtonTemplate>
+       
+        <ItemsPerPageTemplate></ItemsPerPageTemplate>
+        <PageSelectorTemplate>
+            <Select TextColor="TextColor.Primary" @bind-SelectedValue="@context.CurrentPage" Size="Blazorise.Size.Medium">
+                @for (int i = context.FirstVisiblePage; i <= context.LastVisiblePage; ++i)
+                {
+                    var pageNumber = i;
+                    <SelectItem Value="@pageNumber">@pageNumber</SelectItem>
+                }
+                </Select>
+        </PageSelectorTemplate>
+        <PageSizesTemplate>
+            <Select TextColor="TextColor.Primary" @bind-SelectedValue="@context.CurrentPageSize" Size="Blazorise.Size.Small">
+                @foreach (var curPageSize in context.PageSizes)
+                {
+                    <SelectItem Value="@curPageSize">@curPageSize</SelectItem>
+                }
+            </Select>
+        </PageSizesTemplate>
     </DataGrid>
 </EditForm>
 @code {
