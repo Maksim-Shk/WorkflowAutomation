@@ -8,19 +8,18 @@ namespace WorkflowAutomation.Application
 {
     public static class DependencyInjection
     {
-       public static IServiceCollection AddApplication(
-           this IServiceCollection services)
-       {
+        public static IServiceCollection AddApplication(
+            this IServiceCollection services)
+        {
             // Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
             // services.AddMediatR(assemblies);
             services.AddMediatR(Assembly.GetExecutingAssembly());
-          //  services 
-          //     .AddValidatorsFromAssemblies(new[] { Assembly.GetExecutingAssembly() });
-          //services.AddTransient(typeof(IPipelineBehavior<,>),
-          //    typeof(ValidationBehavior<,>));
-          //services.AddTransient(typeof(IPipelineBehavior<,>),
-          //    typeof(LoggingBehavior<,>));
-           return services;
-       }
+            services.AddValidatorsFromAssemblies(new[] { Assembly.GetExecutingAssembly() });
+            services.AddTransient(typeof(IPipelineBehavior<,>),
+                typeof(ValidationBehavior<,>));
+            //  services.AddTransient(typeof(IPipelineBehavior<,>),
+            //      typeof(LoggingBehavior<,>));
+            return services;
+        }
     }
 }
