@@ -8,5 +8,10 @@ namespace WorkflowAutomation.Server.Hubs
         {
             await Clients.All.SendAsync("ReceiveMessage", user, message);
         }
+
+        public async Task SendMessageToUser(string userId, string message)
+        {
+            await Clients.User(userId).SendAsync("ReceiveMessage", message);
+        }
     }
 }
