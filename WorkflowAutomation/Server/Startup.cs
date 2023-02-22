@@ -18,7 +18,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;
-using Duende.IdentityServer.Configuration;
 
 namespace WorkflowAutomation.Server
 {
@@ -149,7 +148,6 @@ namespace WorkflowAutomation.Server
             //app.UseIdentityServer();
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();

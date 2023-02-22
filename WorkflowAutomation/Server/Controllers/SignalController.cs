@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
-
 namespace WorkflowAutomation.Server.Controllers
 {
     [Authorize]
@@ -17,38 +16,29 @@ namespace WorkflowAutomation.Server.Controllers
     {
         private readonly IMapper _mapper;
         private readonly ILogger<SignalController> _logger;
-        private HubConnection? hubConnection;
+        private HubConnection? _hubConnection;
         public SignalController(
            IMapper mapper,
-            ILogger<SignalController> logger, IDocumentUserDbContext dbContext)
+           ILogger<SignalController> logger)
         {
             _mapper = mapper;
             _logger = logger;
         }
 
+        //[HttpGet("Test/{path}")]
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<string>> Test(string user, string message)
-        {    
-            List<string> messages = new List<string>();
-            hubConnection = new HubConnectionBuilder()
-            .WithUrl("/chathub")
-           .Build();
+        public async Task/*<ActionResult<string>>*/ Test(/*string path*/)
+        {
+            Uri myUri = new Uri("https://localhost:7225/chathub/", UriKind.Absolute);
+            _hubConnection = new HubConnectionBuilder()
+         .WithUrl(myUri)
+         .Build();
+            await _hubConnection.StartAsync();
+            await _hubConnection.SendAsync("Send", "пользователь", "сообщение пользователя");
 
-            hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
-            {
-                var encodedMsg = $"{user}: {message}";
-                messages.Add(encodedMsg);
-            });
-
-            await hubConnection.StartAsync();
-
-            if (hubConnection is not null)
-            {
-               // await hubConnection.SendAsync("SendMessage", userInput, messageInput);
-            }
-            return "test";
+            await _hubConnection.DisposeAsync();
+            //return path;
         }
-       
     }
 }
