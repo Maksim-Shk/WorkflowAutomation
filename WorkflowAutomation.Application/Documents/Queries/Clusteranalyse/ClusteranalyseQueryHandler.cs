@@ -1,12 +1,7 @@
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using WorkflowAutomation.Application.Interfaces;
-using WorkflowAutomation.Domain;
 
 namespace WorkflowAutomation.Application.Documents.Queries.Clusteranalyse
 {
@@ -20,6 +15,7 @@ namespace WorkflowAutomation.Application.Documents.Queries.Clusteranalyse
             IMapper mapper) =>
             (_dbContext, _mapper) = (dbContext, mapper);
 
+        //TODO имплементировать иерархичкский кластерный анализ
         public async Task<ClusteranalyseVm> Handle(ClusteranalyseQuery request,
             CancellationToken cancellationToken)
         {

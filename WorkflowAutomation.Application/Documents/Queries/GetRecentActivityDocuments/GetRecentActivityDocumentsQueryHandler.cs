@@ -1,14 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
-using WorkflowAutomation.Domain;
 using WorkflowAutomation.Application.Interfaces;
-using Document = WorkflowAutomation.Domain.Document;
 using Microsoft.EntityFrameworkCore;
 
 namespace WorkflowAutomation.Application.Documents.Queries.GetRecentActivityDocuments

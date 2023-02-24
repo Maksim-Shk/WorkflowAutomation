@@ -42,7 +42,6 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentLis
             yield return doc;
 
         }
-
         public async Task<AllowedDocumentListVm> Handle(GetAllowedDocumentListQuery request,
             CancellationToken cancellationToken)
         {
@@ -55,10 +54,6 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentLis
             //Подразделения, нижестоящие в иерархии подразделения пользователя + подразделение пользователя
             List<Subdivision> allowedSubdivision = new List<Subdivision>();
             allowedSubdivision = GoDownRecursive(requstSubdivision.IdSubdivision);
-
-            // List<AllowedSubdivisions> allowedSubdivisions2 = new List<AllowedSubdivisions>();
-
-            // allowedSubdivisions2 = _dbContext.GetAllowedSubdivisions(requstSubdivision.IdSubdivision);
 
             // Все пользователи найденных подразделений - здесь могут иметься повторы
             List<AppUser> bufallowedUsers = new List<AppUser>();
@@ -85,17 +80,6 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentLis
             {
                 allowedDocuments.AddRange(_dbContext.Documents.Where(doc => doc.IdSender == user.IdUser || doc.IdReceiver == request.UserId));
             }
-            //параллельный foreach
-            // foreach (var user in allowedUsers)
-            // {
-            //     IAsyncEnumerable<List<Document>> allowedDocuments = GetAllowedDocumentsAsync(user);
-            //    var list = await allowedDocuments.ToListAsync();
-            //     ALLOWED_DOCUMENTS.AddRange(allowedDocuments);
-            // }
-            // await foreach (var allowedUser in allowedUsers.ToLis) {
-            //     await allowedDocuments.()
-            // }
-            //  var AllowedDocuments = _dbContext.Documents.SelectMany(x=>x.IdSender == allowedUsers.)
 
             List<GetAllowedDocumentListLookupDto> listLookupDtos = new List<GetAllowedDocumentListLookupDto>();
             foreach (var doc in allowedDocuments)
@@ -106,7 +90,6 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentLis
                 dto.CreateDate = doc.CreateDate;
                 dto.RemoveDate = doc.RemoveDate;
 
-
                 var docStatuses = await _dbContext.DocumentStatuses.Where(s => s.IdDocument == doc.IdDocument).ToListAsync();
                 var lastDocStatus = docStatuses.MaxBy(ls => ls.AppropriationDate);
                 var status = await _dbContext.Statuses.FirstOrDefaultAsync(s => s.IdStatus == lastDocStatus.IdStatus);
@@ -114,7 +97,6 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentLis
                     dto.Status = status.Name;
                 else
                     dto.Status = "Статус не установлен";
-
 
                 var docType = await _dbContext.DocumentTypes.FirstAsync(t => t.IdDocumentType == doc.IdDocumentType);
                 dto.DocumentType = docType.Name;

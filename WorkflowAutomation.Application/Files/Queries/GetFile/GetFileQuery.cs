@@ -6,6 +6,5 @@ namespace WorkflowAutomation.Application.Files.Queries.GetFile
     {
         public int FileId { get; set; }
         public string UserId { get; set; }
-        //public string? DirectoryPath { get; set; }
     }
 }

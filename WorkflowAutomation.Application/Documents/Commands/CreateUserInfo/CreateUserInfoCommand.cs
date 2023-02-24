@@ -10,7 +10,7 @@ namespace WorkflowAutomation.Application.Documents.Commands.UserInfoCommand
         public string Surname { get; set; }
         public string Patronymic { get; set; }
         public int IdSubdivision { get; set; }
-        public int IdPositon { get; set; } //¬озможно сделать множественную рассылку
+        public int IdPositon { get; set; } 
 
     }
 }

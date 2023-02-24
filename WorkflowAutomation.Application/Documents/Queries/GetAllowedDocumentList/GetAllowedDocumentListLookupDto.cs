@@ -11,9 +11,6 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentLis
         public string? SenderId { get; set; }
         public string? RecieverInfo { get; set; }
         public string? RecieverId { get; set; }
-     //   public ShortUserInfo SenderInfo { get; set; }
-     //   public ShortUserInfo RecieverInfo { get; set; }
-        //TODO ещё чего
         public string Status { get; set; }
     }
 }

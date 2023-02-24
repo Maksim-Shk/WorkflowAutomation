@@ -20,7 +20,6 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
 
         public CreateNewDocumentCommandHandler(IDocumentUserDbContext dbContext, ILogger<CreateNewDocumentCommandHandler> logger)
         {
-
             _dbContext = dbContext;
             _logger = logger;
         }
@@ -50,12 +49,10 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
                     var documentStatus = new DocumentStatus
                     {
                         IdDocument = document.IdDocument,
+                        // IdStatus = request.StatusId,
                         IdStatus = _dbContext.Statuses.Where(x => x.Name == "Зарегистрировано").First().IdStatus,
-                        // IdStatus = request.StatusId, //Возможно по-умолчанию "В работе"
                         AppropriationDate = document.CreateDate,
-                        //??????
                         IdUser = request.UserId,
-
                     };
 
                     await _dbContext.DocumentStatuses.AddAsync(documentStatus, cancellationToken);
@@ -67,11 +64,7 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
                     var filesProcessed = 0;
                     var resourcePath = new Uri($"{request.resourcePath}");
                     List<UploadResult> uploadResults = new();
-                    // requestContent.Add(
-                    //     content: fileContent,
-                    //     name: "\"files\"",
-                    //     fileName: file.Name); - старый формат в станице создания документа,
-                    //     теперь requestContent.Add(fileContent, "FilesToUpload", file.Name);
+
                     foreach (var file in request.Files)
                     {
                         var uploadResult = new UploadResult();
@@ -144,7 +137,6 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
 
                         await _dbContext.Save(cancellationToken);
                     }
-
                     //await _dbContext.Save(cancellationToken);
 
                     transaction.Commit();
@@ -152,7 +144,7 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
                 }
                 catch 
                 {
-                    //TODO: вынести в настройки  кастомное исключение в Middleware
+                    //TODO: вынести в настройки кастомное исключение в Middleware
                     throw new InvalidOperationException();
                 }
             }

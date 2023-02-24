@@ -30,6 +30,7 @@ namespace WorkflowAutomation.Server.Controllers
         [Authorize]
         public async Task/*<ActionResult<string>>*/ Test(/*string path*/)
         {
+            //TODO использовать абсолютный путь
             Uri myUri = new Uri("https://localhost:7225/chathub/", UriKind.Absolute);
             _hubConnection = new HubConnectionBuilder()
          .WithUrl(myUri)

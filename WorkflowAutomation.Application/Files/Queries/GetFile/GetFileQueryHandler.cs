@@ -28,7 +28,7 @@ namespace WorkflowAutomation.Application.Files.Queries.GetFile
             var allowedUsers = await _documentRepository.GetAllowedUsers(request.UserId);
             allowedUsers.Add(_dbContext.Users.FirstOrDefault(u=>u.IdUser==request.UserId));
             FileDto dto = new();
-            var file = await _dbContext.DocumentContents.FirstOrDefaultAsync(file => file.IdDocument == request.FileId);
+            var file = await _dbContext.DocumentContents.FirstOrDefaultAsync(file => file.IdDocumentContent == request.FileId);
             var doc = await _dbContext.Documents.FirstOrDefaultAsync(doc => doc.IdDocument == file.IdDocument);
 
             string BasePath = @"..\Server\Development\unsafe_uploads\";

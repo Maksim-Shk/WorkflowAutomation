@@ -40,12 +40,10 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetOneDocument
                 dto.DocumentType = docType.Name;
 
                 var sender = await _dbContext.Users.FirstAsync(t => t.IdUser == doc.IdSender);
-                // dto.SenderInfo = new();
                 dto.SenderInfo = sender.Name + " " + sender.Surname + " " + sender.Patronymic;
                 dto.SenderId = sender.IdUser;
 
                 var reciever = await _dbContext.Users.FirstAsync(t => t.IdUser == doc.IdReceiver);
-                // dto.RecieverInfo = new();
                 dto.RecieverInfo = reciever.Name + " " + reciever.Surname + " " + reciever.Patronymic;
                 dto.RecieverId = reciever.IdUser;
 
@@ -61,18 +59,18 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetOneDocument
                     }).ToList();
 
                 dto.DocumentFiles = new List<DocFile>();
-                //var directoryPath = request.DirectoryPath;
                 var files = _dbContext.DocumentContents.Where(file => file.IdDocument == request.DocumentId).ToList();
 
-                if (files.Count > 0 ) //&& directoryPath != null)
+                if (files.Count > 0 ) 
                 {
                     foreach (var file in files)
                     {
-                      //  var filePath = directoryPath + "\\" + file.Path;
+                      
                         var docFile = new DocFile
                         {
                             Name = file.Name,
                             Id = file.IdDocumentContent,
+                           // Filestream создается в контроллере
                            // File = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)
                         };
                         dto.DocumentFiles.Add(docFile);

@@ -6,6 +6,5 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetOneDocument
     {
         public int DocumentId { get; set; }
         public string UserId { get; set; }
-     //   public string? DirectoryPath { get; set; }
     }
 }
