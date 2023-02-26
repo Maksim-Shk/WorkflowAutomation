@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.SignalR;
+using IdentityModel;
 
 namespace WorkflowAutomation.Server
 {
@@ -30,8 +32,7 @@ namespace WorkflowAutomation.Server
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //SignalR
-            services.AddSignalR();
+           
             services.AddResponseCompression(opts =>
             {
                 opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
@@ -110,7 +111,9 @@ namespace WorkflowAutomation.Server
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.JwtSecurityKey))
                     };
                 });
-
+            //SignalR
+            //services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
+            services.AddSignalR();
             services.AddControllersWithViews();
             services.AddRazorPages();
 
@@ -148,13 +151,14 @@ namespace WorkflowAutomation.Server
             //app.UseIdentityServer();
             app.UseAuthentication();
             app.UseAuthorization();
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
                 //endpoints.MapDefaultControllerRoute();
-
-                endpoints.MapHub<ChatHub>("/chathub"); //SignalR
+              
+                endpoints.MapHub<NotificationHub>("/notificationHub"); //SignalR
                 endpoints.MapFallbackToFile("index.html");
             });
         }

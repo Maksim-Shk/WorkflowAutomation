@@ -1,11 +1,10 @@
 ﻿@page "/SignalRTest"
-
-
+@using WorkflowAutomation.Shared
 @using Microsoft.AspNetCore.SignalR.Client
 @inject NavigationManager NavigationManager
 @inject HttpClient httpClient
+@inject JwtTokenProvider jwtTokenProvider
 @implements IAsyncDisposable
-
 <PageTitle>Index</PageTitle>
 
 
@@ -20,6 +19,17 @@
     }
 </ul>
 
+<button @onclick="SendToUserButton" disabled="@(!IsConnected)">Send</button>
+
+<hr>
+
+<ul id="messagesList">
+    @foreach (var message in notificationMessages)
+    {
+        <li>@message.Header - @message.Body</li>
+    }
+</ul>
+
 @code{
 
     private HubConnection? hubConnection;
@@ -27,13 +37,20 @@
     private List<string> messages = new List<string>();
     private string? userInput;
     private string? messageInput;
+    private List<NotificationMessage> notificationMessages = new List<NotificationMessage>();
+    private string? jwtToken;
 
     protected override async Task OnInitializedAsync()
     {
+        jwtToken = await jwtTokenProvider.GetJwtToken();
         hubConnection = new HubConnectionBuilder()
-            .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
+            .WithUrl(NavigationManager.ToAbsoluteUri("/notificationHub"), options =>
+            {
+                options.AccessTokenProvider = () => Task.FromResult(jwtToken);
+            })
+            .WithAutomaticReconnect()
             .Build();
-
+           
         hubConnection.On<string, string>("Receive", (user, message) =>
         {
             var encodedMsg = $"{user}: {message}";
@@ -41,17 +58,33 @@
             StateHasChanged();
         });
 
+        hubConnection.On<string, string>("ReceiveNotification", (header, body) =>
+     {
+         var encodedMsg = new NotificationMessage { Header = header, Body = body };
+         notificationMessages.Add(encodedMsg);
+         StateHasChanged();
+     });
+
         await hubConnection.StartAsync();
+
+      
     }
 
     private async Task SendButton()
     {
         if (hubConnection is not null)
         {
-            string Url = NavigationManager.ToAbsoluteUri("/chathub").ToString();
+            string Url = NavigationManager.ToAbsoluteUri("/notificationHub").ToString();
             //var a = await httpClient.GetStringAsync("Signal/Test/" + Url);
-            await httpClient.GetAsync("Signal");
+            await httpClient.GetAsync("Signal/GetRecive/" + jwtToken);
             // await hubConnection.SendAsync("SendMessage", userInput, messageInput);
+        }
+    }
+    private async Task SendToUserButton()
+    {
+        if (hubConnection is not null)
+        {
+            await httpClient.GetAsync("Signal/GetReciveUser/" + jwtToken);
         }
     }
 

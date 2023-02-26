@@ -37,6 +37,7 @@ builder.Services.AddAuthorizationCore(o =>
 });
 builder.Services.AddScoped<SignOutSessionStateManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
+builder.Services.AddScoped<JwtTokenProvider>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 await builder.Build().RunAsync();
