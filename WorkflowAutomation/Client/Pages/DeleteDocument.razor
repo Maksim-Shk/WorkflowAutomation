@@ -63,6 +63,7 @@
     private async Task HandleValidSubmit()
     {
         var httpResponse = await httpClient.PutAsJsonAsync("Document/" + deleteDocumentDto.DocumentId, deleteDocumentDto);
+        var http = await httpClient.PutAsJsonAsync("sa/", deleteDocumentDto);
         Logger.LogInformation("HandleValidSubmit called");
         //NavigationManager.NavigateTo("/ViewDocumentList");
     }

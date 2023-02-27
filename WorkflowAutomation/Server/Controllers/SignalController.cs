@@ -46,7 +46,8 @@ namespace WorkflowAutomation.Server.Controllers
         [Authorize]
         public async Task GetReciveUser(string jwtToken)
         {
-            Uri myUri = new Uri("https://localhost:7225/notificationHub/", UriKind.Absolute);
+            var adress = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}" + "/notificationHub/";
+            Uri myUri = new Uri(adress, UriKind.Absolute);
             _hubConnection = new HubConnectionBuilder()
          .WithUrl(myUri, options =>
          {

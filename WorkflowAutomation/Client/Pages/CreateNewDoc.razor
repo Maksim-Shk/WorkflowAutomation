@@ -1,13 +1,16 @@
 ﻿@page "/CreateNewDoc"
 @using Microsoft.AspNetCore.Http;
 @using Microsoft.Extensions.Logging;
-@using System.ComponentModel.DataAnnotations;
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
+@using Microsoft.AspNetCore.SignalR.Client
+
+@using System.ComponentModel.DataAnnotations;
 @using System.Net.Http.Headers
 @using System.Linq
 
+@using WorkflowAutomation.Shared
+@using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
 @using WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
 @using WorkflowAutomation.Application.DocType.Queries.GetDocumentTypeListQuery
 @using WorkflowAutomation.Application.Users.Queries.GetAllUsers
@@ -15,42 +18,43 @@
 @attribute [Authorize]
 @inject HttpClient Http
 @inject ILogger<CreateNewDoc> Logger
-
 @inject INotificationService NotificationService
+@inject JwtTokenProvider jwtTokenProvider
+@inject NavigationManager NavigationManager
+@implements IAsyncDisposable
 
-    
-    <h3>Создать новый документ</h3>
-    <hr/>
+<h3>Создать новый документ</h3>
+<hr />
 
-    <h6>Тема</h6>
-    
-    <Validations @ref="@ValidationsRef" Mode="ValidationMode.Manual" Model="@createNewDocumentDto" ValidateOnLoad="true"> 
-        <Validation>
-    <TextEdit id="Title" class="form-control" @bind-Text="@createNewDocumentDto.Title">
-             <Feedback >            
-            <ValidationError/>
-             </Feedback>
-        </TextEdit>
-        </Validation>
-   
-    
+<h6>Тема</h6>
 
-    
-    <h6 >Получатель</h6>
-    
+<Validations @ref="@ValidationsRef" Mode="ValidationMode.Manual" Model="@createNewDocumentDto" ValidateOnLoad="true">
     <Validation>
-    <Select @bind-SelectedValue="@createNewDocumentDto.ReceiverUserId">
-        <ChildContent>
-            
-            <SelectItem Disabled> Выбирите получателя....</SelectItem>
-            @foreach (var user in allUsers.AllUsers)
-            {
-                <SelectItem TValue="string" Value="@user.Id"> 
-                    @user.Name
-                    @user.Surname 
-                    @user.Patronymic 
-                    @user.SubdivisionName 
-                    @user.PositonName   
+        <TextEdit id="Title" class="form-control" @bind-Text="@createNewDocumentDto.Title">
+            <Feedback>
+                <ValidationError />
+            </Feedback>
+        </TextEdit>
+    </Validation>
+
+
+
+
+    <h6>Получатель</h6>
+
+    <Validation>
+        <Select @bind-SelectedValue="@createNewDocumentDto.ReceiverUserId">
+            <ChildContent>
+
+                <SelectItem Disabled> Выбирите получателя....</SelectItem>
+                @foreach (var user in allUsers.AllUsers)
+                {
+                    <SelectItem TValue="string" Value="@user.Id">
+                        @user.Name
+                        @user.Surname
+                        @user.Patronymic
+                        @user.SubdivisionName
+                        @user.PositonName
                     </SelectItem>
                 }
             </ChildContent>
@@ -59,25 +63,25 @@
             </Feedback>
         </Select>
     </Validation>
-    
+
 
     <h6>Тип документа</h6>
     <Validation>
-    <Select @bind-SelectedValue="@createNewDocumentDto.DocumentTypeId">
-        <ChildContent>
-            <SelectItem Disabled TValue="int"> Выберите тип документа</SelectItem>
-            @foreach (var docType in docTypes.DocumentTypes)
-            {
-                <SelectItem TValue="int" Value="@docType.Id">
-                    @docType.Name
-                </SelectItem>
-            }
-        </ChildContent>
-        <Feedback>
-            <ValidationError />
-        </Feedback>
-    </Select>
-</Validation>
+        <Select @bind-SelectedValue="@createNewDocumentDto.DocumentTypeId">
+            <ChildContent>
+                <SelectItem Disabled TValue="int"> Выберите тип документа</SelectItem>
+                @foreach (var docType in docTypes.DocumentTypes)
+                {
+                    <SelectItem TValue="int" Value="@docType.Id">
+                        @docType.Name
+                    </SelectItem>
+                }
+            </ChildContent>
+            <Feedback>
+                <ValidationError />
+            </Feedback>
+        </Select>
+    </Validation>
 </Validations>
 <br />
 
@@ -100,7 +104,7 @@
                 @foreach (var file in files)
                 {
                     <li>
-                                                
+
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-file-earmark-word" viewBox="0 0 16 16">
                             <path d="M5.485 6.879a.5.5 0 1 0-.97.242l1.5 6a.5.5 0 0 0 .967.01L8 9.402l1.018 3.73a.5.5 0 0 0 .967-.01l1.5-6a.5.5 0 0 0-.97-.242l-1.036 4.144-.997-3.655a.5.5 0 0 0-.964 0l-.997 3.655L5.485 6.88z" />
                             <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
@@ -108,20 +112,20 @@
                         <br>
                         <Span> @SizeSuffix(file.Size) </Span>
                         <Span>@file.Type</Span>
-                       @* @if (FileUpload(uploadResults, file.Name, Logger,
-                       out var result))
-                        {
-                            <span>
-                                Stored File Name: @result.StoredFileName
-                            </span>
-                        }
-                        else
-                        {
-                            <span>
-                                There was an error uploading the file
-                                (Error: @result.ErrorCode).
-                            </span>
-                        }*@
+                        @* @if (FileUpload(uploadResults, file.Name, Logger,
+                out var result))
+                {
+                <span>
+                Stored File Name: @result.StoredFileName
+                </span>
+                }
+                else
+                {
+                <span>
+                There was an error uploading the file
+                (Error: @result.ErrorCode).
+                </span>
+                }*@
                     </li>
                 }
             </ul>
@@ -130,14 +134,17 @@
 }
 
 
-    <br/>
+<br />
 <Button Color="Color.Primary" Clicked="@OnSaveClicked"> Создать документ </Button>
 <Button Color="Color.Primary" Clicked="@ShowWarningNotification"> ВААААААААААА </Button>
-    <br />
+<br />
 
 <br />
 
 @code {
+    private HubConnection? hubConnection;
+    private NotificationMessage? notificationMessage { get; set; }
+    private string? jwtToken;
     //используется для отслеживания количества файлов и отображения их имен
     private List<File> files = new();
 
@@ -169,6 +176,24 @@
         docTypes = await Http.GetFromJsonAsync<DocumentTypeListVm>("DocumentType");
         allUsers = await Http.GetFromJsonAsync<AllUsersListVm>("GetUsers/GetAllUsers");
 
+        jwtToken = await jwtTokenProvider.GetJwtToken();
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/notificationHub"), options =>
+            {
+                options.AccessTokenProvider = () => Task.FromResult(jwtToken);
+            })
+            .WithAutomaticReconnect()
+            .Build();
+
+        hubConnection.On<string, string>("ReceiveNotification", (header, body) =>
+      {
+          notificationMessage.Header = header;
+          notificationMessage.Body = body;
+          StateHasChanged();
+      });
+
+        await hubConnection.StartAsync();
+
     }
 
     private async Task OnSaveClicked()
@@ -199,7 +224,7 @@
             await ValidationsRef.ClearAll();
         }
         else
-        { 
+        {
             await NotificationService.Warning("НеУРА!", "Hello");
         }
 
@@ -230,7 +255,7 @@
             {
                 try
                 {
-                    files.Add(new() { Name = file.Name ,Type= file.ContentType, Size=file.Size});
+                    files.Add(new() { Name = file.Name, Type = file.ContentType, Size = file.Size });
 
                     var fileContent =
                         new StreamContent(file.OpenReadStream(maxFileSize));
@@ -308,6 +333,17 @@
         return string.Format("{0:n" + decimalPlaces + "} {1}",
             adjustedSize,
             SizeSuffixes[mag]);
+    }
+
+    public bool IsConnected =>
+      hubConnection?.State == HubConnectionState.Connected;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
     }
 }
 
