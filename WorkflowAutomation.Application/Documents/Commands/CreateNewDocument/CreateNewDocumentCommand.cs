@@ -18,6 +18,8 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
         public string EnvironmentName { get; set; }
         public int MaxAllowedFiles { get; set; }
         public long MaxFileSize { get; set; }
+        public string? jwtToken { get; set; }
+        public Uri? Uri { get; set; }
 
     }
 }

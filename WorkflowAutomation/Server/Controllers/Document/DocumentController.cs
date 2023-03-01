@@ -19,6 +19,7 @@ using WorkflowAutomation.Application.Documents.Queries.GetDocumentList;
 using WorkflowAutomation.Application.Documents.Commands.DeleteDocument;
 using WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentList;
 using WorkflowAutomation.Application.Documents.Queries.GetOneDocument;
+using Microsoft.AspNetCore.SignalR.Client;
 
 namespace WorkflowAutomation.Server.Controllers
 {
@@ -34,6 +35,7 @@ namespace WorkflowAutomation.Server.Controllers
         private readonly IWebHostEnvironment _env;
         private readonly IMapper _mapper;
         private readonly ILogger<DocumentController> _logger;
+        private HubConnection? _hubConnection;
 
         public DocumentController(IWebHostEnvironment env, IMapper mapper, ILogger<DocumentController> logger)
         {
@@ -42,11 +44,11 @@ namespace WorkflowAutomation.Server.Controllers
             _logger = logger;
         }
 
-        [HttpPost("CreateNewDocument")]
+        [HttpPost("CreateNewDocument/{jwtToken}")]
         [Authorize]
-        public async Task<ActionResult<int>> CreateNewDocument([FromForm]CreateNewDocumentDto createNewDocumentDto)
+        public async Task<ActionResult<int>> CreateNewDocument([FromForm]CreateNewDocumentDto createNewDocumentDto, string jwtToken)
         {
-        var command = _mapper.Map<CreateNewDocumentCommand>(createNewDocumentDto);
+            var command = _mapper.Map<CreateNewDocumentCommand>(createNewDocumentDto);
             command.UserId = UserId.ToString();
             command.resourcePath = new Uri($"{Request.Scheme}://{Request.Host}/");
             command.Files = createNewDocumentDto.FilesToUpload;
@@ -55,6 +57,9 @@ namespace WorkflowAutomation.Server.Controllers
             //TODO: вынести в appsettings
             command.MaxAllowedFiles = 3;
             command.MaxFileSize = 15 * 1024 * 1024;
+            command.jwtToken = jwtToken;
+            var adress = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}" + "/notificationHub/";
+            command.Uri = new Uri(adress, UriKind.Absolute);
             var docId = await Mediator.Send(command);
             
             return Ok(docId);

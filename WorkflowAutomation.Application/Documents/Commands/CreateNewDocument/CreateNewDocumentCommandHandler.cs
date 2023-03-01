@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 using System.Net;
 using System.Reflection.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.SignalR.Client;
 using WorkflowAutomation.Application.Interfaces;
 using WorkflowAutomation.Domain;
 using Document = WorkflowAutomation.Domain.Document;
@@ -17,7 +20,7 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
     {
         private readonly IDocumentUserDbContext _dbContext;
         private readonly ILogger<CreateNewDocumentCommandHandler> _logger;
-
+        private HubConnection? _hubConnection;
         public CreateNewDocumentCommandHandler(IDocumentUserDbContext dbContext, ILogger<CreateNewDocumentCommandHandler> logger)
         {
             _dbContext = dbContext;
@@ -27,6 +30,13 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
         public async Task<int> Handle(CreateNewDocumentCommand request,
             CancellationToken cancellationToken)
         {
+            _hubConnection = new HubConnectionBuilder()
+         .WithUrl(request.Uri, options =>
+         {
+             options.AccessTokenProvider = () => Task.FromResult(request.jwtToken);
+         }).WithAutomaticReconnect()
+           .Build();
+            await _hubConnection.StartAsync();
 
             using (var transaction = _dbContext.Database.BeginTransaction())
             {
@@ -140,10 +150,14 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
                     //await _dbContext.Save(cancellationToken);
 
                     transaction.Commit();
+                    await _hubConnection.SendAsync("SendNotification", request.UserId, "Успешно!", "Документ <" + request.Title + "> создан.");
+                    await _hubConnection.DisposeAsync();
                     return document.IdDocument;
                 }
-                catch 
+                catch
                 {
+                    await _hubConnection.SendAsync("SendNotification", request.UserId, "Ошибка!", "Документ не создан.");
+                    await _hubConnection.DisposeAsync();
                     //TODO: вынести в настройки кастомное исключение в Middleware
                     throw new InvalidOperationException();
                 }

@@ -23,8 +23,26 @@
 @inject NavigationManager NavigationManager
 @implements IAsyncDisposable
 
-<h3>Создать новый документ</h3>
+@*<h4>Состояние документа (заглушка для уведомления)</h4>
 <hr />
+@if (notificationMessage.Header != null){
+@notificationMessage.Header;
+}
+else {
+    <div>Ничего нет</div>
+}
+<hr />
+@if (notificationMessage.Header != null){
+@notificationMessage.Body;
+}
+else
+{
+    <div>Ничего нет</div>
+}
+<hr />
+
+<h3>Создать новый документ</h3>
+<hr />*@
 
 <h6>Тема</h6>
 
@@ -148,7 +166,7 @@
     //используется для отслеживания количества файлов и отображения их имен
     private List<File> files = new();
 
-    private List<UploadResult> uploadResults = new();
+    private List<Application.Documents.Commands.CreateNewDocument.UploadResult> uploadResults = new();
     private int maxAllowedFiles = 3;
     private bool shouldRender;
     private bool upload = false;
@@ -169,6 +187,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        notificationMessage = new();
         createNewDocumentDto = new();
         docTypes.DocumentTypes = new List<DocumentTypeListLookupDto>();
         allUsers.AllUsers = new List<GetAllUsersListDto>();
@@ -204,7 +223,7 @@
             requestContent.Add(new StringContent(createNewDocumentDto.Title), "Title");
             requestContent.Add(new StringContent(createNewDocumentDto.DocumentTypeId.ToString()), "DocumentTypeId");
             requestContent.Add(new StringContent(createNewDocumentDto.ReceiverUserId.ToString()), "ReceiverUserId");
-            var httpResponse = await Http.PostAsync("Document/CreateNewDocument", requestContent);//createNewDocumentDto
+            var httpResponse = await Http.PostAsync("Document/CreateNewDocument/" + jwtToken, requestContent);//createNewDocumentDto
 
             // var newUploadResults = await httpResponse.Content
             //     .ReadFromJsonAsync<IList<UploadResult>>();0
@@ -220,7 +239,8 @@
 
         if (await ValidationsRef.ValidateAll())
         {
-            await NotificationService.Success("УРА!", "Hello");
+            await NotificationService.Success(notificationMessage.Body,notificationMessage.Header);
+          //  await NotificationService.Success("УРА!", "Hello");
             await ValidationsRef.ClearAll();
         }
         else

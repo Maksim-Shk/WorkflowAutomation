@@ -15,7 +15,7 @@ namespace WorkflowAutomation.Server.Hubs
         public async Task SendNotification(string userId, string Header, string Body)
         {
             var userName = Context.User.Identity.Name;
-            await this.Clients.User(userId).SendAsync("ReceiveNotification", Header, userId);
+            await this.Clients.User(userId).SendAsync("ReceiveNotification", Header, Body);
         }
 
         public async Task SendMessageToUser(string userId, string message)
