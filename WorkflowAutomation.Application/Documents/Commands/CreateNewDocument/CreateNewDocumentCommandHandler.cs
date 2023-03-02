@@ -151,6 +151,8 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
 
                     transaction.Commit();
                     await _hubConnection.SendAsync("SendNotification", request.UserId, "Успешно!", "Документ <" + request.Title + "> создан.");
+                    await _hubConnection.SendAsync("SendNotification", request.UserId, "Успешно!2", "Документ <" + request.Title + "> создан.");
+                    await _hubConnection.SendAsync("SendNotification", request.UserId, "Успешно!3", "Документ <" + request.Title + "> создан.");
                     await _hubConnection.DisposeAsync();
                     return document.IdDocument;
                 }

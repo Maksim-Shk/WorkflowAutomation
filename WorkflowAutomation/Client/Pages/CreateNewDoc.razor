@@ -209,6 +209,8 @@ else
           notificationMessage.Header = header;
           notificationMessage.Body = body;
           StateHasChanged();
+          NotificationService.Success(notificationMessage.Body, notificationMessage.Header);
+          StateHasChanged();
       });
 
         await hubConnection.StartAsync();
@@ -239,15 +241,16 @@ else
 
         if (await ValidationsRef.ValidateAll())
         {
-            await NotificationService.Success(notificationMessage.Body,notificationMessage.Header);
+           // await NotificationService.Success(notificationMessage.Body,notificationMessage.Header);
           //  await NotificationService.Success("УРА!", "Hello");
             await ValidationsRef.ClearAll();
         }
         else
         {
-            await NotificationService.Warning("НеУРА!", "Hello");
+            await NotificationService.Warning("Ошибка валидации!", "Валидация не пройдена");
         }
 
+        NavigationManager.NavigateTo("/");
     }
 
     private void NameChanged(string value)
