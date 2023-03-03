@@ -148,12 +148,9 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
                         await _dbContext.Save(cancellationToken);
                     }
                     //await _dbContext.Save(cancellationToken);
-
-                    transaction.Commit();
                     await _hubConnection.SendAsync("SendNotification", request.UserId, "Успешно!", "Документ <" + request.Title + "> создан.");
-                    await _hubConnection.SendAsync("SendNotification", request.UserId, "Успешно!2", "Документ <" + request.Title + "> создан.");
-                    await _hubConnection.SendAsync("SendNotification", request.UserId, "Успешно!3", "Документ <" + request.Title + "> создан.");
                     await _hubConnection.DisposeAsync();
+                    transaction.Commit();
                     return document.IdDocument;
                 }
                 catch
