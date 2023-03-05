@@ -1,22 +1,19 @@
 ﻿@page "/DeleteDocument"
-@using Microsoft.Extensions.Logging
-@using System.ComponentModel.DataAnnotations
-@using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@using WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentList;
+
+@using WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentList
 @using WorkflowAutomation.Application.Documents.Queries.GetDocumentList
 @using WorkflowAutomation.Application.Documents.Commands.DeleteDocument
+
+@using Microsoft.Extensions.Logging
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.ComponentModel.DataAnnotations
 
 @inject HttpClient httpClient
 @inject NavigationManager NavigationManager
 
 @*@attribute [Authorize(Roles = "Админ")]*@
 @*@attribute [Authorize(Policy = "AdminPolicy")]*@ 
-
-
-@*@attribute [Authorize(Roles = "Админ")]*@
-
-
 @*@attribute [Authorize(Roles = "Зарегистрированный пользователь")]*@
 
 <EditForm Model="@deleteDocumentDto" OnValidSubmit="@HandleValidSubmit">

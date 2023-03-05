@@ -8,8 +8,9 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetRecentActivityDocu
 {
     public class RecentActivityDocumentLookupDto
     {
-        public string Titile { set; get; }
-
-        public DateTime LastActivityDate { get;set; }
+        public int? Id { get; set; }
+        public string? Description { get; set; }
+        public string? Content { set; get; }
+        public DateTime? Date { get;set; }
     }
 }

@@ -76,11 +76,15 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentLis
 
             List<Document> allowedDocuments = new List<Document>();
 
-            foreach (var user in allowedUsers)
-            {
-                allowedDocuments.AddRange(_dbContext.Documents.Where(doc => doc.IdSender == user.IdUser || doc.IdReceiver == request.UserId));
-            }
+            var allowedUserIds = allowedUsers.Select(x => x.IdUser).ToList();
+            allowedDocuments = await _dbContext.Documents
+                .Where(document => allowedUserIds.Contains(document.IdSender) || allowedUserIds.Contains(document.IdReceiver))
+                .ToListAsync();
 
+            // foreach (var user in allowedUsers)
+            // {
+            //     allowedDocuments.AddRange(_dbContext.Documents.Where(doc => doc.IdSender == user.IdUser || doc.IdReceiver == request.UserId));
+            // }
             List<GetAllowedDocumentListLookupDto> listLookupDtos = new List<GetAllowedDocumentListLookupDto>();
             foreach (var doc in allowedDocuments)
             {

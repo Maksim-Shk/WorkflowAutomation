@@ -19,6 +19,16 @@
     <h1>Здравствуйте, @getUserInfoDto.Name  @getUserInfoDto.Surname  @getUserInfoDto.Patronymic</h1>
     <h2>@getUserInfoDto.SubdivisionName - @getUserInfoDto.PositonName</h2>
 }
+ <hr />
+<h1>Последняя активность</h1>
+
+@foreach (var activity in recentActivityDocumentListVm.RecentDocuments)
+{
+    <hr />
+    <h5>@activity.Description</h5>
+    <div>@activity.Content - @activity.Date</div>
+}
+
 
 @code{
     private RecentActivityDocumentListVm recentActivityDocumentListVm = new();
@@ -27,7 +37,7 @@
     protected override async Task OnInitializedAsync()
     {
         recentActivityDocumentListVm.RecentDocuments = new List<RecentActivityDocumentLookupDto>();
-
+        recentActivityDocumentListVm = await httpClient.GetFromJsonAsync<RecentActivityDocumentListVm>("ActivityDocument/RecentActivityDocument");
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 

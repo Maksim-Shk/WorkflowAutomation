@@ -5,5 +5,6 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetRecentActivityDocu
     public class GetRecentActivityDocumentsQuery : IRequest<RecentActivityDocumentListVm>
     {
         public string UserId { get; set; }
+        public int NumberOfEntity { get; set; }
     }
 }

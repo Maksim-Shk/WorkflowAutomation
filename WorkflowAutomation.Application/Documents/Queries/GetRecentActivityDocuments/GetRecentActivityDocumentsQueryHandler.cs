@@ -1,6 +1,7 @@
-﻿using AutoMapper;
+﻿using WorkflowAutomation.Application.Interfaces;
+
+using AutoMapper;
 using MediatR;
-using WorkflowAutomation.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace WorkflowAutomation.Application.Documents.Queries.GetRecentActivityDocuments
@@ -18,21 +19,35 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetRecentActivityDocu
         public async Task<RecentActivityDocumentListVm> Handle(GetRecentActivityDocumentsQuery request,
             CancellationToken cancellationToken)
         {
-            List<RecentActivityDocumentLookupDto> RecentDocuments = new List<RecentActivityDocumentLookupDto>();
             var documents = await _dbContext.Documents.Where(x => x.IdSender == request.UserId ||
                                                           x.IdReceiver == request.UserId).ToListAsync();
-            var documentsStatus = await _dbContext.DocumentStatuses.Include(x => x.IdDocumentNavigation).ToListAsync();
+            var documentsStatuses = await _dbContext.DocumentStatuses.Include(x => x.IdDocumentNavigation).ToListAsync();
 
-            List<RecentActivityDocumentLookupDto> DtoDocs = new List<RecentActivityDocumentLookupDto>();
-            for (int i=0; i < 5; i++)
+            var documentIds = await _dbContext.Documents.Where(x => x.IdSender == request.UserId || x.IdReceiver == request.UserId)
+                                                  .Select(x => x.IdDocument).ToListAsync();
+
+            var documentStatuses = await _dbContext.DocumentStatuses
+                .Where(ds => documentIds.Contains(ds.IdDocument))
+                .ToListAsync();
+
+            var recentDocumentStatuses = documentStatuses
+                .OrderByDescending(x => x.AppropriationDate)
+                .Take(request.NumberOfEntity);
+
+            List<RecentActivityDocumentLookupDto> RecentDocuments = new List<RecentActivityDocumentLookupDto>();
+            foreach (var ds in recentDocumentStatuses)
             {
-                var docStat = documentsStatus.First(y => y.AppropriationDate == documentsStatus.Max(x => x.AppropriationDate));
+                var document = await _dbContext.Documents.FirstAsync(doc => doc.IdDocument == ds.IdDocument);
                 RecentActivityDocumentLookupDto dto = new RecentActivityDocumentLookupDto();
-                dto.LastActivityDate = docStat.AppropriationDate;
-                dto.Titile = documents.First(x => x.IdDocument == docStat.IdDocument).Title;
-                documentsStatus.Remove(docStat);
+                if (ds.IdUser == request.UserId)
+                    dto.Description = "Документ отправлен";
+                else dto.Description = "Документ получен";
+                dto.Content = document.Title;
+                dto.Date = ds.AppropriationDate;
+                dto.Id = ds.IdDocument;
                 RecentDocuments.Add(dto);
             }
+
             return new RecentActivityDocumentListVm { RecentDocuments = RecentDocuments };
         }
     }

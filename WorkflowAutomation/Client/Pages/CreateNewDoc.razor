@@ -1,4 +1,11 @@
 ﻿@page "/CreateNewDoc"
+
+@using WorkflowAutomation.Shared
+@using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
+@using WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
+@using WorkflowAutomation.Application.DocType.Queries.GetDocumentTypeListQuery
+@using WorkflowAutomation.Application.Users.Queries.GetAllUsers
+
 @using Microsoft.AspNetCore.Http;
 @using Microsoft.Extensions.Logging;
 @using Microsoft.AspNetCore.Authorization
@@ -9,11 +16,6 @@
 @using System.Net.Http.Headers
 @using System.Linq
 
-@using WorkflowAutomation.Shared
-@using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
-@using WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
-@using WorkflowAutomation.Application.DocType.Queries.GetDocumentTypeListQuery
-@using WorkflowAutomation.Application.Users.Queries.GetAllUsers
 
 @attribute [Authorize]
 @inject HttpClient Http

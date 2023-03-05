@@ -32,13 +32,14 @@ namespace WorkflowAutomation.Server.Controllers.Document
             _logger = logger;
         }
 
-        [HttpGet]
+        [HttpGet("RecentActivityDocument")]
         [Authorize]
-        public async Task<ActionResult<RecentActivityDocumentListVm>> GetAllowedDocuments()
+        public async Task<ActionResult<RecentActivityDocumentListVm>> GetRecentActivityDocument()
         {
             var query = new GetRecentActivityDocumentsQuery
             {
-                UserId = UserId
+                UserId = UserId,
+                NumberOfEntity = 10
             };
             var vm = await Mediator.Send(query);
             return Ok(vm);
