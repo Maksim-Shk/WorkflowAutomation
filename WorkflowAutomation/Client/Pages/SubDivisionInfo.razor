@@ -1,9 +1,11 @@
 ﻿@page "/SubDivisionInfo/{Id:int}"
 
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionInfo
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
 @inject NavigationManager NavigationManager
 @inject HttpClient httpClient
+
 <h2>Подразделение @Id</h2>
 <hr />
 <dl class="row">
@@ -46,7 +48,6 @@
     public int Id { get; set; }
 
     public List<int> PositionsIdList { get; set; }
-    //public List<Person> person { get; set; }
     public SubdivisionInfoDto subdivisionInfoDto { get; set; }
     protected override async Task OnInitializedAsync()
     {
@@ -56,14 +57,22 @@
             subdivisionInfoDto.Users = new();
             subdivisionInfoDto = await httpClient.GetFromJsonAsync<SubdivisionInfoDto>("Subdivision/GetSubdivisionInfo/" + Id);
 
-            var positions = subdivisionInfoDto.Users.GroupBy(x => x.PositionId).Select(x => x.First()).ToList().Select(e => new { Name = e.Position, IdPosition = e.PositionId }).ToList();
+            var positions = subdivisionInfoDto.Users
+                            .GroupBy(x => x.PositionId)
+                            .Select(x => x.First())
+                            .ToList()
+                            .Select(e => new {
+                                Name = e.Position,
+                                IdPosition = e.PositionId
+                            }).ToList();
+
             PositionsIdList = new List<int>();
             foreach (var pos in positions)
             {
                 PositionsIdList.Add(pos.IdPosition);
             }
         }
-        catch 
+        catch
         {
             NavigationManager.NavigateTo("/");
         }

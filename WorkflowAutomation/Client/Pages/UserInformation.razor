@@ -2,7 +2,6 @@
 
 @using WorkflowAutomation.Application.Users.Queries.GetFullUserInfo
 
-
 @inject HttpClient httpClient
 @inject NavigationManager NavigationManager
 
@@ -107,19 +106,22 @@
 
 </EditForm>
 
-@*</EditForm>*@
 @code {
     //ФИО, подразделение, должность, роль, дата регистриция , дата последнего входа в систему, дата увольнения(если есть), история работы(таблица)
+
     [Parameter]
     public string? Text { get; set; }
+
     FullUserInfoDto GetFullUserInfoDto = new();
-    DateTime? removaDate;
+
+    private DateTime? removaDate { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
             GetFullUserInfoDto.UserSubdivisionHistory = new List<UserSubdivisionHistory>();
-            Text = Text ?? "fantastic";
+            Text = Text ?? "default";
             GetFullUserInfoDto = await httpClient.GetFromJsonAsync<FullUserInfoDto>("GetUsers/GetFullUserInfo/" + Text);
 
             var list = GetFullUserInfoDto.UserSubdivisionHistory.Where(x => x.DismissalDate == null).ToList();

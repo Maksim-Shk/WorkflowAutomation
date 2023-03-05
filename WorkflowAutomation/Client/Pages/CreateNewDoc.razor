@@ -23,30 +23,10 @@
 @inject NavigationManager NavigationManager
 @implements IAsyncDisposable
 
-@*<h4>Состояние документа (заглушка для уведомления)</h4>
-<hr />
-@if (notificationMessage.Header != null){
-@notificationMessage.Header;
-}
-else {
-    <div>Ничего нет</div>
-}
-<hr />
-@if (notificationMessage.Header != null){
-@notificationMessage.Body;
-}
-else
-{
-    <div>Ничего нет</div>
-}
-<hr />
 
-<h3>Создать новый документ</h3>
-<hr />*@
-
-<h6>Тема</h6>
 
 <Validations @ref="@ValidationsRef" Mode="ValidationMode.Manual" Model="@createNewDocumentDto" ValidateOnLoad="true">
+    <h6>Тема</h6>
     <Validation>
         <TextEdit id="Title" class="form-control" @bind-Text="@createNewDocumentDto.Title">
             <Feedback>
@@ -55,15 +35,11 @@ else
         </TextEdit>
     </Validation>
 
-
-
-
     <h6>Получатель</h6>
 
     <Validation>
         <Select @bind-SelectedValue="@createNewDocumentDto.ReceiverUserId">
             <ChildContent>
-
                 <SelectItem Disabled> Выбирите получателя....</SelectItem>
                 @foreach (var user in allUsers.AllUsers)
                 {
@@ -233,7 +209,7 @@ else
             //    CreateDocumentId = Convert.ToInt32(responseString);
 
             // var newUploadResults = await httpResponse.Content
-            //     .ReadFromJsonAsync<IList<UploadResult>>();0
+            //     .ReadFromJsonAsync<IList<UploadResult>>();
             //
             // if (newUploadResults is not null)
             // {
@@ -246,9 +222,8 @@ else
 
         if (await ValidationsRef.ValidateAll())
         {
-            // await NotificationService.Success(notificationMessage.Body,notificationMessage.Header);
-            //  await NotificationService.Success("УРА!", "Hello");
-            await ValidationsRef.ClearAll();
+            // await NotificationService.Success("Успех!", "Документ создан");
+            // await ValidationsRef.ClearAll();
         }
         else
         {
@@ -269,10 +244,10 @@ else
         return str.Substring(0, 1).ToUpper() + (str.Length > 1 ? str.Substring(1) : "");
     }
 
-
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
         shouldRender = false;
+        //TODO: maxFileSize - вынести в настройки/получать из бэка
         long maxFileSize = 1024 * 150000;
         upload = false;
 
@@ -283,7 +258,11 @@ else
             {
                 try
                 {
-                    files.Add(new() { Name = file.Name, Type = file.ContentType, Size = file.Size });
+                    files.Add(new() {
+                            Name = file.Name,
+                            Type = file.ContentType,
+                            Size = file.Size
+                        });
 
                     var fileContent =
                         new StreamContent(file.OpenReadStream(maxFileSize));
@@ -312,20 +291,6 @@ else
         }
         shouldRender = true;
     }
-
-    //private static bool FileUpload(IList<UploadResult> uploadResults,
-    //    string? fileName, ILogger<CreateNewDoc> logger, out UploadResult result)
-    //{
-    //    result = uploadResults.SingleOrDefault(f => f.FileName == fileName) ?? new();
-
-    //    if (!result.Uploaded)
-    //    {
-    //        logger.LogInformation("{FileName} not uploaded (Err: 5)", fileName);
-    //        result.ErrorCode = 5;
-    //    }
-
-    //    return result.Uploaded;
-    //}
     private class File
     {
         public string? Name { get; set; }

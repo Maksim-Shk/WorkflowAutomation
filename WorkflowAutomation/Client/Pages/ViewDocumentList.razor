@@ -1,5 +1,8 @@
 ﻿@page "/ViewDocumentList"
 
+@using WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentList;
+@using WorkflowAutomation.Application.Documents.Queries.GetDocumentList
+
 @using System.Drawing
 @using System.ComponentModel.DataAnnotations;
 @using Microsoft.Extensions.Logging;
@@ -7,8 +10,6 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Blazorise.DataGrid
 
-@using WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentList;
-@using WorkflowAutomation.Application.Documents.Queries.GetDocumentList
 
 @attribute [Authorize]
 @inject NavigationManager NavigationManager
@@ -108,7 +109,6 @@
         try
         {
             allowedDocumentListVm.AllowedDocuments = new List<GetAllowedDocumentListLookupDto>();
-            //documentListVm = await httpClient.GetFromJsonAsync<DocumentListVm>("Document/GetAllDocuments");
             allowedDocumentListVm = await httpClient.GetFromJsonAsync<AllowedDocumentListVm>("Document/GetAllowedDocuments");
           
         }

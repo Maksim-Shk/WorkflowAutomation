@@ -1,14 +1,15 @@
 ﻿@page "/CreateNewUserInfo"
 
-@using System.ComponentModel.DataAnnotations;
-@using Microsoft.Extensions.Logging;
-@using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@using WorkflowAutomation.Client.Models;
+@using WorkflowAutomation.Client.Models
 @using WorkflowAutomation.Domain
 @using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
 @using WorkflowAutomation.Application.Documents.Queries.GetPositionList
 @using WorkflowAutomation.Application.Documents.Commands.UserInfoCommand
+
+@using Microsoft.Extensions.Logging;
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.ComponentModel.DataAnnotations
 
 @attribute [Authorize]
 

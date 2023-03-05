@@ -1,15 +1,14 @@
 ﻿@page "/ShowDocument/{Id:int}"
-@using Microsoft.Extensions.Logging;
-@using System.ComponentModel.DataAnnotations;
+@using WorkflowAutomation.Application.Documents.Queries.GetOneDocument
+
+@using Microsoft.Extensions.Logging
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@using WorkflowAutomation.Application.Documents.Queries.GetOneDocument
+@using System.ComponentModel.DataAnnotations
 
 @attribute [Authorize]
 @inject NavigationManager NavigationManager
 @inject HttpClient httpClient
-
-
 
 <EditForm Model="@getDocumentDto">
     <DataAnnotationsValidator />
@@ -53,10 +52,9 @@
         <dd class="col-sm-10">            
             <dl class="row">
                 @foreach (var file in getDocumentDto.DocumentFiles)
-            {
+                {
                     <a href="" @onclick="@(async()=> await FileDownload(file.Name, file.Id))" @onclick:preventDefault> @file.Name</a>
-                 //<div>@file.Name</div> 
-            }
+                }
              </dl>
         </dd>
         <hr/>
@@ -91,9 +89,8 @@
 @code {
     [Parameter]
     public int Id { get; set; }
-    //Название, отправитель, получатаель. тип. дата создание. дата удаления(Если есть).приерпленные фаилы(как в мудле)
-    DocumentDto getDocumentDto;
 
+    DocumentDto getDocumentDto;
 
     protected override async Task OnInitializedAsync()
     {
@@ -111,13 +108,10 @@
         }
     }
 
-    private async Task FileDownload(string fileName,int id)
+    private async Task FileDownload(string fileName, int id)
     {
-        
-            var fileStream = await httpClient.GetStreamAsync("/FileDownload/"+ id);
-            using var streamRef = new DotNetStreamReference(stream: fileStream);
-
-            await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
-      
+        var fileStream = await httpClient.GetStreamAsync("/FileDownload/" + id);
+        using var streamRef = new DotNetStreamReference(stream: fileStream);
+        await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
     }
 }

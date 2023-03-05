@@ -1,15 +1,12 @@
 ﻿@page "/"
 
-@using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-
-@using Microsoft.AspNetCore.Authorization
-@using System.Security.Claims
-
 @using WorkflowAutomation.Application.Users.Queries.GetUserInfo
 @using WorkflowAutomation.Application.Documents.Queries.GetRecentActivityDocuments
 
-
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
 
 @inject HttpClient httpClient
 @inject NavigationManager NavigationManager
@@ -22,8 +19,6 @@
     <h1>Здравствуйте, @getUserInfoDto.Name  @getUserInfoDto.Surname  @getUserInfoDto.Patronymic</h1>
     <h2>@getUserInfoDto.SubdivisionName - @getUserInfoDto.PositonName</h2>
 }
-
-
 
 @code{
     private RecentActivityDocumentListVm recentActivityDocumentListVm = new();
@@ -45,7 +40,4 @@
             getUserInfoDto = await httpClient.GetFromJsonAsync<GetUserInfoDto>("UserInfo");
         }
     }
-
-
-
-   }
+}

@@ -7,7 +7,6 @@
 @using WorkflowAutomation.Application.Documents.Queries.GetDocumentList
 @using WorkflowAutomation.Application.Documents.Commands.DeleteDocument
 
-@inject ILogger<Test> Logger
 @inject HttpClient httpClient
 @inject NavigationManager NavigationManager
 
@@ -64,7 +63,6 @@
     {
         var httpResponse = await httpClient.PutAsJsonAsync("Document/" + deleteDocumentDto.DocumentId, deleteDocumentDto);
         var http = await httpClient.PutAsJsonAsync("sa/", deleteDocumentDto);
-        Logger.LogInformation("HandleValidSubmit called");
         //NavigationManager.NavigateTo("/ViewDocumentList");
     }
 }

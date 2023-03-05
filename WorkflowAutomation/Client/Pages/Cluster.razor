@@ -41,8 +41,9 @@
 
 </EditForm>
 @code {
-    DocumentListVm documentListVm = new();
 
+    //заглушка для кластерного анализа
+    DocumentListVm documentListVm = new();
 
     public class ClusterClass
     {
@@ -59,7 +60,6 @@
         Clusters = new List<ClusterClass>();
         try
         {
-
             Clusters.Add(new ClusterClass { Id = 1, Title = "Документ 1", DateWork = "73 ч", DateCheck = "48 ч", DocClass = "Долгая работа, долгая проверка" });
             Clusters.Add(new ClusterClass { Id = 12, Title = "Документ 12", DateWork = "79 ч", DateCheck = "46 ч", DocClass = "Долгая работа, долгая проверка" });
             Clusters.Add(new ClusterClass { Id = 3, Title = "Документ 3", DateWork = "50 ч", DateCheck = "8 ч", DocClass = "Долгая работа, быстрая проверка" });
@@ -68,7 +68,6 @@
             Clusters.Add(new ClusterClass { Id = 2, Title = "Документ 2", DateWork = "29 ч", DateCheck = "47 ч", DocClass = "Быстрая работа, долгая проверка" });
             Clusters.Add(new ClusterClass { Id = 11, Title = "Документ 11", DateWork = "20 ч", DateCheck = "4 ч", DocClass = "Быстрая работа, быстрая проверка" });
             Clusters.Add(new ClusterClass { Id = 50, Title = "Документ 50", DateWork = "12 ч", DateCheck = "12 ч", DocClass = "Быстрая работа, быстрая проверка" });
-
         }
         catch (AccessTokenNotAvailableException exception)
         {

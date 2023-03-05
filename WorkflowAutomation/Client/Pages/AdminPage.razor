@@ -1,28 +1,27 @@
 ﻿@page "/adminpage"
 
 @using WorkflowAutomation.Application.Roles.Queries.GetRolesList
-@using WorkflowAutomation.Application.Users.Queries.GetAllowedUsers
+@using WorkflowAutomation.Application.Users.Queries.GetAllUsers;
 @using WorkflowAutomation.Application.Roles.Commands.SetRoleToUser;
 
 @using Microsoft.AspNetCore.Identity.EntityFrameworkCore
 @using Microsoft.AspNetCore.Identity
-@using Microsoft.Extensions.Logging;
-@using System.ComponentModel.DataAnnotations;
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.Extensions.Logging;
 
+@using System.ComponentModel.DataAnnotations;
 @using System.Security.Claims
 
 @inject HttpClient Http
 
-    <EditForm Model="@roleDto" OnValidSubmit="@HandleValidSubmit">
+<EditForm Model="@roleDto" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
-    
 
     <h6>Выберите пользователя</h6>
-   <InputSelect id="selectAllowedUser" class="form-control" @bind-Value="@roleDto.UserId">
+    <InputSelect id="selectAllowedUser" class="form-control" @bind-Value="@roleDto.UserId">
 
-        @foreach (var user in UsersVm.AllowedUsers)
+        @foreach (var user in UsersVm.AllUsers)
         {
             <option value="@user.Id"> @user.Name @user.Surname @user.Patronymic @user.SubdivisionName @user.PositonName </option>
         }
@@ -35,44 +34,34 @@
             <option value="@role.RoleId"> @role.Name </option>
         }
     </InputSelect>
-   <button type="submit" class="btn btn-primary"> Присвоить роль </button>
+    <button type="submit" class="btn btn-primary"> Присвоить роль </button>
 
     <br />
 </EditForm>
 
-<h3>AdminPage</h3>
-
-
 @code {
-    
-    AllowedUserListVm UsersVm = new();
+
+    AllUsersListVm UsersVm = new();
     RolesListVm RolesVm = new();
     SetRoleToUserDto roleDto = new();
 
-    //var a = _userManager.AddToRoleAsync
     protected override async Task OnInitializedAsync()
     {
-
         try
         {
-            UsersVm.AllowedUsers = new List<GetAllUsersListDto>();
+            UsersVm.AllUsers = new List<GetAllUsersListDto>();
             RolesVm.Roles = new List<RolesListLookupDto>();
-            UsersVm = await Http.GetFromJsonAsync<AllowedUserListVm>("GetAllowedUsers");
+            UsersVm = await Http.GetFromJsonAsync<AllUsersListVm>("GetUsers/GetAllUsers");
             RolesVm = await Http.GetFromJsonAsync<RolesListVm>("Role");
         }
         catch (AccessTokenNotAvailableException exception)
         {
             exception.Redirect();
         }
-
     }
 
     private async Task HandleValidSubmit()
     {
         var httpResponse = await Http.PutAsJsonAsync("Role/", roleDto);
-       // var httpResponse = await Http.PutAsJsonAsync("Document/" + deleteDocumentDto.DocumentId, deleteDocumentDto);
-       // Logger.LogInformation("HandleValidSubmit called");
-        //NavigationManager.NavigateTo("/ViewDocumentList");
     }
-
 }
