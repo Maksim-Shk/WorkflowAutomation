@@ -1,5 +1,6 @@
 ﻿@page "/ShowDocument/{Id:int}"
 @using WorkflowAutomation.Application.Documents.Queries.GetOneDocument
+@using WorkflowAutomation.Application.Users.Queries.GetUserInfo;
 
 @using Microsoft.Extensions.Logging
 @using Microsoft.AspNetCore.Authorization
@@ -9,13 +10,14 @@
 @attribute [Authorize]
 @inject NavigationManager NavigationManager
 @inject HttpClient httpClient
+@*@inject AuthenticationStateProvider AuthenticationStateProvider*@
 
 <EditForm Model="@getDocumentDto">
     <DataAnnotationsValidator />
     <h4>Сведения о документе @Id </h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             Название документа
         </dt>
         <dd class="col-sm-10">
@@ -45,60 +47,81 @@
         <dd class="col-sm-10">
             @getDocumentDto.RemoveDate
         </dd>
-        <hr/>
+        <hr />
         <dt class="col-sm-2">
             Прикрепленный файл
         </dt>
-        <dd class="col-sm-10">            
+        <dd class="col-sm-10">
             <dl class="row">
                 @foreach (var file in getDocumentDto.DocumentFiles)
                 {
                     <a href="" @onclick="@(async()=> await FileDownload(file.Name, file.Id))" @onclick:preventDefault> @file.Name</a>
                 }
-             </dl>
+            </dl>
         </dd>
-        <hr/>
+        <hr />
         <dt class="col-sm-2">
             История статусов документа
         </dt>
         <dd class="col-sm-10">
             <dl class="row">
-               <Table Hoverable Striped>
-                   <TableHeader ThemeContrast="ThemeContrast.Light">
-                       <TableRow>
-                           <TableHeaderCell>Статус</TableHeaderCell>
-                           <TableHeaderCell>Дата</TableHeaderCell>
-                       </TableRow>
-                   </TableHeader>
-                   <TableBody>
-                        @foreach(var status in getDocumentDto.Statuses)
+                <Table Hoverable Striped>
+                    <TableHeader ThemeContrast="ThemeContrast.Light">
+                        <TableRow>
+                            <TableHeaderCell>Статус</TableHeaderCell>
+                            <TableHeaderCell>Дата</TableHeaderCell>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        @foreach (var status in getDocumentDto.Statuses)
                         {
-                         <TableRow>
-                             <TableRowCell>@status.Name</TableRowCell>
-                             <TableRowCell>@status.Date</TableRowCell>
-                         </TableRow>   
+                            <TableRow>
+                                <TableRowCell>@status.Name</TableRowCell>
+                                <TableRowCell>@status.Date</TableRowCell>
+                            </TableRow>
                         }
                     </TableBody>
-               </Table>
+                </Table>
             </dl>
         </dd>
-        </dl>
 
+        @if (getDocumentDto.SenderId == getUserInfoDto.Id)
+        {
+            <dt class="col-sm-2">
+                Отозвать документ
+            </dt>
+            <dd class="col-sm-10">
+                <Button Color="Color.Danger" Clicked="@OnSaveClicked"> ОТОЗВАТЬ </Button>
+            </dd>
+        }
+        @if (getDocumentDto.RecieverId == getUserInfoDto.Id)
+        {
+            <dt class="col-sm-2">
+                Принять документ
+            </dt>
+            <dd class="col-sm-10">
+                <Button Color="Color.Success" Clicked="@OnSaveClicked"> ПРИНЯТЬ </Button>
+            </dd>
+        }
+    </dl>
 </EditForm>
 
 @code {
     [Parameter]
     public int Id { get; set; }
 
-    DocumentDto getDocumentDto;
+    DocumentDto getDocumentDto = new();
+    private GetUserInfoDto getUserInfoDto = new();
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            getDocumentDto = new();
+            //var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            //var user = authState.User.Claims.Select(x=>x.Type).ToList();
             getDocumentDto.DocumentFiles = new();
             getDocumentDto.Statuses = new();
+            getUserInfoDto = await httpClient.GetFromJsonAsync<GetUserInfoDto>("UserInfo");
             getDocumentDto = await httpClient.GetFromJsonAsync<DocumentDto>("Document/GetDocument/" + Id);
 
         }
@@ -113,5 +136,10 @@
         var fileStream = await httpClient.GetStreamAsync("/FileDownload/" + id);
         using var streamRef = new DotNetStreamReference(stream: fileStream);
         await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+    }
+
+    private async Task OnSaveClicked()
+    {
+
     }
 }
