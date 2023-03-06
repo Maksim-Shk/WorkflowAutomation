@@ -16,7 +16,6 @@
 @using System.Net.Http.Headers
 @using System.Linq
 
-
 @attribute [Authorize]
 @inject HttpClient Http
 @inject ILogger<CreateNewDoc> Logger
@@ -24,8 +23,6 @@
 @inject JwtTokenProvider jwtTokenProvider
 @inject NavigationManager NavigationManager
 @implements IAsyncDisposable
-
-
 
 <Validations @ref="@ValidationsRef" Mode="ValidationMode.Manual" Model="@createNewDocumentDto" ValidateOnLoad="true">
     <h6>Тема</h6>
