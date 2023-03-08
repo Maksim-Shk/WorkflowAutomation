@@ -49,6 +49,7 @@
   <ItemGroup>
     <Folder Include="Controllers\Identity\" />
     <Folder Include="Controllers\Role\" />
+    <Folder Include="Controllers\Status\" />
     <Folder Include="Development\unsafe_uploads\" />
   </ItemGroup>
 

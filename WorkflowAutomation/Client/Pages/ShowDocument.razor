@@ -1,7 +1,10 @@
 ﻿@page "/ShowDocument/{Id:int}"
+@using WorkflowAutomation.Shared;
 @using WorkflowAutomation.Application.Documents.Queries.GetOneDocument
+@using WorkflowAutomation.Application.Statuses.Commands.ChangeStatus;
 @using WorkflowAutomation.Application.Users.Queries.GetUserInfo;
 
+@using Microsoft.AspNetCore.SignalR.Client;
 @using Microsoft.Extensions.Logging
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
@@ -10,6 +13,9 @@
 @attribute [Authorize]
 @inject NavigationManager NavigationManager
 @inject HttpClient httpClient
+@inject JwtTokenProvider jwtTokenProvider
+@inject INotificationService NotificationService
+@implements IAsyncDisposable
 @*@inject AuthenticationStateProvider AuthenticationStateProvider*@
 
 <EditForm Model="@getDocumentDto">
@@ -91,7 +97,7 @@
                 Отозвать документ
             </dt>
             <dd class="col-sm-10">
-                <Button Color="Color.Danger" Clicked="@OnSaveClicked"> ОТОЗВАТЬ </Button>
+                <Button Color="Color.Danger" Clicked="@RejectClick"> ОТОЗВАТЬ </Button>
             </dd>
         }
         @if (getDocumentDto.RecieverId == getUserInfoDto.Id)
@@ -100,30 +106,64 @@
                 Принять документ
             </dt>
             <dd class="col-sm-10">
-                <Button Color="Color.Success" Clicked="@OnSaveClicked"> ПРИНЯТЬ </Button>
+                <Button Color="Color.Success" Clicked="@ApproveClick"> ПРИНЯТЬ </Button>
             </dd>
         }
     </dl>
 </EditForm>
 
 @code {
+    private HubConnection? hubConnection;
+    private NotificationMessage? notificationMessage { get; set; }
+    private string? jwtToken;
+    /// <summary>
+    /// СТАТУС УТВЕРЖДЕНИЯ ДОКУМЕНТА
+    /// </summary>
+    private int ApproveStatusId { get; set; }
+    /// <summary>
+    /// СТАТУС ОТМЕНЫ ДОКУМЕНТА
+    /// </summary>
+    private int RejectStatusId { get; set; }
     [Parameter]
     public int Id { get; set; }
 
     DocumentDto getDocumentDto = new();
     private GetUserInfoDto getUserInfoDto = new();
-
+    ChangeStatusDto changeStatusDto = new();
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            //var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            //var user = authState.User.Claims.Select(x=>x.Type).ToList();
             getDocumentDto.DocumentFiles = new();
             getDocumentDto.Statuses = new();
+            notificationMessage = new();
+            jwtToken = await jwtTokenProvider.GetJwtToken();
+            hubConnection = new HubConnectionBuilder()
+           .WithUrl(NavigationManager.ToAbsoluteUri("/notificationHub"), options =>
+           {
+               options.AccessTokenProvider = () => Task.FromResult(jwtToken);
+           })
+           .WithAutomaticReconnect()
+           .Build();
+            hubConnection.On<string, string>("ReceiveNotification", (header, body) =>
+                {
+                    notificationMessage.Header = header;
+                    notificationMessage.Body = body;
+                    StateHasChanged();
+                    NotificationService.Success(notificationMessage.Body, notificationMessage.Header);
+                    StateHasChanged();
+                });
+            await hubConnection.StartAsync();
+            //Статус - "Выполнено"
+            ApproveStatusId = 3;
+            //Статус - "Удалено"
+            RejectStatusId = 5;
+            //var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            //var user = authState.User.Claims.Select(x=>x.Type).ToList();
             getUserInfoDto = await httpClient.GetFromJsonAsync<GetUserInfoDto>("UserInfo");
             getDocumentDto = await httpClient.GetFromJsonAsync<DocumentDto>("Document/GetDocument/" + Id);
 
+       
         }
         catch (AccessTokenNotAvailableException exception)
         {
@@ -138,8 +178,28 @@
         await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
     }
 
-    private async Task OnSaveClicked()
+    private async Task ApproveClick()
     {
+        changeStatusDto.JwtToken = jwtToken;
+        changeStatusDto.StatusId = ApproveStatusId;
+        changeStatusDto.DocumentId = getDocumentDto.Id;
+        var httpResponse = await httpClient.PutAsJsonAsync("Status/ChangeStatus", changeStatusDto);
+    }
+    private async Task RejectClick()
+    {
+        changeStatusDto.JwtToken = await jwtTokenProvider.GetJwtToken();
+        changeStatusDto.StatusId = RejectStatusId;
+        changeStatusDto.DocumentId = getDocumentDto.Id;
+        var httpResponse = await httpClient.PutAsJsonAsync("Status/ChangeStatus", changeStatusDto);
+    }
+    public bool IsConnected =>
+      hubConnection?.State == HubConnectionState.Connected;
 
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
     }
 }

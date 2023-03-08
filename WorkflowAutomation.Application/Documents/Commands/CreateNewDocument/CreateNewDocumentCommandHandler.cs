@@ -155,10 +155,17 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
                 }
                 catch
                 {
-                    await _hubConnection.SendAsync("SendNotification", request.UserId, "Ошибка!", "Документ не создан.");
-                    await _hubConnection.DisposeAsync();
-                    //TODO: вынести в настройки кастомное исключение в Middleware
-                    throw new InvalidOperationException();
+                    //try
+                    //{
+                        await _hubConnection.SendAsync("SendNotification", request.UserId, "Ошибка!", "Документ не создан.");
+                        await _hubConnection.DisposeAsync();
+                    //    transaction.Rollback();
+                    //}
+                    //catch
+                    //{
+                        //TODO: вынести в настройки кастомное исключение в Middleware
+                        throw new InvalidOperationException();
+                    //}
                 }
             }
         }

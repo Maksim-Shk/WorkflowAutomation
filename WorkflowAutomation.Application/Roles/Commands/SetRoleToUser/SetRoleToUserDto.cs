@@ -1,7 +1,5 @@
 using AutoMapper;
 using WorkflowAutomation.Application.Common.Mappings;
-using System.ComponentModel.DataAnnotations;
-using WorkflowAutomation.Application.Documents.Commands.UserInfoCommand;
 
 namespace WorkflowAutomation.Application.Roles.Commands.SetRoleToUser
 {
