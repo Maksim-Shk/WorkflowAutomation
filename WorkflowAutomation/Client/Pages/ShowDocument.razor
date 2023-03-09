@@ -127,9 +127,9 @@
     [Parameter]
     public int Id { get; set; }
 
-    DocumentDto getDocumentDto = new();
-    private GetUserInfoDto getUserInfoDto = new();
-    ChangeStatusDto changeStatusDto = new();
+    private DocumentDto? getDocumentDto = new();
+    private GetUserInfoDto? getUserInfoDto = new();
+    private ChangeStatusDto? changeStatusDto = new();
     protected override async Task OnInitializedAsync()
     {
         try
@@ -145,12 +145,12 @@
            })
            .WithAutomaticReconnect()
            .Build();
-            hubConnection.On<string, string>("ReceiveNotification", (header, body) =>
+            hubConnection.On<string, string>("ReceiveNotification", async (header, body) => 
                 {
                     notificationMessage.Header = header;
                     notificationMessage.Body = body;
-                    StateHasChanged();
-                    NotificationService.Success(notificationMessage.Body, notificationMessage.Header);
+                    await GetDocumentDto();
+                    await NotificationService.Success(notificationMessage.Body, notificationMessage.Header);
                     StateHasChanged();
                 });
             await hubConnection.StartAsync();
@@ -161,7 +161,7 @@
             //var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             //var user = authState.User.Claims.Select(x=>x.Type).ToList();
             getUserInfoDto = await httpClient.GetFromJsonAsync<GetUserInfoDto>("UserInfo");
-            getDocumentDto = await httpClient.GetFromJsonAsync<DocumentDto>("Document/GetDocument/" + Id);
+            await GetDocumentDto();
 
        
         }
@@ -169,6 +169,11 @@
         {
             exception.Redirect();
         }
+    }
+
+    private async Task GetDocumentDto()
+    {
+        getDocumentDto = await httpClient.GetFromJsonAsync<DocumentDto>("Document/GetDocument/" + Id);
     }
 
     private async Task FileDownload(string fileName, int id)

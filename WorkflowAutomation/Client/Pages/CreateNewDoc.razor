@@ -18,10 +18,10 @@
 
 @attribute [Authorize]
 @inject HttpClient Http
-@inject ILogger<CreateNewDoc> Logger
 @inject INotificationService NotificationService
 @inject JwtTokenProvider jwtTokenProvider
 @inject NavigationManager NavigationManager
+@inject ILogger<CreateNewDocumentDto> Logger
 @implements IAsyncDisposable
 
 <Validations @ref="@ValidationsRef" Mode="ValidationMode.Manual" Model="@createNewDocumentDto" ValidateOnLoad="true">
