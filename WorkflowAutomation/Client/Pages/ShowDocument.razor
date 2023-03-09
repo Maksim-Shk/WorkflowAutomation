@@ -97,7 +97,14 @@
                 Отозвать документ
             </dt>
             <dd class="col-sm-10">
-                <Button Color="Color.Danger" Clicked="@RejectClick"> ОТОЗВАТЬ </Button>
+                @if (getDocumentDto.Statuses.FirstOrDefault(s => s.Id == RejectStatusId) == null)
+                {
+                    <Button Color="Color.Danger" Clicked="@RejectClick"> ОТОЗВАТЬ </Button>
+                }
+                else
+                {
+                    <Button Color="Color.Danger"  Disabled Clicked="@RejectClick"> ОТОЗВАНО </Button>
+                }
             </dd>
         }
         @if (getDocumentDto.RecieverId == getUserInfoDto.Id)
@@ -106,7 +113,13 @@
                 Принять документ
             </dt>
             <dd class="col-sm-10">
-                <Button Color="Color.Success" Clicked="@ApproveClick"> ПРИНЯТЬ </Button>
+                @if (getDocumentDto.Statuses.FirstOrDefault(s=>s.Id == ApproveStatusId) == null) {
+                    <Button Color="Color.Success" Clicked="@ApproveClick"> ПРИНЯТЬ </Button>
+                }
+                else
+                {
+                    <Button Color="Color.Success" Disabled Clicked="@ApproveClick"> ПРИНЯТО </Button>
+                }
             </dd>
         }
     </dl>
