@@ -16,7 +16,7 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
             RuleFor(createNewDocumentCommand => createNewDocumentCommand.EnvironmentName).NotEmpty();
             RuleFor(createNewDocumentCommand => createNewDocumentCommand.jwtToken).NotEmpty();
             //TODO: вынести лимит и размер файлов в настройки
-            RuleFor(createNewDocumentCommand => createNewDocumentCommand.MaxAllowedFiles).GreaterThanOrEqualTo(10);
+            RuleFor(createNewDocumentCommand => createNewDocumentCommand.MaxAllowedFiles).GreaterThanOrEqualTo(1).LessThanOrEqualTo(10);
             RuleFor(createNewDocumentCommand => createNewDocumentCommand.MaxFileSize).GreaterThanOrEqualTo(15 * 1024 * 1024);
         }
     }

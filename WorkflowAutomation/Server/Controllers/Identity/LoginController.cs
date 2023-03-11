@@ -19,7 +19,6 @@ namespace WorkflowAutomation.Server.Controllers
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
-
         private readonly AuthJwtOptions _authenticationSettings;
 
         public LoginController(

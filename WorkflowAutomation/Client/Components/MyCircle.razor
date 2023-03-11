@@ -1,4 +1,4 @@
-﻿<button class="btn btn-outline-secondary rounded-circle" @onclick="() => showComponent = true">@Text</button>
+﻿<button class="btn btn-outline-secondary rounded-circle" @onclick="() => showComponent = !showComponent">@Text</button>
 @if (showComponent)
 {   <hr/>
     <label style="font-size:18px">@SubText</label>
@@ -11,5 +11,5 @@
             public string Text { get; set; }
             [Parameter]
             public string SubText{ get; set; }
-            bool showComponent;
+            bool showComponent = false;
 }
