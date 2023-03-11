@@ -1,17 +1,8 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using WorkflowAutomation.Application.Interfaces;
 using WorkflowAutomation.Domain;
-using WorkflowAutomation.Application.Documents.Queries.GetRecentActivityDocuments;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using WorkflowAutomation.Domain.Database;
 
 namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentList
 {

@@ -1,12 +1,10 @@
-﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-using WorkflowAutomation.Application.Interfaces;
+﻿using WorkflowAutomation.Application.Interfaces;
 using WorkflowAutomation.Domain;
+
+using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using MediatR;
 
 namespace WorkflowAutomation.Application.Documents.Queries.GetPositionList
 {

@@ -1,9 +1,8 @@
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
 using WorkflowAutomation.Application.Interfaces;
 using WorkflowAutomation.Application.Common.Exceptions;
 using WorkflowAutomation.Domain;
+
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace WorkflowAutomation.Application.Documents.Commands.DeleteDocument

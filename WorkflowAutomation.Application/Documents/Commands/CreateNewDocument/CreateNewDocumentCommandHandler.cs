@@ -1,16 +1,12 @@
-﻿using System;
+﻿using WorkflowAutomation.Application.Interfaces;
+using WorkflowAutomation.Domain;
+
 using System.Data;
-using System.Data.Common;
 using System.Net;
-using System.Reflection.Metadata;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
-using WorkflowAutomation.Application.Interfaces;
-using WorkflowAutomation.Domain;
+
 using Document = WorkflowAutomation.Domain.Document;
 
 namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument

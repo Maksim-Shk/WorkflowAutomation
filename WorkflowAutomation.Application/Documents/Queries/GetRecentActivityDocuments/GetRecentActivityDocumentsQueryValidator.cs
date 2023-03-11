@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FluentValidation;
 
 namespace WorkflowAutomation.Application.Documents.Queries.GetRecentActivityDocuments
 {
-    public class GetRecentActivityDocumentsQueryValidator
+    public class GetRecentActivityDocumentsQueryValidator : AbstractValidator<GetRecentActivityDocumentsQuery>
     {
-
+        public GetRecentActivityDocumentsQueryValidator()
+        {
+            RuleFor(getDocumentListQuery => getDocumentListQuery.UserId).NotEmpty();
+            RuleFor(getDocumentListQuery => getDocumentListQuery.NumberOfEntity).NotEmpty().GreaterThanOrEqualTo(1);
+        }
     }
 }

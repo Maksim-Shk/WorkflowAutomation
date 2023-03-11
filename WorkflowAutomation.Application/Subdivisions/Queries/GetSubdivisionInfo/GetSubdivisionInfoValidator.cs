@@ -1,4 +1,3 @@
-using System;
 using FluentValidation;
 
 namespace WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionInfo
@@ -8,6 +7,7 @@ namespace WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionInfo
         public GetSubdivisionInfoValidator()
         {
             RuleFor(getRolesListQueryValidator => getRolesListQueryValidator.UserId).NotEmpty();
+            RuleFor(getRolesListQueryValidator => getRolesListQueryValidator.SubdivisionId).NotNull();
         }
     }
 }

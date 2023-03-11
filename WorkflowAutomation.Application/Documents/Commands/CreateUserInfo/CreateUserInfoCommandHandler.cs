@@ -1,12 +1,9 @@
-using System;
-using System.Data;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
 using WorkflowAutomation.Application.Interfaces;
 using WorkflowAutomation.Domain;
+
+using System.Diagnostics;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace WorkflowAutomation.Application.Documents.Commands.UserInfoCommand
 {

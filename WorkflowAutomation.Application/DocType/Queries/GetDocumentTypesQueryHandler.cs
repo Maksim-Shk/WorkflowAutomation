@@ -1,12 +1,10 @@
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
 using WorkflowAutomation.Application.Interfaces;
 using WorkflowAutomation.Domain;
+
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace WorkflowAutomation.Application.DocType.Queries.GetDocumentTypeListQuery
 {

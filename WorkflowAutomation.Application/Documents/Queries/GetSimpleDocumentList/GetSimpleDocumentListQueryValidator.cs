@@ -1,5 +1,4 @@
-﻿using System;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentList
 {
@@ -7,7 +6,7 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentList
     {
         public GetSimpleDocumentListQueryValidator()
         {
-            RuleFor(x => x.UserId).NotEqual(Guid.Empty.ToString());
+            RuleFor(GetSimpleDocumentListQueryValidator => GetSimpleDocumentListQueryValidator.UserId).NotEmpty();
         }
     }
 }

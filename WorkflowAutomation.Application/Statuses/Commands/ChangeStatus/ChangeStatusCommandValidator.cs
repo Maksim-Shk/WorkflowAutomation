@@ -8,9 +8,11 @@ namespace WorkflowAutomation.Application.Statuses.Commands.ChangeStatus
     {
         public ChangeStatusCommandValidator()
         {
-            RuleFor(deleteNoteCommand => deleteNoteCommand.DocumentId).NotEmpty();
+            RuleFor(deleteNoteCommand => deleteNoteCommand.DocumentId).NotNull().GreaterThanOrEqualTo(0);
             RuleFor(deleteNoteCommand => deleteNoteCommand.UserId).NotEmpty();
-            RuleFor(deleteNoteCommand => deleteNoteCommand.StatusId).NotEmpty();
+            RuleFor(deleteNoteCommand => deleteNoteCommand.StatusId).NotNull().GreaterThanOrEqualTo(0);
+            RuleFor(deleteNoteCommand => deleteNoteCommand.JwtToken).NotEmpty();
+            RuleFor(deleteNoteCommand => deleteNoteCommand.Uri).NotEmpty();
         }
     }
 }

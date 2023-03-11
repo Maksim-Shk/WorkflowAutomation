@@ -7,7 +7,7 @@ namespace WorkflowAutomation.Application.Documents.Commands.DeleteDocument
     {
         public DeleteNoteCommandValidator()
         {
-            RuleFor(deleteNoteCommand => deleteNoteCommand.DocumentId).NotEmpty().GreaterThan(0);
+            RuleFor(deleteNoteCommand => deleteNoteCommand.UserId).NotEmpty();
             RuleFor(deleteNoteCommand => deleteNoteCommand.UserId).NotEmpty();
         }
     }

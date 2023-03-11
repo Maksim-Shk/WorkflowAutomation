@@ -8,7 +8,6 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
     {
         public string UserId { get; set; }
         public string Title { get; set; }
-        //public int StatusId { get; set; }
         public int DocumentTypeId { get; set; }
         //Возможно сделать множественную рассылку
         public string ReceiverUserId { get; set; } 
