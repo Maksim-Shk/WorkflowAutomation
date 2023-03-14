@@ -19,7 +19,7 @@ using WorkflowAutomation.Application.Roles.Commands.SetRoleToUser;
 
 namespace WorkflowAutomation.Server.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Админ")]
     [ApiController]
     [Route("[controller]")]
     public class RoleController : BaseController
@@ -33,7 +33,7 @@ namespace WorkflowAutomation.Server.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<RolesListVm>> SubdivisionGet()
+        public async Task<ActionResult<RolesListVm>> GetRole()
         {
             var query = new GetRolesListQuery
             {

@@ -14,7 +14,10 @@
 @using System.Security.Claims
 
 @inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
+@attribute [Authorize(Roles = "Админ")];
 <PageTitle>Админ</PageTitle>
 
 <EditForm Model="@roleDto" OnValidSubmit="@HandleValidSubmit">
@@ -42,6 +45,8 @@
 </EditForm>
 
 @code {
+    //[CascadingParameter]
+    //private Task<AuthenticationState>? authenticationState { get; set; }
 
     AllUsersListVm UsersVm = new();
     RolesListVm RolesVm = new();
@@ -49,17 +54,28 @@
 
     protected override async Task OnInitializedAsync()
     {
-        try
-        {
-            UsersVm.AllUsers = new List<GetAllUsersListDto>();
-            RolesVm.Roles = new List<RolesListLookupDto>();
-            UsersVm = await Http.GetFromJsonAsync<AllUsersListVm>("GetUsers/GetAllUsers");
-            RolesVm = await Http.GetFromJsonAsync<RolesListVm>("Role");
-        }
-        catch (AccessTokenNotAvailableException exception)
-        {
-            exception.Redirect();
-        }
+        //if (authenticationState != null)
+        //{
+        //var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        //var user = authState?.User;
+        //if (user.IsInRole("Админ"))
+        //{
+            try
+            {
+                UsersVm.AllUsers = new List<GetAllUsersListDto>();
+                RolesVm.Roles = new List<RolesListLookupDto>();
+                UsersVm = await Http.GetFromJsonAsync<AllUsersListVm>("GetUsers/GetAllUsers");
+                RolesVm = await Http.GetFromJsonAsync<RolesListVm>("Role");
+            }
+            catch (AccessTokenNotAvailableException exception)
+            {
+                exception.Redirect();
+            }
+       // }
+        //else
+        //{
+        //    NavigationManager.NavigateTo("/wrong-role");
+        //}
     }
 
     private async Task HandleValidSubmit()

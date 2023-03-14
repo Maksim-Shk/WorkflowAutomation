@@ -4,16 +4,16 @@ using Microsoft.AspNetCore.Authorization;
 
 using WorkflowAutomation.Server.Models;
 using WorkflowAutomation.Shared.Identity;
+using WorkflowAutomation.Application.Roles.Commands.SetRoleToUser;
+using AutoMapper;
 
 namespace WorkflowAutomation.Server.Controllers
 {
-    //[Authorize]
     [ApiController]
     [Route("[controller]")]
     public class AccountsController : BaseController
     {
         private readonly UserManager<ApplicationUser> _userManager;
-
         public AccountsController(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;

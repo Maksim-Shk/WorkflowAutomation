@@ -52,7 +52,9 @@ namespace WorkflowAutomation.Application.Documents.Commands.UserInfoCommand
                     AppointmentDate = DateTime.Now,
                     RemovalDate = null
                 }; 
-                
+                //var aspNetUser = await _dbContext.AspNetUsers.FirstAsync(x=>x.Id == request.UserId, cancellationToken);
+                //var role = await _dbContext.AspNetRoles.FirstAsync(x => x.Id == "97da9e73-7077-4bde-84ef-9332d9e93083", cancellationToken);
+                //aspNetUser.Roles.Add(role);
                 await _dbContext.Users.AddAsync(user, cancellationToken);
                 await _dbContext.UserSubdivisions.AddAsync(userSubdivision, cancellationToken);
                 await _dbContext.UserPositions.AddAsync(userPosition, cancellationToken);
