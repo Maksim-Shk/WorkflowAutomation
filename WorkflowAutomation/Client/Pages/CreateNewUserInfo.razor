@@ -16,6 +16,8 @@
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
+<PageTitle>Заполнение данные</PageTitle>
+
 <EditForm Model="@createUserInfoDto" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
     <h3>Заполнить данные пользователя</h3>

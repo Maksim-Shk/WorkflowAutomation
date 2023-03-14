@@ -18,6 +18,8 @@
 @implements IAsyncDisposable
 @*@inject AuthenticationStateProvider AuthenticationStateProvider*@
 
+<PageTitle>@getDocumentDto.Title</PageTitle>
+
 <EditForm Model="@getDocumentDto">
     <DataAnnotationsValidator />
     <h4>Сведения о документе @Id </h4>

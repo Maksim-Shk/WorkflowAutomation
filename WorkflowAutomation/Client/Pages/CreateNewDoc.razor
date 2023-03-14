@@ -24,6 +24,8 @@
 @inject ILogger<CreateNewDocumentDto> Logger
 @implements IAsyncDisposable
 
+<PageTitle>Создание документа</PageTitle>
+
 <Validations @ref="@ValidationsRef" Mode="ValidationMode.Manual" Model="@createNewDocumentDto" ValidateOnLoad="true">
     <h6>Тема</h6>
     <Validation>

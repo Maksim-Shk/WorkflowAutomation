@@ -5,6 +5,8 @@
 @inject HttpClient httpClient
 @inject NavigationManager NavigationManager
 
+<PageTitle>@(GetFullUserInfoDto.Name + " " + GetFullUserInfoDto.Surname + " " + GetFullUserInfoDto.Patronymic)</PageTitle>
+
 <EditForm Model="@GetFullUserInfoDto">
     <DataAnnotationsValidator />
 

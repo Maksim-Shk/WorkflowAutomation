@@ -1,44 +1,20 @@
 ﻿@page "/"
 
-@using WorkflowAutomation.Application.Users.Queries.GetUserInfo
-@using WorkflowAutomation.Application.Documents.Queries.GetRecentActivityDocuments
-
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Microsoft.AspNetCore.Authorization
 @using System.Security.Claims
 
-@inject HttpClient httpClient
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<PageTitle>Документооборот ОГУ</PageTitle>
+<PageTitle>Главная</PageTitle>
 
-@if (!string.IsNullOrEmpty(getUserInfoDto.Name))
-{
-    <h1>Здравствуйте, @getUserInfoDto.Name  @getUserInfoDto.Surname  @getUserInfoDto.Patronymic</h1>
-    <h2>@getUserInfoDto.SubdivisionName - @getUserInfoDto.PositonName</h2>
-}
- <hr />
-<h1>Последняя активность</h1>
+<a href="/login">Вы не авторизованы. Войдите в систему</a>
 
-@foreach (var activity in recentActivityDocumentListVm.RecentDocuments)
-{
-    <hr />
-    <h5>@activity.Description</h5>
-
-    <div> <a href="ShowDocument/@activity.Id">@activity.Content</a> - @activity.Date</div>
-}
-<hr />
-
-@code{
-    private RecentActivityDocumentListVm recentActivityDocumentListVm = new();
-    private GetUserInfoDto getUserInfoDto = new();
-
+@code {
     protected override async Task OnInitializedAsync()
     {
-        recentActivityDocumentListVm.RecentDocuments = new List<RecentActivityDocumentLookupDto>();
-        recentActivityDocumentListVm = await httpClient.GetFromJsonAsync<RecentActivityDocumentListVm>("ActivityDocument/RecentActivityDocument");
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
@@ -48,7 +24,8 @@
         }
         else
         {
-            getUserInfoDto = await httpClient.GetFromJsonAsync<GetUserInfoDto>("UserInfo");
+            NavigationManager.NavigateTo("/main");
         }
     }
+
 }
