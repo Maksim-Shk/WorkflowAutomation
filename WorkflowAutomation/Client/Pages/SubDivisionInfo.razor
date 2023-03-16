@@ -1,5 +1,6 @@
 ﻿@page "/SubDivisionInfo/{Id:int}"
 
+@using Microsoft.AspNetCore.Authorization;
 @using WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionInfo
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
@@ -8,6 +9,7 @@
 
 <PageTitle>@subdivisionInfoDto.Name</PageTitle>
 
+@attribute [Authorize]
 <h2>Подразделение @Id</h2>
 <hr />
 <dl class="row">

@@ -1,10 +1,12 @@
 ﻿@page "/UserInformation/{text?}"
 
+@using Microsoft.AspNetCore.Authorization;
 @using WorkflowAutomation.Application.Users.Queries.GetFullUserInfo
 
 @inject HttpClient httpClient
 @inject NavigationManager NavigationManager
 
+@attribute [Authorize]
 <PageTitle>@(GetFullUserInfoDto.Name + " " + GetFullUserInfoDto.Surname + " " + GetFullUserInfoDto.Patronymic)</PageTitle>
 
 <EditForm Model="@GetFullUserInfoDto">

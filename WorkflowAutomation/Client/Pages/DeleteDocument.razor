@@ -16,6 +16,7 @@
 @*@attribute [Authorize(Policy = "AdminPolicy")]*@ 
 @*@attribute [Authorize(Roles = "Зарегистрированный пользователь")]*@
 
+@attribute [Authorize]
 <PageTitle>Удалить документ</PageTitle>
 
 <EditForm Model="@deleteDocumentDto" OnValidSubmit="@HandleValidSubmit">

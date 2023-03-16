@@ -12,6 +12,7 @@
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
+@attribute [Authorize]
 <PageTitle>Документооборот ОГУ</PageTitle>
 
 @if (!string.IsNullOrEmpty(getUserInfoDto.Name))

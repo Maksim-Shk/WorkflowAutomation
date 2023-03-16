@@ -12,8 +12,10 @@ using System.Text;
 using MediatR;
 using WorkflowAutomation.Application.Files.Queries.GetFile;
 using WorkflowAutomation.Server.Controllers;
+using Microsoft.AspNetCore.Authorization;
 
 [ApiController]
+[Authorize]
 [Route("[controller]")]
 public class FileDownloadController : BaseController
 {

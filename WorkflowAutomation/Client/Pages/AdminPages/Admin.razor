@@ -1,5 +1,8 @@
 ﻿@page "/Admin"
+@using Microsoft.AspNetCore.Authorization;
 @using WorkflowAutomation.Client.Components
+
+@attribute [Authorize(Roles = "Админ")];
 <hr />
 <h2 style="text-align: center"> Администрирование Системы Электронного Документооборота </h2>
 <hr/>
