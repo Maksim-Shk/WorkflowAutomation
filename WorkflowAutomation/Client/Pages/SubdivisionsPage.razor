@@ -1,53 +1,66 @@
 ﻿@page "/SubdivisionsPage"
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
+@using Blazorise.TreeView
 
 @inject HttpClient Http
 
     <TreeView Nodes="Items"
-          GetChildNodes="@(item => item.Children)"
-          HasChildNodes="@(item => item.Children?.Any() == true)"
-          @bind-SelectedNode="selectedNode"
-          @bind-ExpandedNodes="expandedNodes">
+          GetChildNodes="@(item => item.GetChilds(item.Id))"
+          HasChildNodes="@(item => item.GetChilds(item.Id)?.Any() == true)">
     <NodeContent>
         <Icon Name="IconName.Superscript" />
-        @context.Text
+        <a href="SubDivisionInfo/@context.Id"> @context.Name </a>
     </NodeContent>
     </TreeView>
 
 @code{
+
+
+    //IEnumerable<Item> Items = new[]
+    //{
+    //    new Item { Name = "Ректор" },
+    //    new Item
+    //    {
+    //        Name = "Перый проректор",
+    //        Children = new []
+    //        {
+    //            new Item { Name = "Аэрокосмический институт" },
+    //            new Item
+    //            {
+    //                Name = "Факультете математики и информационных технологии ",
+    //                Children = new []
+    //                {
+    //                    new Item { Name = "Кафедра программного обеспечения вычислительной техники и автоматизированных систем" },
+    //                    new Item { Name = "Кафедра информатики" },
+    //                    new Item { Name = "Кафедра прикладной математики" },
+    //                    new Item { Name = "Кафедра геометрии и компьютерных наук" }
+    //                }
+    //            },
+    //            new Item { Name = "Факультет филологии" },
+    //            new Item { Name = "Физический факультет" }
+    //        }
+    //    },
+    //    new Item { Name = "Проректор по научной работе" },
+    //};
     public class Item
     {
-        public string Text { get; set; }
-        public IEnumerable<Item> Children { get; set; }
+        public int Id { get; set; }
+        public int? SubId { get; set; }
+        public string Name { get; set; }
+        //public List<Item> Children { get; set; }
+
+        public List<Item> GetChilds(int id)
+        {
+            List<Item> ans = new List<Item>();
+            ans = AllItems.Where(x => x.SubId == id).ToList();
+            return ans;
+        }
     }
 
-    IEnumerable<Item> Items = new[]
-    {
-        new Item { Text = "Ректор" },
-        new Item
-        {
-            Text = "Перый проректор",
-            Children = new []
-            {
-                new Item { Text = "Аэрокосмический институт" },
-                new Item
-                {
-                    Text = "Факультете математики и информационных технологии ",
-                    Children = new []
-                    {
-                        new Item { Text = "Кафедра программного обеспечения вычислительной техники и автоматизированных систем" },
-                        new Item { Text = "Кафедра информатики" },
-                        new Item { Text = "Кафедра прикладной математики" },
-                        new Item { Text = "Кафедра геометрии и компьютерных наук" }
-                    }
-                },
-                new Item { Text = "Факультет филологии" },
-                new Item { Text = "Физический факультет" }
-            }
-        },
-        new Item { Text = "Проректор по научной работе" },
-    };
+    List<Item> Items;
+    public static List<Item> AllItems;
+
 
     IList<Item> expandedNodes = new List<Item>();
     Item selectedNode;
@@ -59,10 +72,19 @@
         try
         {
             subdivisionListVm.Subdivisions = new List<SubdivisionListLookupDto>();
-            
-
             subdivisionListVm = await Http.GetFromJsonAsync<SubdivisionListVm>("Subdivision");
-            
+            Items = new List<Item>();
+            AllItems = new List<Item>();
+            foreach (var sub in subdivisionListVm.Subdivisions.Where(x=>x.IdSubordination == null))
+            {
+                Item item = new Item() { Id = sub.Id, Name = sub.Name, SubId = sub.IdSubordination };
+                Items.Add(item);
+            }
+            foreach (var sub in subdivisionListVm.Subdivisions.Where(x => x.IdSubordination != null))
+            {
+                Item item = new Item() { Id = sub.Id, Name = sub.Name, SubId = sub.IdSubordination };
+                AllItems.Add(item);
+            }
 
         }
         catch (AccessTokenNotAvailableException exception)
