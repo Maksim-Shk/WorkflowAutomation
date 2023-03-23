@@ -5,44 +5,25 @@
 
 @inject HttpClient Http
 
-    <TreeView Nodes="Items"
+    <Button Color="Color.Primary" Clicked="@(()=>treeViewRef.ExpandAll())">Раскрыть структуру</Button>
+<Button Color="Color.Secondary" Clicked="@(()=>treeViewRef.CollapseAll())">Скрыть структуру</Button>
+
+<br />
+<br />
+<br />
+
+<TreeView @ref="@treeViewRef" Nodes="Items"
           GetChildNodes="@(item => item.GetChilds(item.Id))"
           HasChildNodes="@(item => item.GetChilds(item.Id)?.Any() == true)">
     <NodeContent>
-        <Icon Name="IconName.Superscript" />
-        <a href="SubDivisionInfo/@context.Id"> @context.Name </a>
+        
+        <a style="text-decoration:none" href="SubDivisionInfo/@context.Id"> @context.Name </a>
     </NodeContent>
     </TreeView>
 
 @code{
-
-
-    //IEnumerable<Item> Items = new[]
-    //{
-    //    new Item { Name = "Ректор" },
-    //    new Item
-    //    {
-    //        Name = "Перый проректор",
-    //        Children = new []
-    //        {
-    //            new Item { Name = "Аэрокосмический институт" },
-    //            new Item
-    //            {
-    //                Name = "Факультете математики и информационных технологии ",
-    //                Children = new []
-    //                {
-    //                    new Item { Name = "Кафедра программного обеспечения вычислительной техники и автоматизированных систем" },
-    //                    new Item { Name = "Кафедра информатики" },
-    //                    new Item { Name = "Кафедра прикладной математики" },
-    //                    new Item { Name = "Кафедра геометрии и компьютерных наук" }
-    //                }
-    //            },
-    //            new Item { Name = "Факультет филологии" },
-    //            new Item { Name = "Физический факультет" }
-    //        }
-    //    },
-    //    new Item { Name = "Проректор по научной работе" },
-    //};
+    TreeView<Item> treeViewRef;
+    
     public class Item
     {
         public int Id { get; set; }

@@ -15,6 +15,9 @@
 @inject NavigationManager NavigationManager
 @inject HttpClient httpClient
 
+
+
+
 <PageTitle>Просмотр документов</PageTitle>
 
 <EditForm Model="@allowedDocumentListVm" Context="EditFormContext">
@@ -36,8 +39,8 @@
                 @{
                         var title = (context as GetAllowedDocumentListLookupDto)?.Title;
                         var DocId = (context as GetAllowedDocumentListLookupDto)?.Id;
-                        if (title != null){  
-                            <a href="ShowDocument/@DocId">@title</a>
+                        if (title != null){
+                            <a href="ShowDocument/@DocId" style="text-decoration:none">@title</a>
                                        }}
             </DisplayTemplate>
 
@@ -49,7 +52,7 @@
                     var userinfo = (context as GetAllowedDocumentListLookupDto)?.SenderInfo;
                     var SenderId = (context as GetAllowedDocumentListLookupDto)?.SenderId;
                     if (userinfo!=null){
-                            <a href="UserInformation/@SenderId">@userinfo</a>
+                            <a href="UserInformation/@SenderId" style="text-decoration:none">@userinfo</a>
                     }
              }
             </DisplayTemplate>
@@ -61,7 +64,7 @@
                     var RecieverId = (context as GetAllowedDocumentListLookupDto)?.RecieverId;
 
                     if (userinfo != null){
-                            <a href="UserInformation/@RecieverId">@userinfo</a>
+                            <a href="UserInformation/@RecieverId" style="text-decoration:none">@userinfo</a>
                     }
                 }
             </DisplayTemplate>
@@ -92,7 +95,7 @@
                 </Select>
         </PageSelectorTemplate>
         <PageSizesTemplate>
-            <Select TextColor="TextColor.Primary" @bind-SelectedValue="@context.CurrentPageSize" Size="Blazorise.Size.Small">
+            <Select TextColor="TextColor.Primary" @bind-SelectedValue="@context.CurrentPageSize" Size="Blazorise.Size.Medium">
                 @foreach (var curPageSize in context.PageSizes)
                 {
                     <SelectItem Value="@curPageSize">@curPageSize</SelectItem>
