@@ -16,7 +16,7 @@
 @inject HttpClient httpClient
 
 
-
+<link href="/css/ViewDocumentList.css" rel="stylesheet" />
 
 <PageTitle>Просмотр документов</PageTitle>
 
@@ -40,7 +40,7 @@
                         var title = (context as GetAllowedDocumentListLookupDto)?.Title;
                         var DocId = (context as GetAllowedDocumentListLookupDto)?.Id;
                         if (title != null){
-                            <a href="ShowDocument/@DocId" style="text-decoration:none">@title</a>
+                                <a href="ShowDocument/@DocId" >@title</a>
                                        }}
             </DisplayTemplate>
 
@@ -52,7 +52,7 @@
                     var userinfo = (context as GetAllowedDocumentListLookupDto)?.SenderInfo;
                     var SenderId = (context as GetAllowedDocumentListLookupDto)?.SenderId;
                     if (userinfo!=null){
-                            <a href="UserInformation/@SenderId" style="text-decoration:none">@userinfo</a>
+                                <a href="UserInformation/@SenderId" >@userinfo</a>
                     }
              }
             </DisplayTemplate>
@@ -64,7 +64,7 @@
                     var RecieverId = (context as GetAllowedDocumentListLookupDto)?.RecieverId;
 
                     if (userinfo != null){
-                            <a href="UserInformation/@RecieverId" style="text-decoration:none">@userinfo</a>
+                                <a href="UserInformation/@RecieverId" class="plain_text">@userinfo</a>
                     }
                 }
             </DisplayTemplate>
