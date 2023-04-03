@@ -55,6 +55,7 @@
     {
         try
         {
+            PositionsIdList = new List<int>();
             subdivisionInfoDto = new();
             subdivisionInfoDto.Users = new();
             subdivisionInfoDto = await httpClient.GetFromJsonAsync<SubdivisionInfoDto>("Subdivision/GetSubdivisionInfo/" + Id);

@@ -170,9 +170,9 @@
                 });
             await hubConnection.StartAsync();
             //Статус - "Выполнено"
-            ApproveStatusId = 3;
+            ApproveStatusId = 5;
             //Статус - "Удалено"
-            RejectStatusId = 5;
+            RejectStatusId = 6;
             //var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             //var user = authState.User.Claims.Select(x=>x.Type).ToList();
             getUserInfoDto = await httpClient.GetFromJsonAsync<GetUserInfoDto>("UserInfo");

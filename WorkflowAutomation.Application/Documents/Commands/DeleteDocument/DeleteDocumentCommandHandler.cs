@@ -31,14 +31,14 @@ namespace WorkflowAutomation.Application.Documents.Commands.DeleteDocument
 
             document.RemoveDate = DateTime.Now;
 
-            if (_dbContext.Statuses.FirstOrDefault(x => x.Name == "Удалено") == null)
+            if (_dbContext.Statuses.FirstOrDefault(x => x.Name == "Удален") == null)
             {
-                var st = new Status { Name = "Удалено" };
+                var st = new Status { Name = "Удален" };
                 _dbContext.Statuses.Add(st);
                 _dbContext.Save(cancellationToken);
             }
 
-            Status status = await _dbContext.Statuses.FirstAsync(y => y.Name == "Удалено");
+            Status status = await _dbContext.Statuses.FirstAsync(y => y.Name == "Удален");
 
             var documentStatus = new DocumentStatus
             {

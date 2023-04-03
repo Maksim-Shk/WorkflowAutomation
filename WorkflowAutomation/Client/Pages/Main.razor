@@ -1,7 +1,8 @@
 ﻿@page "/main"
 
+@using WorkflowAutomation.Application.Documents.Queries.GetRecentActivityDocuments;
+@using WorkflowAutomation.Application.Roles.Queries.GetRolesList;
 @using WorkflowAutomation.Application.Users.Queries.GetUserInfo
-@using WorkflowAutomation.Application.Documents.Queries.GetRecentActivityDocuments
 
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
@@ -16,8 +17,30 @@
 
 @if (!string.IsNullOrEmpty(getUserInfoDto.Name))
 {
-    <h1>Здравствуйте, @getUserInfoDto.Name  @getUserInfoDto.Surname  @getUserInfoDto.Patronymic</h1>
+    <h1>Здравствуйте, @getUserInfoDto.Surname @getUserInfoDto.Name @getUserInfoDto.Patronymic</h1>
     <h2>@getUserInfoDto.SubdivisionName - @getUserInfoDto.PositonName</h2>
+    @if (rolesListVm.Roles != null)
+    {
+        <dl class="row">
+            <dt class="col-sm-2" style="font-weight:bold">
+                @if (rolesListVm.Roles.Count == 1)
+                {
+                    @("Ваш уровень доступа")
+                }
+                else 
+                {
+                    @("Ваши уровни доступа")
+                }
+            </dt>
+            <dd class="col-sm-10">
+                @foreach (var role in rolesListVm.Roles)
+                {
+                    @role.Name
+                    <br/>
+                }
+            </dd>
+        </dl>
+    }
 }
  <hr />
 <h1>Последняя активность</h1>
@@ -34,14 +57,16 @@
 @code{
     private RecentActivityDocumentListVm recentActivityDocumentListVm = new();
     private GetUserInfoDto getUserInfoDto = new();
-
+    private RolesListVm rolesListVm = new();
     protected override async Task OnInitializedAsync()
     {
         recentActivityDocumentListVm.RecentDocuments = new List<RecentActivityDocumentLookupDto>();
         recentActivityDocumentListVm = await httpClient.GetFromJsonAsync<RecentActivityDocumentListVm>("ActivityDocument/RecentActivityDocument");
+        rolesListVm.Roles = new List<RolesListLookupDto>();
+        rolesListVm = await httpClient.GetFromJsonAsync<RolesListVm>("Role/UserRoles");
+
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-
         if (!user.Identity.IsAuthenticated)
         {
             NavigationManager.NavigateTo("/login");

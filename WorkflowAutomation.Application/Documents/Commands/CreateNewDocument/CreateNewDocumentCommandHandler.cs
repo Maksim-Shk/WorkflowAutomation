@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.SignalR.Client;
 
 using Document = WorkflowAutomation.Domain.Document;
+using Microsoft.EntityFrameworkCore;
 
 namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
 {
@@ -52,11 +53,19 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
                     await _dbContext.Documents.AddAsync(document, cancellationToken);
                     await _dbContext.Save(cancellationToken);
 
+                    //создание статуса "Зарегистрирован" при его отсутствии в БД
+                    var RegStatus = await _dbContext.Statuses.FirstOrDefaultAsync(x => x.Name == "Зарегистрирован");
+                    if (RegStatus == null)
+                    {
+                        await _dbContext.Statuses.AddAsync(new Status { Name = "Зарегистрирован" });
+                        await _dbContext.Save(cancellationToken);
+                    }
+
                     var documentStatus = new DocumentStatus
                     {
                         IdDocument = document.IdDocument,
                         // IdStatus = request.StatusId,
-                        IdStatus = _dbContext.Statuses.Where(x => x.Name == "Зарегистрировано").First().IdStatus,
+                        IdStatus = _dbContext.Statuses.FirstOrDefault(x => x.Name == "Зарегистрирован").IdStatus,
                         AppropriationDate = document.CreateDate,
                         IdUser = request.UserId,
                     };
