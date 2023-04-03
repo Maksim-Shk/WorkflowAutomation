@@ -27,7 +27,6 @@ namespace WorkflowAutomation.Application.Roles.Queries.GetRolesList
 
             var roles = await _dbContext.AspNetRoles.ToListAsync();
 
-
             foreach (var role in roles)
             {
                 RolesListLookupDto dto = new RolesListLookupDto();

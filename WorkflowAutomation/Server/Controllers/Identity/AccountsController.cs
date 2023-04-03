@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 
 using WorkflowAutomation.Server.Models;
 using WorkflowAutomation.Shared.Identity;
+using System.Data;
 
 namespace WorkflowAutomation.Server.Controllers
 {
@@ -13,9 +14,11 @@ namespace WorkflowAutomation.Server.Controllers
     public class AccountsController : BaseController
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AccountsController(UserManager<ApplicationUser> userManager)
+        public AccountsController(UserManager<ApplicationUser> userManager,RoleManager<IdentityRole> roleManager)
         {
+            _roleManager = roleManager;
             _userManager = userManager;
         }
 
@@ -23,8 +26,11 @@ namespace WorkflowAutomation.Server.Controllers
         public async Task<IActionResult> Post([FromBody] RegisterDto dto)
         {
             var newUser = new ApplicationUser { UserName = dto.Email, Email = dto.Email };
-
             var result = await _userManager.CreateAsync(newUser, dto.Password);
+
+            var allRoles = _roleManager.Roles.ToList();
+
+            await _userManager.AddToRoleAsync(newUser, allRoles.FirstOrDefault(r=>r.NormalizedName == "«¿–≈√»—“–»–Œ¬¿ÕÕ€… œŒÀ‹«Œ¬¿“≈À‹").Name);
 
             if (!result.Succeeded)
             {

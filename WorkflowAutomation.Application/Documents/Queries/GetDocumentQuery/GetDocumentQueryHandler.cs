@@ -35,7 +35,7 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetOneDocument
                 dto.CreateDate = doc.CreateDate;
                 dto.RemoveDate = doc.RemoveDate;
 
-                var docType = await _dbContext.DocumentTypes.FirstAsync(t => t.IdDocumentType == doc.IdDocumentType);
+                var docType = await _dbContext.DocumentTypes.FirstOrDefaultAsync(t => t.IdDocumentType == doc.IdDocumentType);
                 dto.DocumentType = docType.Name;
 
                 var sender = await _dbContext.Users.FirstAsync(t => t.IdUser == doc.IdSender);
