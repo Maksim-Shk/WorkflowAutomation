@@ -13,7 +13,8 @@
 <TreeView @ref="@treeViewRef" Nodes="Items"
           GetChildNodes="@(item => item.GetChilds(item.Id))"
           HasChildNodes="@(item => item.GetChilds(item.Id)?.Any() == true)"
-          @bind-SelectedNode="selectedNode">
+          @bind-SelectedNode="selectedNode"
+SelectionMode="TreeViewSelectionMode.Single">
     <NodeContent>
         @context.Name
     </NodeContent>
