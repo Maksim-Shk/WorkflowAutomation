@@ -98,11 +98,11 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentLis
 
                 //var sender = await allowedUsers.FirstAsync(t => t.IdUser == doc.IdSender);
                 var sender = await _dbContext.Users.FirstAsync(t => t.IdUser == doc.IdSender);
-                dto.SenderInfo = sender.Name + " " + sender.Surname + " " + sender.Patronymic;
+                dto.SenderInfo = sender.Surname + " " + sender.Name + " " + sender.Patronymic;
                 dto.SenderId = sender.IdUser;
 
                 var reciever = await _dbContext.Users.FirstAsync(t => t.IdUser == doc.IdReceiver);
-                dto.RecieverInfo = reciever.Name + " " + reciever.Surname + " " + reciever.Patronymic;
+                dto.RecieverInfo = reciever.Surname + " " + reciever.Name + " " + reciever.Patronymic;
                 dto.RecieverId = reciever.IdUser;
 
                 listLookupDtos.Add(dto);

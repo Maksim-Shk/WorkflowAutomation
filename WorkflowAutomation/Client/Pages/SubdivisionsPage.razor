@@ -1,0 +1,76 @@
+﻿@page "/SubdivisionsPage"
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
+@using Blazorise.TreeView
+
+@inject HttpClient Http
+
+    <Button Color="Color.Primary" Clicked="@(()=>treeViewRef.ExpandAll())">Раскрыть структуру</Button>
+<Button Color="Color.Secondary" Clicked="@(()=>treeViewRef.CollapseAll())">Скрыть структуру</Button>
+
+<br />
+<br />
+<br />
+
+<TreeView @ref="@treeViewRef" Nodes="Items"
+          GetChildNodes="@(item => item.GetChilds(item.Id))"
+          HasChildNodes="@(item => item.GetChilds(item.Id)?.Any() == true)">
+    <NodeContent>
+        
+        <a style="text-decoration:none" href="SubDivisionInfo/@context.Id"> @context.Name </a>
+    </NodeContent>
+    </TreeView>
+
+@code{
+    TreeView<Item> treeViewRef;
+    
+    public class Item
+    {
+        public int Id { get; set; }
+        public int? SubId { get; set; }
+        public string Name { get; set; }
+        //public List<Item> Children { get; set; }
+
+        public List<Item> GetChilds(int id)
+        {
+            List<Item> ans = new List<Item>();
+            ans = AllItems.Where(x => x.SubId == id).ToList();
+            return ans;
+        }
+    }
+
+    List<Item> Items;
+    public static List<Item> AllItems;
+
+
+    IList<Item> expandedNodes = new List<Item>();
+    Item selectedNode;
+
+    private SubdivisionListVm subdivisionListVm = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            subdivisionListVm.Subdivisions = new List<SubdivisionListLookupDto>();
+            subdivisionListVm = await Http.GetFromJsonAsync<SubdivisionListVm>("Subdivision");
+            Items = new List<Item>();
+            AllItems = new List<Item>();
+            foreach (var sub in subdivisionListVm.Subdivisions.Where(x=>x.IdSubordination == null))
+            {
+                Item item = new Item() { Id = sub.Id, Name = sub.Name, SubId = sub.IdSubordination };
+                Items.Add(item);
+            }
+            foreach (var sub in subdivisionListVm.Subdivisions.Where(x => x.IdSubordination != null))
+            {
+                Item item = new Item() { Id = sub.Id, Name = sub.Name, SubId = sub.IdSubordination };
+                AllItems.Add(item);
+            }
+
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+}
