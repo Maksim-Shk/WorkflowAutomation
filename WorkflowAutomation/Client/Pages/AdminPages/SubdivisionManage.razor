@@ -12,21 +12,53 @@
 
 <TreeView @ref="@treeViewRef" Nodes="Items"
           GetChildNodes="@(item => item.GetChilds(item.Id))"
-          HasChildNodes="@(item => item.GetChilds(item.Id)?.Any() == true)"  
-          @bind-SelectedNode="selectedNode"
-          >
+          HasChildNodes="@(item => item.GetChilds(item.Id)?.Any() == true)"
+          @bind-SelectedNode="selectedNode">
     <NodeContent>
-         @context.Name
+        @context.Name
     </NodeContent>
-    </TreeView>
+</TreeView>
 
-    <p>
-    @selectedNode.Name
-    </p>
+<TextEdit @bind-Text="searchItemName">
+
+</TextEdit>
+
+<Button Clicked="@SearchClick">
+    Поиск
+</Button>
+@if (SearchResult != null)
+{
+    <ListView Title="Поиск"
+          Data="SearchResult"
+          TextField="(item)=> item.Name"
+          ValueField="(item)=>item.Id.ToString()"
+          Mode="ListGroupMode.Selectable"
+          @bind-SelectedItem="selectedNode">
+        <ItemTemplate>
+            <a href="SubDivisionInfo/@context.Item.Id"> @context.Item.Name</a>
+        </ItemTemplate>
+    </ListView>
+}
 
 @code {
+    private TextEdit SearchOutput = new();
+    private void SearchClick()
+    {
+        List<Item> NodesForSearch = new List<Item>();
+        NodesForSearch.AddRange(Items);
+        NodesForSearch.AddRange(AllItems);
+        SearchResult = NodesForSearch.Where(node => node.Name.Contains(searchItemName,StringComparison.OrdinalIgnoreCase)).ToList();
+        //treeViewRef.ExpandedNodes.Add(SearchItem);
+        StateHasChanged();
+    }
+    string searchItemName = "";
+    Item SearchNode { get; set; } = new();
 
     TreeView<Item> treeViewRef;
+    List<Item> SearchResult { get; set; } = new();
+    
+    private List<Item> Items;
+    public static List<Item> AllItems;
 
     public class Item
     {
@@ -43,13 +75,11 @@
         }
     }
 
-    List<Item> Items;
-    public static List<Item> AllItems;
 
 
-    IList<Item> expandedNodes = new List<Item>();
-    Item selectedNode;
-    
+    private IList<Item> expandedNodes = new List<Item>();
+    private Item selectedNode = new();
+
 
     private SubdivisionListVm subdivisionListVm = new();
 
