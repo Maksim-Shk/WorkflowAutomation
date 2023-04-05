@@ -15,7 +15,7 @@ namespace WorkflowAutomation.Application.Subdivisions.Commands.UpdateSubdivision
     {
         public string Name { get; set; }
         public DateTime CreateDate { get; set; }
-        public List<SubUsers>? SubdivisionUsers { get; set; }
+        public List<UpdatesSubUsers>? SubdivisionUsers { get; set; }
         public int? SubordinationId { get; set; }
         public void Mapping(Profile profile)
         {

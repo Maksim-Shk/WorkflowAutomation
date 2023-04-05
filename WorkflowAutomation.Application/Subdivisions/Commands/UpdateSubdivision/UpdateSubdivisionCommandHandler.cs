@@ -36,9 +36,9 @@ namespace WorkflowAutomation.Application.Subdivisions.Commands.UpdateSubdivision
                     var subdivision = await _dbContext.Subdivisions.FirstOrDefaultAsync(s=>s.IdSubdivision == request.SubdivisionId);
                     if (subdivision != null)
                     {
-                        if (request.Name != null)
-                            subdivision.Name = request.Name;
-                        if (request.)
+                      //  if (request.Name != null)
+                      //      subdivision.Name = request.Name;
+                      //  if (request.)
                     }
                     else
                     {
