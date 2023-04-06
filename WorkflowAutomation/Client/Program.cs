@@ -29,6 +29,7 @@ builder.Services
     .AddBootstrap5Providers()
     .AddFontAwesomeIcons();
 
+builder.Services.AddBlazorContextMenu();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore(o =>
 {
