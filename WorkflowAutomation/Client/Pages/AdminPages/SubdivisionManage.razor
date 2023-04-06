@@ -9,6 +9,8 @@
 @inject HttpClient Http
 <link href="/css/SundivisonManage.css" rel="stylesheet" />
 
+
+
 <hr />
 <h2 style="text-align: center">Упраление подразделениями</h2>
 <hr />
@@ -102,19 +104,27 @@ else{
         }
     </dd>
     </dl>
-
-    <ContextMenu Id="myMenu">
-    
-</ContextMenu>
-
-<ContextMenuTrigger MenuId="myMenu">
-    <p>Right-click on me to show the context menu !!</p>
-</ContextMenuTrigger>
 }
 else{
     <Label>empty</Label>
 }
 
+<ContextMenu Id="myMenu">
+    <Item OnClick="@OnClick">Item 1</Item>
+    <Item OnClick="@OnClick">Item 2</Item>
+    <Item OnClick="@OnClick" Enabled="false">Item 3 (disabled)</Item>
+    <Seperator />
+    <Item>Submenu
+        <SubMenu>
+            <Item OnClick="@OnClick">Submenu Item 1</Item>
+            <Item OnClick="@OnClick">Submenu Item 2</Item>
+        </SubMenu>
+    </Item>
+</ContextMenu>
+
+<ContextMenuTrigger MenuId="myMenu">
+    <p>Right-click on me to show the context menu !!</p>
+</ContextMenuTrigger>
 
 
 
@@ -122,7 +132,7 @@ else{
 @code {
     void OnClick(ItemClickEventArgs e)
     {
-        
+        Console.WriteLine($"Item Clicked => Menu: {e.ContextMenuId}, MenuTarget: {e.ContextMenuTargetId}, IsCanceled: {e.IsCanceled}, MenuItem: {e.MenuItemElement}, MouseEvent: {e.MouseEvent}");
     }
 
     bool Render;
