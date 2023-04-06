@@ -2,31 +2,51 @@
 
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
+@using WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionInfo
 @using Blazorise.TreeView
+@using BlazorContextMenu
 
 @inject HttpClient Http
+<link href="/css/SundivisonManage.css" rel="stylesheet" />
 
 <hr />
 <h2 style="text-align: center">Упраление подразделениями</h2>
 <hr />
 
-<TreeView @ref="@treeViewRef" Nodes="Items"
+<Switch TValue="bool" @bind-Checked=@Render>
+    @if (Render) {
+        <Label>Древовидная струкрутра</Label>
+       // @SelectedChangeTree();
+    }
+    else{
+        <Label> Поиск</Label>
+        //@SelectedChangeList();
+    }
+</Switch>
+
+@if (Render)
+{
+    <TreeView @ref="@treeViewRef" Nodes="Items"
           GetChildNodes="@(item => item.GetChilds(item.Id))"
           HasChildNodes="@(item => item.GetChilds(item.Id)?.Any() == true)"
-          @bind-SelectedNode="selectedNode"
-SelectionMode="TreeViewSelectionMode.Single">
-    <NodeContent>
-        @context.Name
-    </NodeContent>
-</TreeView>
-
+          @bind-SelectedNode="selectedNodeTreeView"
+          @onclick="()=>SelectedChangeTree()">
+        <NodeContent >
+            @context.Name
+        </NodeContent>
+    </TreeView>
+}
+else{
+<div class="subscribe">
 <TextEdit @bind-Text="searchItemName">
 
 </TextEdit>
-
-<Button Clicked="@SearchClick">
+<Button class="btn-primary" Clicked="@SearchClick">
     Поиск
 </Button>
+</div>
+
+
 @if (SearchResult != null)
 {
     <ListView Title="Поиск"
@@ -34,15 +54,95 @@ SelectionMode="TreeViewSelectionMode.Single">
           TextField="(item)=> item.Name"
           ValueField="(item)=>item.Id.ToString()"
           Mode="ListGroupMode.Selectable"
-          @bind-SelectedItem="selectedNode">
-        <ItemTemplate>
-            <a href="SubDivisionInfo/@context.Item.Id"> @context.Item.Name</a>
+          @bind-SelectedItem="selectedNodeListView"
+          @onclick="()=>SelectedChangeList()"
+          >
+        <ItemTemplate>  
+            <a href="SubDivisionInfo/@context.Item.Id" > @context.Item.Name</a>
         </ItemTemplate>
     </ListView>
+}}
+
+@* Информация о выбранном подразделений*@
+@if (selectedNodeListView != null || selectedNodeTreeView != null) 
+{ 
+<h2>Подразделение </h2>
+<hr />
+<dl class="row">
+    <dt class="col-sm-3">
+        Название
+    </dt>
+    <dd class="col-sm-8">
+        @subdivisionInfoDto.Name
+    </dd>
+    <dt class="col-sm-3">
+        Дата создания
+    </dt>
+    <dd class="col-sm-8">
+        @subdivisionInfoDto.CreateDate
+    </dd>
+    <dt class="col-sm-3">
+        Сотрудники
+    </dt>
+
+    <dd class="col-sm-8">
+        @foreach (var posId in PositionsIdList)
+        {
+            @if (posId != null)
+            {
+                @foreach (var item in subdivisionInfoDto.Users.Where(x => x.PositionId == posId).ToList())
+                {
+                    @if (item != null)
+                    {
+                        <div>@item.Name @item.Position </div>
+                    }
+                }
+                <hr />
+            }
+        }
+    </dd>
+    </dl>
+
+    <ContextMenu Id="myMenu">
+    
+</ContextMenu>
+
+<ContextMenuTrigger MenuId="myMenu">
+    <p>Right-click on me to show the context menu !!</p>
+</ContextMenuTrigger>
+}
+else{
+    <Label>empty</Label>
 }
 
+
+
+
+
 @code {
+    void OnClick(ItemClickEventArgs e)
+    {
+        
+    }
+
+    bool Render;
     private TextEdit SearchOutput = new();
+
+    private void SelectedChangeList() {
+        selectedNodeTreeView = null;
+        OnClickSubdivision();
+        StateHasChanged();
+
+    }
+    private void SelectedChangeTree()
+    {
+        selectedNodeListView = null;
+        OnClickSubdivision();
+        StateHasChanged();
+    }
+
+
+
     private void SearchClick()
     {
         List<Item> NodesForSearch = new List<Item>();
@@ -57,7 +157,7 @@ SelectionMode="TreeViewSelectionMode.Single">
 
     TreeView<Item> treeViewRef;
     List<Item> SearchResult { get; set; } = new();
-    
+
     private List<Item> Items;
     public static List<Item> AllItems;
 
@@ -79,15 +179,18 @@ SelectionMode="TreeViewSelectionMode.Single">
 
 
     private IList<Item> expandedNodes = new List<Item>();
-    private Item selectedNode = new();
-
+    private Item? selectedNodeTreeView { get; set; }
+    private Item? selectedNodeListView { get; set; }
 
     private SubdivisionListVm subdivisionListVm = new();
 
     protected override async Task OnInitializedAsync()
     {
         try
-        {
+        {  
+            selectedNodeTreeView = null;
+            selectedNodeListView = null;
+            #region Инфромация о поздразделениях
             subdivisionListVm.Subdivisions = new List<SubdivisionListLookupDto>();
             subdivisionListVm = await Http.GetFromJsonAsync<SubdivisionListVm>("Subdivision");
             Items = new List<Item>();
@@ -102,6 +205,8 @@ SelectionMode="TreeViewSelectionMode.Single">
                 Item item = new Item() { Id = sub.Id, Name = sub.Name, SubId = sub.IdSubordination };
                 AllItems.Add(item);
             }
+            #endregion
+
 
         }
         catch (AccessTokenNotAvailableException exception)
@@ -110,4 +215,48 @@ SelectionMode="TreeViewSelectionMode.Single">
         }
     }
 
+    public List<int> PositionsIdList { get; set; } = new();
+    public SubdivisionInfoDto subdivisionInfoDto { get; set; } = new();
+
+
+    private async Task OnClickSubdivision() {
+        try
+        {
+            Item? SelectedItem = new();
+            if (selectedNodeListView != null)
+            {
+                SelectedItem = selectedNodeListView;
+            }
+            else if (selectedNodeTreeView != null)
+            {
+                SelectedItem = selectedNodeTreeView;
+            }
+            subdivisionInfoDto.Users = new();
+            if (SelectedItem != null)
+            {
+                subdivisionInfoDto = await Http.GetFromJsonAsync<SubdivisionInfoDto>("Subdivision/GetSubdivisionInfo/" + SelectedItem.Id.ToString());
+
+                var positions = subdivisionInfoDto.Users
+                                .GroupBy(x => x.PositionId)
+                                .Select(x => x.First())
+                                .ToList()
+                                .Select(e => new
+                                {
+                                    Name = e.Position,
+                                    IdPosition = e.PositionId
+                                }).ToList();
+
+                PositionsIdList = new List<int>();
+                foreach (var pos in positions)
+                {
+                    PositionsIdList.Add(pos.IdPosition);
+                }
+                StateHasChanged();
+            }
+        }
+        catch
+        {
+            return;
+        }
+    }
 }
