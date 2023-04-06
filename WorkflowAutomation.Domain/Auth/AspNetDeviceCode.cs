@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace WorkflowAutomation.Domain
 {
-    public partial class DeviceCode
+    public partial class AspNetDeviceCode
     {
         public string UserCode { get; set; } = null!;
-        public string DeviceCode1 { get; set; } = null!;
+        public string DeviceCode { get; set; } = null!;
         public string? SubjectId { get; set; }
         public string? SessionId { get; set; }
         public string ClientId { get; set; } = null!;

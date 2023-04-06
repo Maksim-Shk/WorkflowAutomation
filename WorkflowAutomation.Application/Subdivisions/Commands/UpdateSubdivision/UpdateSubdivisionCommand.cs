@@ -7,7 +7,7 @@ namespace WorkflowAutomation.Application.Subdivisions.Commands.UpdateSubdivision
         /// <summary>
         /// ID измененного подразделения
         /// </summary>
-        public int? SubdivisionId { get; set; }
+        public int SubdivisionId { get; set; }
         /// <summary>
         /// ID пользователя, обновляющего данные о подразделении
         /// </summary>
@@ -28,7 +28,7 @@ namespace WorkflowAutomation.Application.Subdivisions.Commands.UpdateSubdivision
         /// <summary>
         /// Список пользователей с изменениями
         /// </summary>
-        public List<UpdatesSubUsers>? SubdivisionUsers { get; set; }
+        public List<UpdatesSubUsers>? UpdatedSubdivisionUsers { get; set; }
 
     }
 }

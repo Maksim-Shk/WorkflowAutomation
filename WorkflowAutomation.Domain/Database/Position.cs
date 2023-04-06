@@ -14,6 +14,7 @@ namespace WorkflowAutomation.Domain
         public int IdPosition { get; set; }
         public string Name { get; set; } = null!;
         public int? IdSubordination { get; set; }
+        public string? ShortName { get; set; }
 
         public virtual Position? IdSubordinationNavigation { get; set; }
         public virtual ICollection<Position> InverseIdSubordinationNavigation { get; set; }

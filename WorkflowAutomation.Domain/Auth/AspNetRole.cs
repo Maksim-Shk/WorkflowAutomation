@@ -17,6 +17,7 @@ namespace WorkflowAutomation.Domain
         public string? ConcurrencyStamp { get; set; }
 
         public virtual ICollection<AspNetRoleClaim> AspNetRoleClaims { get; set; }
+
         public virtual ICollection<AspNetUser> Users { get; set; }
     }
 }

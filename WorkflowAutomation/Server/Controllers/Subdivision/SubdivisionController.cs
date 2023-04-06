@@ -1,26 +1,13 @@
-﻿using AutoMapper;
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using WorkflowAutomation.Application.Documents.Commands.CreateNewDocument;
-using WorkflowAutomation.Application.Documents.Queries.GetDocumentList;
-using WorkflowAutomation.Application.Documents.Commands.UserInfoCommand;
-using WorkflowAutomation.Server.Models;
-using WorkflowAutomation.Server.Controllers;
-
-using Microsoft.EntityFrameworkCore;
-using System.Threading;
-using WorkflowAutomation.Domain;
-using System.Reflection;
-using WorkflowAutomation.Application.Interfaces;
-using AutoMapper.QueryableExtensions;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
+﻿using WorkflowAutomation.Application.Interfaces;
 using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList;
 using WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionInfo;
-using MediatR;
+using WorkflowAutomation.Application.Subdivisions.Commands.UpdateSubdivision;
+
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using WorkflowAutomation.Application.Documents.Commands.CreateNewDocument;
+
 
 namespace WorkflowAutomation.Server.Controllers
 {
@@ -64,6 +51,15 @@ namespace WorkflowAutomation.Server.Controllers
             };
             var vm = await Mediator.Send(query);
             return Ok(vm);
+        }
+        [HttpPut("UpdateSubdivision")]
+        [Authorize]
+        public async Task<ActionResult<int>> UpdateSubdivision([FromBody] UpdateSubdivisionDto updateSubdivisionDto)
+        {
+            var command = _mapper.Map<UpdateSubdivisionCommand>(updateSubdivisionDto);
+            command.UserId = UserId;
+            var subId = await Mediator.Send(command);
+            return Ok(subId);
         }
     }
 }

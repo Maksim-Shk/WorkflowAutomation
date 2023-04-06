@@ -3,7 +3,7 @@ namespace WorkflowAutomation.Application.Subdivisions.Commands.UpdateSubdivision
     public class UpdatesSubUsers
     {
         /// <summary>
-        /// ID меняющего подразделение пользователя
+        /// ID пользователя пользователя с изменениями
         /// </summary>
         public string UserId { get; set; }
         /// <summary>

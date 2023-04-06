@@ -33,12 +33,51 @@ namespace WorkflowAutomation.Application.Subdivisions.Commands.UpdateSubdivision
             {
                 try
                 {
-                    var subdivision = await _dbContext.Subdivisions.FirstOrDefaultAsync(s=>s.IdSubdivision == request.SubdivisionId);
+                    var subdivision = await _dbContext.Subdivisions.FirstOrDefaultAsync(s =>s.IdSubdivision == request.SubdivisionId);
                     if (subdivision != null)
                     {
-                      //  if (request.Name != null)
-                      //      subdivision.Name = request.Name;
-                      //  if (request.)
+                        if (request.Name != null)
+                            subdivision.Name = request.Name;
+                        if (request.CreateDate != null)
+                            subdivision.CreationDate = request.CreateDate;
+                        if (request.SubordinationId != null)
+                            subdivision.IdSubordination = request.SubordinationId;
+
+                        if (request.UpdatedSubdivisionUsers != null)
+                        {
+                            foreach (var user in request.UpdatedSubdivisionUsers)
+                            {
+                                var SbdUser = await _dbContext.UserSubdivisions.FirstOrDefaultAsync(su => su.IdUser == user.UserId);
+                                if (SbdUser != null)
+                                {
+                                    if (user.NewSubdivisionId != null)
+                                    {
+                                        DateTime transitDate = DateTime.Now;
+                                        SbdUser.RemovalDate = transitDate;
+                                        UserSubdivision userSubdivision = new()
+                                        {
+                                            IdUser = user.UserId,
+                                            RemovalDate = null,
+                                            IdSubdivision = (int)user.NewSubdivisionId,
+                                            AppointmentDate = transitDate
+                                        };
+                                        _dbContext.UserSubdivisions.Update(SbdUser);
+                                        await _dbContext.UserSubdivisions.AddAsync(userSubdivision, cancellationToken);
+                                    }
+                                    else if (user.RemovalDate != null)
+                                    {
+                                        SbdUser.RemovalDate = (DateTime)user.RemovalDate;
+                                        _dbContext.UserSubdivisions.Update(SbdUser);
+                                    }
+                                    if (user.AppointmentDate != null)
+                                    {
+                                        SbdUser.AppointmentDate = (DateTime)user.AppointmentDate;
+                                        _dbContext.UserSubdivisions.Update(SbdUser);
+                                    }
+                                }
+                            }
+                        }
+                        await _dbContext.Save(cancellationToken);
                     }
                     else
                     {

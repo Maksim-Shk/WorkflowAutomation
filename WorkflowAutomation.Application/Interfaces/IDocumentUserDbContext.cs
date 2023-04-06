@@ -31,7 +31,7 @@ namespace WorkflowAutomation.Application.Interfaces
         DbSet<AspNetUserClaim> AspNetUserClaims { get; set; } 
         DbSet<AspNetUserLogin> AspNetUserLogins { get; set; } 
         DbSet<AspNetUserToken> AspNetUserTokens { get; set; }
-        List<AllowedSubdivisions> GetAllowedSubdivisions(int a);
+        List<AllowedSubdivision> GetAllowedSubdivisions(int a);
 
         Task<int> Save(CancellationToken cancellationToken);
         DatabaseFacade Database { get { return this.Database; } }

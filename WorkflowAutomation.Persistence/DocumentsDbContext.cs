@@ -14,7 +14,6 @@ namespace WorkflowAutomation.Persistence
         public DocumentsDbContext(DbContextOptions<DocumentsDbContext> options)
             : base(options) { }
 
-        // public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<AppUser> Users { get; set; } = null!;
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; } = null!;
         public virtual DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; } = null!;
@@ -22,7 +21,6 @@ namespace WorkflowAutomation.Persistence
         public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; } = null!;
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; } = null!;
         public virtual DbSet<AspNetUserToken> AspNetUserTokens { get; set; } = null!;
-        public virtual DbSet<DeviceCode> AspNetDeviceCodes { get; set; } = null!;
         public virtual DbSet<Document> Documents { get; set; } = null!;
         public virtual DbSet<DocumentContent> DocumentContents { get; set; } = null!;
         public virtual DbSet<DocumentStatus> DocumentStatuses { get; set; } = null!;
@@ -34,25 +32,29 @@ namespace WorkflowAutomation.Persistence
         public virtual DbSet<Subdivision> Subdivisions { get; set; } = null!;
         public virtual DbSet<UserPosition> UserPositions { get; set; } = null!;
         public virtual DbSet<UserSubdivision> UserSubdivisions { get; set; } = null!;
-        private DbSet<AllowedSubdivisions> AllowedSubdivisions { get; set; } = null!;
+        private DbSet<AllowedSubdivision> AllowedSubdivisions { get; set; } = null!;
 
-        public List<AllowedSubdivisions> GetAllowedSubdivisions(int a)
+        public List<AllowedSubdivision> GetAllowedSubdivisions(int a)
         {
             NpgsqlParameter totalParameter = new NpgsqlParameter()
             {
                 ParameterName = "@a",
                 DbType = DbType.Int32,
-               // Direction = ParameterDirection.Input
+                // Direction = ParameterDirection.Input
                 Value = a
             };
-            var result = AllowedSubdivisions.FromSqlRaw("CALL public.findallowedsubdivisions @a)",totalParameter).ToList();
+            var result = AllowedSubdivisions.FromSqlRaw("CALL public.findallowedsubdivisions @a)", totalParameter).ToList();
             //var result = AllowedSubdivisions.FromSqlRaw($"WITH RECURSIVE r AS ( SELECT id_subdivision, id_subordination, name FROM subdivision WHERE id_subdivision = {a} UNION SELECT subdivision.id_subdivision, subdivision.id_subordination, subdivision.name  FROM subdivision   JOIN r  ON subdivision.id_subordination = r.id_subdivision) SELECT * FROM r;").ToList();
             return result;
         }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<AllowedSubdivisions>().HasNoKey();
+            modelBuilder.HasPostgresExtension("pgcrypto");
+
+            modelBuilder.Entity<AllowedSubdivision>(entity =>
+            {
+                entity.HasNoKey();
+            });
 
             modelBuilder.Entity<AppUser>(entity =>
             {
@@ -94,6 +96,30 @@ namespace WorkflowAutomation.Persistence
                     .HasForeignKey<AppUser>(d => d.IdUser)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("app_user_asp_id_fkey");
+            });
+
+            modelBuilder.Entity<AspNetDeviceCode>(entity =>
+            {
+                entity.HasKey(e => e.UserCode);
+
+                entity.HasIndex(e => e.DeviceCode, "IX_DeviceCodes_DeviceCode")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.Expiration, "IX_DeviceCodes_Expiration");
+
+                entity.Property(e => e.UserCode).HasMaxLength(200);
+
+                entity.Property(e => e.ClientId).HasMaxLength(200);
+
+                entity.Property(e => e.Data).HasMaxLength(50000);
+
+                entity.Property(e => e.Description).HasMaxLength(200);
+
+                entity.Property(e => e.DeviceCode).HasMaxLength(200);
+
+                entity.Property(e => e.SessionId).HasMaxLength(100);
+
+                entity.Property(e => e.SubjectId).HasMaxLength(200);
             });
 
             modelBuilder.Entity<AspNetRole>(entity =>
@@ -183,32 +209,6 @@ namespace WorkflowAutomation.Persistence
                     .HasForeignKey(d => d.UserId);
             });
 
-            modelBuilder.Entity<DeviceCode>(entity =>
-            {
-                entity.HasKey(e => e.UserCode);
-
-                entity.HasIndex(e => e.DeviceCode1, "IX_DeviceCodes_DeviceCode")
-                    .IsUnique();
-
-                entity.HasIndex(e => e.Expiration, "IX_DeviceCodes_Expiration");
-
-                entity.Property(e => e.UserCode).HasMaxLength(200);
-
-                entity.Property(e => e.ClientId).HasMaxLength(200);
-
-                entity.Property(e => e.Data).HasMaxLength(50000);
-
-                entity.Property(e => e.Description).HasMaxLength(200);
-
-                entity.Property(e => e.DeviceCode1)
-                    .HasMaxLength(200)
-                    .HasColumnName("DeviceCode");
-
-                entity.Property(e => e.SessionId).HasMaxLength(100);
-
-                entity.Property(e => e.SubjectId).HasMaxLength(200);
-            });
-
             modelBuilder.Entity<Document>(entity =>
             {
                 entity.HasKey(e => e.IdDocument)
@@ -216,14 +216,15 @@ namespace WorkflowAutomation.Persistence
 
                 entity.ToTable("document");
 
+                entity.HasIndex(e => e.IdSender, "IX_document_id_sender");
+
                 entity.HasIndex(e => e.IdReceiver, "fki_document_id_receiver_fkey");
 
                 entity.HasIndex(e => e.IdDocumentType, "fki_rtewte");
 
                 entity.Property(e => e.IdDocument)
                     .HasColumnName("id_document")
-                    .UseIdentityAlwaysColumn()
-                    .HasIdentityOptions(null, null, 0L);
+                    .UseIdentityAlwaysColumn();
 
                 entity.Property(e => e.CreateDate)
                     .HasColumnType("timestamp without time zone")
@@ -277,8 +278,7 @@ namespace WorkflowAutomation.Persistence
 
                 entity.Property(e => e.IdDocumentContent)
                     .HasColumnName("id_document_content")
-                    .UseIdentityAlwaysColumn()
-                    .HasIdentityOptions(null, null, 0L);
+                    .UseIdentityAlwaysColumn();
 
                 entity.Property(e => e.IdDocument).HasColumnName("id_document");
 
@@ -301,6 +301,10 @@ namespace WorkflowAutomation.Persistence
                     .HasName("document_status_pkey");
 
                 entity.ToTable("document_status");
+
+                entity.HasIndex(e => e.IdDocument, "IX_document_status_id_document");
+
+                entity.HasIndex(e => e.IdStatus, "IX_document_status_id_status");
 
                 entity.HasIndex(e => e.IdUser, "fki_document_status_id_user_fkey");
 
@@ -344,23 +348,17 @@ namespace WorkflowAutomation.Persistence
 
                 entity.ToTable("document_type");
 
-                entity.HasIndex(e => e.IdSubordination, "fki_document_type_id_subordination");
-
                 entity.Property(e => e.IdDocumentType)
                     .HasColumnName("id_document_type")
-                    .UseIdentityAlwaysColumn()
-                    .HasIdentityOptions(null, null, 0L);
-
-                entity.Property(e => e.IdSubordination).HasColumnName("id_subordination");
+                    .UseIdentityAlwaysColumn();
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(256)
                     .HasColumnName("name");
 
-                entity.HasOne(d => d.IdSubordinationNavigation)
-                    .WithMany(p => p.InverseIdSubordinationNavigation)
-                    .HasForeignKey(d => d.IdSubordination)
-                    .HasConstraintName("document_type_id_subordination");
+                entity.Property(e => e.ShortName)
+                    .HasMaxLength(256)
+                    .HasColumnName("short_name");
             });
 
             modelBuilder.Entity<Key>(entity =>
@@ -410,14 +408,17 @@ namespace WorkflowAutomation.Persistence
 
                 entity.Property(e => e.IdPosition)
                     .HasColumnName("id_position")
-                    .UseIdentityAlwaysColumn()
-                    .HasIdentityOptions(null, null, 0L);
+                    .UseIdentityAlwaysColumn();
 
                 entity.Property(e => e.IdSubordination).HasColumnName("id_subordination");
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(256)
                     .HasColumnName("name");
+
+                entity.Property(e => e.ShortName)
+                    .HasMaxLength(256)
+                    .HasColumnName("short_name");
 
                 entity.HasOne(d => d.IdSubordinationNavigation)
                     .WithMany(p => p.InverseIdSubordinationNavigation)
@@ -434,8 +435,7 @@ namespace WorkflowAutomation.Persistence
 
                 entity.Property(e => e.IdStatus)
                     .HasColumnName("id_status")
-                    .UseIdentityAlwaysColumn()
-                    .HasIdentityOptions(null, null, 0L);
+                    .UseIdentityAlwaysColumn();
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(256)
@@ -453,14 +453,21 @@ namespace WorkflowAutomation.Persistence
 
                 entity.Property(e => e.IdSubdivision)
                     .HasColumnName("id_subdivision")
-                    .UseIdentityAlwaysColumn()
-                    .HasIdentityOptions(null, null, 0L);
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.CreationDate)
+                    .HasColumnType("timestamp without time zone")
+                    .HasColumnName("creation_date");
 
                 entity.Property(e => e.IdSubordination).HasColumnName("id_subordination");
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(256)
                     .HasColumnName("name");
+
+                entity.Property(e => e.ShortName)
+                    .HasMaxLength(256)
+                    .HasColumnName("short_name");
 
                 entity.HasOne(d => d.IdSubordinationNavigation)
                     .WithMany(p => p.InverseIdSubordinationNavigation)
@@ -481,8 +488,7 @@ namespace WorkflowAutomation.Persistence
 
                 entity.Property(e => e.IdUserPosition)
                     .HasColumnName("id_user_position")
-                    .UseIdentityAlwaysColumn()
-                    .HasIdentityOptions(null, null, 0L);
+                    .UseIdentityAlwaysColumn();
 
                 entity.Property(e => e.AppointmentDate)
                     .HasColumnType("timestamp without time zone")
@@ -522,8 +528,7 @@ namespace WorkflowAutomation.Persistence
 
                 entity.Property(e => e.IdUserSubdivision)
                     .HasColumnName("id_user_subdivision")
-                    .UseIdentityAlwaysColumn()
-                    .HasIdentityOptions(null, null, 0L);
+                    .UseIdentityAlwaysColumn();
 
                 entity.Property(e => e.AppointmentDate)
                     .HasColumnType("timestamp without time zone")
@@ -550,7 +555,6 @@ namespace WorkflowAutomation.Persistence
                     .HasConstraintName("user_subdivision_id_user_fkey");
             });
         }
-
         public async Task<int> Save(CancellationToken cancellationToken)
         {
             return await this.SaveChangesAsync(cancellationToken);
