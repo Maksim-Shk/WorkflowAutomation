@@ -32,7 +32,7 @@ namespace WorkflowAutomation.Server
 
         public void ConfigureServices(IServiceCollection services)
         {
-           
+            services.AddBlazorContextMenu();
             services.AddResponseCompression(opts =>
             {
                 opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
