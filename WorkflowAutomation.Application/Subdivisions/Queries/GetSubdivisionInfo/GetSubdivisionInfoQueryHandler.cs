@@ -45,6 +45,7 @@ namespace WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionInfo
                 SubdivisionUser subdivisionUser = new SubdivisionUser();
                 subdivisionUser.Name = item.User.Surname + " " + item.User.Name + " " + item.User.Patronymic;
                 subdivisionUser.Id = item.User.IdUser;
+                subdivisionUser.AppointmentDate = SubdivisionUsers.First(u=>u.IdUser==item.User.IdUser).AppointmentDate;
 
                 var userPosition = _dbContext.UserPositions.FirstOrDefault(up => up.IdUser == subdivisionUser.Id);
                 var position = await _dbContext.Positions.FirstAsync(p => p.IdPosition == userPosition.IdPosition);
@@ -61,6 +62,7 @@ namespace WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionInfo
               // var position = _dbContext.Positions.FirstOrDefault(p=>p.IdPosition == userPosition.UserPosition.IdPosition).Name;
                 subdivisionUser.Position = position.Name;
                 subdivisionUser.PositionId = position.IdPosition;
+
                 dto.Users.Add(subdivisionUser);
             }
             //  foreach (var user in users)

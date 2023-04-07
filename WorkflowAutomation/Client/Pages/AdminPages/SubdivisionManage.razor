@@ -83,11 +83,11 @@ else{
     <dd class="col-sm-8">
         @subdivisionInfoDto.CreateDate
     </dd>
-    <dt class="col-sm-3">
+        <dt class="col-sm-3" >
         Сотрудники
     </dt>
 
-    <dd class="col-sm-8">
+        <dd class="col-sm-8" style="margin-bottom:25%">
         @foreach (var posId in PositionsIdList)
         {
             @if (posId != null)
@@ -96,7 +96,29 @@ else{
                 {
                     @if (item != null)
                     {
-                        <div>@item.Name @item.Position </div>
+                            <ContextMenuTrigger MenuId="myMenu" Data="item.Id">
+
+                                <p>@item.Name @item.Position</p>
+                                @if (item.IsRender)
+                                {
+                                    <Div ElementId="#b-animate">
+                                        <Animate Anchor="#b-animate" Auto Animation="Animations.Fade" DelayMilliseconds="500">
+                                            <Card Margin="Margin.Is4.OnY">
+                                                <CardBody>
+                                                    <Field ColumnSize="ColumnSize.Is4.OnDesktop">
+                                                        <FieldLabel>Дата закрепления</FieldLabel>
+                                                        <DatePicker @bind-Date="item.AppointmentDate" TValue="DateTime" Min="min" Max="DateTimeOffset.Now" DisplayFormat="dd/MM/Y" />
+                                                    </Field>
+                                                                                                        
+                                                    <button class="btn-warning"> Подтвердить   </button>
+                                                    <button type="button" class="btn-success"  @onclick="()=>HideEditCard(item.Id)"> Скрыть</button>
+                                                </CardBody>
+                                            </Card>
+                                        </Animate>
+                                    </Div>
+                                }
+                            </ContextMenuTrigger>
+                        @*<div>@item.Name @item.Position </div>*@
                     }
                 }
                 <hr />
@@ -108,36 +130,44 @@ else{
 else{
     <Label>empty</Label>
 }
+<label></label>
 
 <ContextMenu Id="myMenu">
-    <Item OnClick="@OnClick">Item 1</Item>
-    <Item OnClick="@OnClick">Item 2</Item>
-    <Item OnClick="@OnClick" Enabled="false">Item 3 (disabled)</Item>
-    <Seperator />
-    <Item>Submenu
-        <SubMenu>
-            <Item OnClick="@OnClick">Submenu Item 1</Item>
-            <Item OnClick="@OnClick">Submenu Item 2</Item>
-        </SubMenu>
-    </Item>
-</ContextMenu>
+    <Item OnClick="@OnClick">Изменить данные</Item>
+    <Item OnClick="@OnClick">Сменить подразделение</Item>
+     <Item OnClick="@OnClick">Уволить</Item>
+    </ContextMenu>
 
-<ContextMenuTrigger MenuId="myMenu">
-    <p>Right-click on me to show the context menu !!</p>
-</ContextMenuTrigger>
 
 
 
 
 @code {
+
+    DateTimeOffset min = DateTimeOffset.Now.AddYears(-50);
+
+   
+    
+    
+   bool Render;
+    void HideEditCard(string id) { 
+        var user = subdivisionInfoDto.Users.FirstOrDefault(u => u.Id == id);
+        user.IsRender = false;
+        StateHasChanged();
+
+    }
     void OnClick(ItemClickEventArgs e)
     {
-        Console.WriteLine($"Item Clicked => Menu: {e.ContextMenuId}, MenuTarget: {e.ContextMenuTargetId}, IsCanceled: {e.IsCanceled}, MenuItem: {e.MenuItemElement}, MouseEvent: {e.MouseEvent}");
-    }
+        var user = subdivisionInfoDto.Users.FirstOrDefault(u => u.Id == e.Data.ToString());
+        if (user != null) 
+        { user.IsRender = true;
 
-    bool Render;
-    private TextEdit SearchOutput = new();
+        }
+        StateHasChanged();
+            }
 
+     
+    
     private void SelectedChangeList() {
         selectedNodeTreeView = null;
         OnClickSubdivision();
@@ -150,9 +180,10 @@ else{
         OnClickSubdivision();
         StateHasChanged();
     }
+    
 
-
-
+    
+private TextEdit SearchOutput = new();
     private void SearchClick()
     {
         List<Item> NodesForSearch = new List<Item>();
@@ -164,7 +195,8 @@ else{
     }
     string searchItemName = "";
     Item SearchNode { get; set; } = new();
-
+    
+    
     TreeView<Item> treeViewRef;
     List<Item> SearchResult { get; set; } = new();
 
@@ -200,7 +232,7 @@ else{
         {  
             selectedNodeTreeView = null;
             selectedNodeListView = null;
-            #region Инфромация о поздразделениях
+           
             subdivisionListVm.Subdivisions = new List<SubdivisionListLookupDto>();
             subdivisionListVm = await Http.GetFromJsonAsync<SubdivisionListVm>("Subdivision");
             Items = new List<Item>();
@@ -215,7 +247,7 @@ else{
                 Item item = new Item() { Id = sub.Id, Name = sub.Name, SubId = sub.IdSubordination };
                 AllItems.Add(item);
             }
-            #endregion
+           
 
 
         }
@@ -243,25 +275,28 @@ else{
             }
             subdivisionInfoDto.Users = new();
             if (SelectedItem != null)
-            {
-                subdivisionInfoDto = await Http.GetFromJsonAsync<SubdivisionInfoDto>("Subdivision/GetSubdivisionInfo/" + SelectedItem.Id.ToString());
-
-                var positions = subdivisionInfoDto.Users
-                                .GroupBy(x => x.PositionId)
-                                .Select(x => x.First())
-                                .ToList()
-                                .Select(e => new
-                                {
-                                    Name = e.Position,
-                                    IdPosition = e.PositionId
-                                }).ToList();
-
-                PositionsIdList = new List<int>();
-                foreach (var pos in positions)
+            {   if (SelectedItem.Id != 0)
                 {
-                    PositionsIdList.Add(pos.IdPosition);
+                    subdivisionInfoDto = await Http.GetFromJsonAsync<SubdivisionInfoDto>("Subdivision/GetSubdivisionInfo/" + SelectedItem.Id.ToString());
+
+                    var positions = subdivisionInfoDto.Users
+                                    .GroupBy(x => x.PositionId)
+                                    .Select(x => x.First())
+                                    .ToList()
+                                    .Select(e => new
+                                    {
+                                        Name = e.Position,
+                                        IdPosition = e.PositionId                                                                              
+                                    }).ToList()
+                                    ;
+
+                    PositionsIdList = new List<int>();
+                    foreach (var pos in positions)
+                    {
+                        PositionsIdList.Add(pos.IdPosition);
+                    }
+                    StateHasChanged();
                 }
-                StateHasChanged();
             }
         }
         catch
