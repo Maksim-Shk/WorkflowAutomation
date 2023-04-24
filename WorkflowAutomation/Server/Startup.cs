@@ -48,11 +48,11 @@ namespace WorkflowAutomation.Server
             //Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
             // services.AddMediatR(Assembly.GetExecutingAssembly());
 
-            var connectionString = Configuration["DbConnection"];
-            services.AddDbContext<AuthDbContext>(options =>
-            {
-                options.UseNpgsql(connectionString);
-            });
+           var connectionString = Configuration.GetConnectionString("DbConnection");
+           services.AddDbContext<AuthDbContext>(options =>
+           {
+               options.UseNpgsql(connectionString);
+           });
             services.AddPersistence(Configuration);
 
             services.AddCors(options =>

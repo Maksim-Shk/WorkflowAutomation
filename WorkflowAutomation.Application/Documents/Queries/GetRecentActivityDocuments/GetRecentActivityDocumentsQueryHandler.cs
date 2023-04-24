@@ -40,9 +40,13 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetRecentActivityDocu
                 var document = await _dbContext.Documents.FirstAsync(doc => doc.IdDocument == ds.IdDocument);
                 RecentActivityDocumentLookupDto dto = new RecentActivityDocumentLookupDto();
                 if (ds.IdUser == request.UserId)
-                    dto.Description = "Документ отправлен";
-                else dto.Description = "Документ получен";
-                dto.Content = document.Title;
+                    dto.Description = "Отправленный документ";
+                else dto.Description = "Полученный документ";
+
+                var status = await _dbContext.Statuses.FirstAsync(s => s.IdStatus == ds.IdStatus);
+                var documentType = await _dbContext.DocumentTypes.FirstAsync(t => t.IdDocumentType == document.IdDocumentType);
+
+                dto.Content = documentType.Name + " <" + document.Title + "> получил статус <" + status.Name + ">";
                 dto.Date = ds.AppropriationDate;
                 dto.Id = ds.IdDocument;
                 RecentDocuments.Add(dto);

@@ -1,5 +1,4 @@
-﻿
-namespace WorkflowAutomation.Persistence
+﻿namespace WorkflowAutomation.Persistence
 {
     public class DbInitializer
     {
