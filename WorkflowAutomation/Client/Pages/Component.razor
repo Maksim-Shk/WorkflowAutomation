@@ -1,0 +1,21 @@
+﻿@page "/GenerateData"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.ComponentModel.DataAnnotations
+@using Blazorise
+@inject HttpClient httpClient
+@attribute [Authorize]
+
+<h3>Генерация данных</h3>
+
+
+<Button Color="Color.Primary" Clicked="@GenerateClick"> Генерация </Button>
+
+@code {
+
+    public async Task GenerateClick()
+    {
+        var response = await httpClient.GetAsync("GenerateDate/Generate");
+    }
+
+}

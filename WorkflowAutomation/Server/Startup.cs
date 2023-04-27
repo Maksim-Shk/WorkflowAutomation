@@ -88,8 +88,6 @@ namespace WorkflowAutomation.Server
             services.AddOptions();
             services.Configure<AuthJwtOptions>(Configuration.GetSection("JwtSettings"));
 
-
-
             var authSettings = Configuration.GetSection("JwtSettings").Get<AuthJwtOptions>();
 
             services
@@ -148,7 +146,6 @@ namespace WorkflowAutomation.Server
             });
 
             app.UseCors("AllowAll");
-            //app.UseIdentityServer();
             app.UseAuthentication();
             app.UseAuthorization();
             

@@ -34,8 +34,6 @@ namespace WorkflowAutomation.Server.Extensions
       //         .AddDefaultTokenProviders();
       // }
 
-      
-
       //  public static void ConfigureJWT(this IServiceCollection services, JWTSettings settings)
       //  {
       //      services
@@ -121,6 +119,5 @@ namespace WorkflowAutomation.Server.Extensions
             services.AddResponseCaching();
         }
 
-      
     }
 }

@@ -52,6 +52,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Controllers\ClusterAnalysis\" />
+    <Folder Include="Controllers\GenerateData\" />
     <Folder Include="Controllers\Identity\" />
     <Folder Include="Controllers\Role\" />
     <Folder Include="Controllers\Status\" />

@@ -1,3 +1,4 @@
+/*
 using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 using System.Web;
@@ -12,3 +13,4 @@ public class CustomUserIdProvider : IUserIdProvider
         //return connection.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
     }
 }
+*/
