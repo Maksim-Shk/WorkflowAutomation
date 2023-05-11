@@ -15,6 +15,7 @@
 	 <ItemGroup>
     <PackageReference Include="Accord" Version="3.8.0" />
     <PackageReference Include="Accord.MachineLearning" Version="3.8.0" />
+    <PackageReference Include="Accord.Statistics" Version="3.8.0" />
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="FluentValidation" Version="11.2.2" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.2.2" />

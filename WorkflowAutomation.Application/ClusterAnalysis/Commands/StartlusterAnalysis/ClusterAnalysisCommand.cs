@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAnalysis
 {
-    public class ClusterAnalysisCommand : IRequest
+    public class ClusterAnalysisCommand : IRequest<OutputClustersVm>
     {
         /// <summary>
         /// Количество кластеров

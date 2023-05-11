@@ -11,11 +11,18 @@ using System.Security.Cryptography;
 using Accord.Math;
 using Microsoft.Extensions.Logging;
 using Serilog.Core;
+using Accord.Statistics.Filters;
+using Accord.Statistics.Kernels;
+using Accord.Math.Transforms;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Data;
+using WorkflowAutomation.Domain;
+using Accord.Math.Distances;
 
 namespace WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAnalysis
 {
     public class ClusterAnalysisCommandHandler
-        : IRequestHandler<ClusterAnalysisCommand>
+        : IRequestHandler<ClusterAnalysisCommand, OutputClustersVm>
     {
         private readonly IDocumentUserDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -25,61 +32,12 @@ namespace WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAna
              IMapper mapper, ILogger<ClusterAnalysisCommandHandler> logger) =>
              (_dbContext, _mapper, _logger) = (dbContext, mapper, logger);
 
-        public async Task<Unit> Handle(ClusterAnalysisCommand request,
+        public async Task<OutputClustersVm> Handle(ClusterAnalysisCommand request,
            CancellationToken cancellationToken)
         {
             Accord.Math.Random.Generator.Seed = 0;
 
-            //            double[][] observations =
-            //{
-            //    new double[] { -5, -2, -1 },
-            //    new double[] { -5, -5, -6 },
-            //    new double[] {  2,  1,  1 },
-            //    new double[] {  1,  1,  2 },
-            //    new double[] {  1,  2,  2 },
-            //    new double[] {  3,  1,  2 },
-            //    new double[] { 11,  5,  4 },
-            //    new double[] { 15,  5,  6 },
-            //    new double[] { 10,  5,  6 },
-            //};
-
-            // Создаем объект для генерации случайных чисел
-            var random = new RNGCryptoServiceProvider();
-            var rnd = new Random();
-            // создать дату начала
-            DateTime startDate = DateTime.Now.AddHours(3);
-
-            // создать дату окончания, ограниченную 3 днями
-            DateTime endDate = startDate.AddDays(3);
-            // получить случайный интервал времени между началом и концом
-            TimeSpan timeSpan = endDate - startDate;
-
-
             var documents = await _dbContext.Documents.ToListAsync(cancellationToken);
-
-
-
-
-            //var result = _dbContext.Documents
-            //    .Join(
-            //        _dbContext.DocumentStatuses,
-            //        d => d.IdDocument,
-            //        ds => ds.IdDocument,
-            //        (d, ds) => new { Document = d, DocumentStatus = ds }
-            //        );
-
-            //var result2 = result
-            //    .Include(x => x.DocumentStatus.IdStatusNavigation);
-
-            //int Count = result2.Count();
-
-            //var result3 = result2
-            //    .Select(x => new { x.Document.Title, x.DocumentStatus.IdStatusNavigation.Name, x.DocumentStatus.AppropriationDate });
-
-            //foreach (var d in result2){
-            //    //_logger.LogInformation($"Документ {d.Title}: Статус {d.Name} - Дата {d.AppropriationDate}");
-            //    var a = d.Document.Title;
-            //}
 
             //Документы и статусы (Id статусов приходят из request.StatusesIds)
             var documentStatuses = _dbContext.Documents
@@ -93,6 +51,9 @@ namespace WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAna
             //характеристики документов в формате для проведеления кластеризации
             double[][] observations = new double[documentStatuses.Count][];
 
+
+
+
             for (int i = 0; i < documentStatuses.Count; i++)
             {
                 //массив для получения дат из статусов документов
@@ -100,40 +61,69 @@ namespace WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAna
 
                 //все статусы кроме 2 = "Зарегистрирован"
                 var statuses = documentStatuses[i].DocumentStatuses.Where(s => s.IdStatus != 2).ToList();
+
                 foreach (var status in statuses)
                 {
-                    dates.Add((status.AppropriationDate - documentStatuses[i].DocumentStatuses.First(s => s.IdStatus == 2).AppropriationDate).TotalHours);
+                    dates.Add((status.AppropriationDate - documentStatuses[i].DocumentStatuses.First(s => s.IdStatus == 2).AppropriationDate).TotalMinutes);
                 }
                 dates.Add(documentStatuses[i].IdDocumentType);
-                // TimeSpan randomInterval1 = new TimeSpan((long)(rnd.NextDouble() * timeSpan.Ticks));
-                // TimeSpan randomInterval2 = new TimeSpan((long)(rnd.NextDouble() * timeSpan.Ticks));
-                // TimeSpan randomInterval3 = new TimeSpan((long)(rnd.NextDouble() * timeSpan.Ticks));
-
-                // добавить случайный интервал к начальной дате
-
-
-                //   var FirstStatus = startDate + randomInterval1;
-                //   var SecondStatus = startDate + randomInterval2;
-                //   var ThirdStatus = startDate + randomInterval3;
 
                 observations[i] = new double[statuses.Count + 1];
                 for (int j = 0; j < statuses.Count + 1; j++)
                 {
                     observations[i][j] = dates[j];
-
                 }
-              //  observations[i][0] = randomInterval1.TotalMinutes;
-              //  observations[i][1] = randomInterval2.TotalMinutes;
-              //  observations[i][2] = randomInterval3.TotalMinutes;
             }
+
+            double[][] originalObservations = new double[observations.Length][];
+            for (int i = 0; i < observations.Length; i++)
+            {
+                originalObservations[i] = new double[observations[i].Length];
+                Array.Copy(observations[i], originalObservations[i], observations[i].Length);
+            }
+
+
+            //минимальное и максимальное значения
+            double[] minValues = new double[observations[0].Length];
+            double[] maxValues = new double[observations[0].Length];
+            for (int j = 0; j < observations[0].Length; j++)
+            {
+                minValues[j] = observations[0][j];
+                maxValues[j] = observations[0][j];
+            }
+
+            for (int i = 0; i < observations.Length; i++)
+            {
+                for (int j = 0; j < observations[i].Length; j++)
+                {
+                    if (observations[i][j] < minValues[j])
+                    {
+                        minValues[j] = observations[i][j];
+                    }
+                    if (observations[i][j] > maxValues[j])
+                    {
+                        maxValues[j] = observations[i][j];
+                    }
+                }
+            }
+          
+            //нормализация от 0 до 1
+            for (int i = 0; i < observations.Length; i++)
+            {
+                for (int j = 0; j < observations[i].Length; j++)
+                {
+                    observations[i][j] = (observations[i][j] - minValues[j]) / (maxValues[j] - minValues[j]);
+                }
+            }
+
             // Задаем количество кластеров
             int k = request.ClusterCount;
-
 
             // Инициализируем алгоритм k-средних
             var kmeans = new KMeans(k)
             {
-                //Distance = Distance.Euclidean()
+                //Distance = new SquareEuclidean(),
+                //Tolerance = 0.05
             };
 
             // Выполняем кластеризацию
@@ -148,7 +138,84 @@ namespace WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAna
                 _logger.LogInformation($"Документ {documents[i].Title}: Cluster {labels[i]}");
             }
 
-            return Unit.Value;
+
+            var outputClustersDtoList = new List<OutputClustersDto>();
+
+            for (int i = 0; i < observations.Length; i++)
+            {
+                var document = _dbContext.Documents.First(d => d.IdDocument == documentStatuses[i].IdDocument);
+                var statuses = new List<ClusterStatus>();
+
+                //observations[i].Length - 1 - только статусы, без типа документа
+                for (int j=0;j<observations[i].Length - 1 ;j++) //(var requestStatusId in request.StatusesIds.Where(x => x != 2))
+                {
+                    var status = new ClusterStatus
+                    {
+                        StatusId = request.StatusesIds[j],
+                        StatusName = _dbContext.Statuses.First(s => s.IdStatus == request.StatusesIds[j]).Name,
+                        StatusValue = originalObservations[i][j],
+                        StatusNormaliseValue = observations[i][j]
+                    };
+                    statuses.Add(status);
+                }
+                outputClustersDtoList.Add(new OutputClustersDto
+                {
+                    DocumentId = documentStatuses[i].IdDocument,
+                    DocumentName = document.Title,
+                    ClusterId = labels[i],
+                    ClusterName = "ТУТ ПУСТО",
+                    DocumentType = _dbContext.DocumentTypes.First(dt => dt.IdDocumentType == document.IdDocumentType).Name,
+                    Statuses = statuses
+                });
+            }
+            //TestMethod();
+
+            return new OutputClustersVm { DocumentClusters = outputClustersDtoList };
+        }
+
+        public void TestMethod()
+        {
+            // Create the aforementioned sample table
+            DataTable table = new DataTable("Sample data");
+            table.Columns.Add("Age", typeof(double));
+            table.Columns.Add("Label", typeof(string));
+
+            //            age   label
+            table.Rows.Add(10, "child");
+            table.Rows.Add(07, "child");
+            table.Rows.Add(04, "child");
+            table.Rows.Add(21, "adult");
+            table.Rows.Add(27, "adult");
+            table.Rows.Add(12, "child");
+            table.Rows.Add(79, "elder");
+            table.Rows.Add(40, "adult");
+            table.Rows.Add(30, "adult");
+
+            // The filter will ignore non-real (continuous) data
+            Normalization normalization = new Normalization(table);
+
+            double mean = normalization["Age"].Mean;              // 25.55
+            double sdev = normalization["Age"].StandardDeviation; // 23.29
+
+            // Now we can process another table at once:
+            DataTable result = normalization.Apply(table);
+
+            foreach (DataRow item in table.Rows)
+            {
+                _logger.LogInformation("age" + item["Age"].ToString());
+            }
+
+            _logger.LogInformation("--------------------------------------------------------------------");
+
+            foreach (DataRow item in result.Rows)
+            {
+                _logger.LogInformation("age" + item["Age"].ToString());
+            }
+
+            // The result will be a table with the same columns, but
+            // in which any column named "Age" will have been normalized
+            // using the previously detected mean and standard deviation:
+
         }
     }
 }

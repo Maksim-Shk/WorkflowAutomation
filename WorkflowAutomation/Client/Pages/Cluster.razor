@@ -1,6 +1,7 @@
 ﻿@page "/Cluster"
 
-@using WorkflowAutomation.Application.Documents.Queries.GetDocumentList
+@*@using WorkflowAutomation.Application.Documents.Queries.GetDocumentList*@
+@using WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAnalysis;
 
 @using Microsoft.Extensions.Logging
 @using Microsoft.AspNetCore.Authorization
@@ -16,28 +17,49 @@
 
 <h3>Просмотр документов</h3>
 
-<EditForm Model="@documentListVm">
+<EditForm Model="@outputClustersVm">
     <DataAnnotationsValidator />
 
     <table class="table">
         <thead>
             <tr>
-                <th>Номер</th>
+                <th>ID документа</th>
                 <th>Тема</th>
-                <th>Время выполнения</th>
-                <th>Время проверки</th>
                 <th>Класс документа</th>
+                @foreach (var statusName in StatusesNames)
+                {
+                    <th>@statusName</th>
+                    <th>Нормализированный @statusName</th>
+                }
+                <th>Тип документа</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var doc in Clusters)
+            @foreach (var doc in outputClustersVm.DocumentClusters)
             {
                 <tr>
-                    <td>@doc.Id</td>
-                    <td>@doc.Title</td>
-                    <td>@doc.DateWork</td>
-                    <td>@doc.DateCheck</td>
-                    <td>@doc.DocClass</td>
+                    <td>@doc.DocumentId</td>
+                    <td>@doc.DocumentName</td>
+                    <td>@(doc.ClusterId+1)</td>
+                    @foreach (var item in doc.Statuses)
+                    {
+                        <td>
+                            @if (@item.StatusValue > 60 && @item.StatusValue <= 1536)
+                            {
+                                <Div>@(Math.Round(item.StatusValue/60,0)) часов @(Math.Round(item.StatusValue%60,0)) минут</Div>
+                            }
+                            else if (@item.StatusValue > 1536)
+                            {
+                                <Div>@(Math.Round(item.StatusValue / 1536, 0)) дней @(Math.Round(item.StatusValue % 1536 / 60, 0)) часов @(Math.Round(item.StatusValue % 1536 / 60,0)) минут</Div>
+                            }
+                            else
+                            {
+                                <Div>@(Math.Round(item.StatusValue,0)) минут</Div>
+                            }
+                        </td>
+                        <td>@item.StatusNormaliseValue</td>
+                    }
+                    <td>@doc.DocumentType</td>
                 </tr>
             }
         </tbody>
@@ -47,31 +69,32 @@
 @code {
 
     //заглушка для кластерного анализа
-    DocumentListVm documentListVm = new();
 
-    public class ClusterClass
-    {
-        public int Id{ get; set; }
-        public string Title{ get; set; }
-        public string DateWork { get; set; }
-        public string DateCheck { get; set; }
-        public string DocClass{ get; set; }
-    }
 
-    public List<ClusterClass> Clusters;
+    StartClusterAnalysisDto startClusterAnalysisDto = new();
+    OutputClustersVm outputClustersVm = new();
+    //List<Dictionary<int, string>> statuses = new List<Dictionary<int, string>>();
+    List<int> statuses = new List<int> { 2, 5 };
+    List<string> StatusesNames = new List<String> { "Время до принятия" };
+    //DocumentListVm documentListVm = new();
+    //public class ClusterClass
+    //{
+    //    public int Id{ get; set; }
+    //    public string Title{ get; set; }
+    //    public string DateWork { get; set; }
+    //    public string DateCheck { get; set; }
+    //    public string DocClass{ get; set; }
+    //}
+
+    //public List<ClusterClass> Clusters;
+
     protected override async Task OnInitializedAsync()
     {
-        Clusters = new List<ClusterClass>();
         try
         {
-            Clusters.Add(new ClusterClass { Id = 1, Title = "Документ 1", DateWork = "73 ч", DateCheck = "48 ч", DocClass = "Долгая работа, долгая проверка" });
-            Clusters.Add(new ClusterClass { Id = 12, Title = "Документ 12", DateWork = "79 ч", DateCheck = "46 ч", DocClass = "Долгая работа, долгая проверка" });
-            Clusters.Add(new ClusterClass { Id = 3, Title = "Документ 3", DateWork = "50 ч", DateCheck = "8 ч", DocClass = "Долгая работа, быстрая проверка" });
-            Clusters.Add(new ClusterClass { Id = 44, Title = "Документ 44", DateWork = "59 ч", DateCheck = "12 ч", DocClass = "Долгая работа, быстрая проверка" });
-            Clusters.Add(new ClusterClass { Id = 14, Title = "Документ 14", DateWork = "32 ч", DateCheck = "42 ч", DocClass = "Быстрая работа, долгая проверка" });
-            Clusters.Add(new ClusterClass { Id = 2, Title = "Документ 2", DateWork = "29 ч", DateCheck = "47 ч", DocClass = "Быстрая работа, долгая проверка" });
-            Clusters.Add(new ClusterClass { Id = 11, Title = "Документ 11", DateWork = "20 ч", DateCheck = "4 ч", DocClass = "Быстрая работа, быстрая проверка" });
-            Clusters.Add(new ClusterClass { Id = 50, Title = "Документ 50", DateWork = "12 ч", DateCheck = "12 ч", DocClass = "Быстрая работа, быстрая проверка" });
+            startClusterAnalysisDto.StatusesIds = statuses;//= statusList;
+            var httpResponse = await Http.PostAsJsonAsync<StartClusterAnalysisDto>("/ClusterAnalysis/CalculateClusters", startClusterAnalysisDto);
+            outputClustersVm = await httpResponse.Content.ReadFromJsonAsync<OutputClustersVm>();
         }
         catch (AccessTokenNotAvailableException exception)
         {

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WorkflowAutomation.Server.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class ClusterAnalysisController : BaseController
@@ -25,19 +25,21 @@ namespace WorkflowAutomation.Server.Controllers
             _dbContext = dbContext;
         }
 
-        [HttpPost]
-        //[Authorize]
-        public async Task<IActionResult> GenerateClusters()
+        [HttpPost("CalculateClusters")]
+        [Authorize]
+        public async Task<IActionResult> CalculateClusters([FromBody]StartClusterAnalysisDto dto)
         {
-            var dto = new StartClusterAnalysisDto
-            {
-                 ClusterCount = 2,
-                  StatusesIds = new List<int> { 2,6 }
-            };
+            //var dto = new StartClusterAnalysisDto
+            //{
+            //      ClusterCount = 2,
+            //      //TODO 2,{3-4},5
+            //      //StatusesIds = new List<int> { 2,5 }
+            //};
+            dto.ClusterCount = 4;
            
             var command = _mapper.Map<ClusterAnalysisCommand>(dto);
-            await Mediator.Send(command);
-            return NoContent();
+            var vm = await Mediator.Send(command);
+            return Ok(vm);
         }
     }
 }
