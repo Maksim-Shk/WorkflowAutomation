@@ -40,21 +40,21 @@
                 <tr>
                     <td>@doc.DocumentId</td>
                     <td>@doc.DocumentName</td>
-                    <td>@(doc.ClusterId+1)</td>
+                    <td>@(doc.ClusterId + 1)</td>
                     @foreach (var item in doc.Statuses)
                     {
                         <td>
                             @if (@item.StatusValue > 60 && @item.StatusValue <= 1536)
                             {
-                                <Div>@(Math.Round(item.StatusValue/60,0)) часов @(Math.Round(item.StatusValue%60,0)) минут</Div>
+                                <Div>@(Math.Round(item.StatusValue / 60, 0)) часов @(Math.Round(item.StatusValue % 60, 0)) минут</Div>
                             }
                             else if (@item.StatusValue > 1536)
                             {
-                                <Div>@(Math.Round(item.StatusValue / 1536, 0)) дней @(Math.Round(item.StatusValue % 1536 / 60, 0)) часов @(Math.Round(item.StatusValue % 1536 / 60,0)) минут</Div>
+                                <Div>@(Math.Round(item.StatusValue / 1536, 0)) дней @(Math.Round(item.StatusValue % 1536 / 60, 0)) часов @(Math.Round(item.StatusValue % 1536 / 60, 0)) минут</Div>
                             }
                             else
                             {
-                                <Div>@(Math.Round(item.StatusValue,0)) минут</Div>
+                                <Div>@(Math.Round(item.StatusValue, 0)) минут</Div>
                             }
                         </td>
                         <td>@item.StatusNormaliseValue</td>
@@ -65,8 +65,12 @@
         </tbody>
     </table>
 
+    <PSC.Blazor.Components.Chartjs.Chart Config="_config1" @ref="_chart1" Height="400px"></PSC.Blazor.Components.Chartjs.Chart>
+
 </EditForm>
 @code {
+    private BubbleChartConfig? _config1;
+    private PSC.Blazor.Components.Chartjs.Chart? _chart1;
 
     //заглушка для кластерного анализа
 
@@ -74,7 +78,7 @@
     StartClusterAnalysisDto startClusterAnalysisDto = new();
     OutputClustersVm outputClustersVm = new();
     //List<Dictionary<int, string>> statuses = new List<Dictionary<int, string>>();
-    List<int> statuses = new List<int> { 2, 5 };
+    List<int> statuses = new List<int> { 2, 4, 5 };
     List<string> StatusesNames = new List<String> { "Время до принятия" };
     //DocumentListVm documentListVm = new();
     //public class ClusterClass
@@ -95,10 +99,68 @@
             startClusterAnalysisDto.StatusesIds = statuses;//= statusList;
             var httpResponse = await Http.PostAsJsonAsync<StartClusterAnalysisDto>("/ClusterAnalysis/CalculateClusters", startClusterAnalysisDto);
             outputClustersVm = await httpResponse.Content.ReadFromJsonAsync<OutputClustersVm>();
+
+            var SimpleBubbleText = new List<string>();
+            var clusters = outputClustersVm.DocumentClusters.GroupBy(x => x.ClusterId).Select(x => x.First()).ToList();
+
+
+            for (int i = 1; i <= clusters.Count; i++)
+            {
+                SimpleBubbleText.Add("Кластер " + i);
+            }
+
+            _config1 = new BubbleChartConfig()
+                {
+                    Options = new Options()
+                    {
+                        Responsive = true,
+                        MaintainAspectRatio = false
+                    }
+                };
+
+            int count = 1;
+            foreach (var cluster in clusters)
+            {
+                var SimpleBubble = new List<BubbleCoords>();
+                foreach (var document in outputClustersVm.DocumentClusters.Where(c => c.ClusterId == cluster.ClusterId).ToList())
+                {
+                    int y = 0;
+                    if (document.DocumentType == "Приказ")
+                    {
+                        y = 0;
+                    }
+                    else y = 1;
+                    SimpleBubble.Add(new BubbleCoords()
+                        {
+                            R = 7,
+                            X = document.X,
+                            Y = document.Y
+                        });
+                }
+
+                _config1.Data.Datasets.Add(new BubbleDataset()
+                    {
+                        Label = "Dataset " + count,
+                        Data = SimpleBubble,
+                        BackgroundColor = colors[count - 1]
+                    });
+                count++;
+            }
         }
+
         catch (AccessTokenNotAvailableException exception)
         {
             exception.Redirect();
         }
     }
+    List<string> colors = new List<string>()
+        {
+             "rgb(255, 99, 132)",
+            "rgb(255, 159, 64)",
+            "rgb(255, 205, 86)",
+            "rgb(75, 192, 192)",
+            "rgb(54, 162, 235)",
+            "rgb(153, 102, 255)",
+            "rgb(201, 203, 207)"
+        };
 }

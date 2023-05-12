@@ -10,5 +10,7 @@ namespace WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAna
         public string ClusterName { get; set; }
         public List<ClusterStatus> Statuses { get; set; }
         public string DocumentType { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
     }
 }

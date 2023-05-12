@@ -1,7 +1,127 @@
-﻿@page "/bubblechart"
+﻿@page "/bubbleSimple"
+<h3>Bubble Simple</h3>
 
-@using ChartJs.Blazor.BubbleChart
+<PSC.Blazor.Components.Chartjs.Chart Config="_config1" @ref="_chart1" Height="400px"></PSC.Blazor.Components.Chartjs.Chart>
+
+<hr />
+
+<h3>Code</h3>
+
+<p>
+    This is the component to add in your page.
+</p>
+
+<CodeSnippet Language="Language.xml" Style="Style.VisualStudio">
+&ltChart Config="_config1" &#64;ref="_chart1">&lt;Chart>
+</CodeSnippet>
+
+<p>
+    Then, in the code section, add the following code:
+</p>
+
+<CodeSnippet Language="Language.csharp" Style="Style.VisualStudio" LoadMainScript="false">
+private BubbleChartConfig? _config1;
+private Chart? _chart1;
+
+protected override async Task OnInitializedAsync()
+{
+    _config1 = new BubbleChartConfig()
+        {
+        };
+
+    _config1.Data.Labels = BubbleDataExamples.SimpleBubbleText;
+    _config1.Data.Datasets.Add(new BubbleDataset()
+        {
+            Label = "My First Dataset",
+            Data = BubbleDataExamples.SimpleBubble,
+            BackgroundColor = Colors.PaletteBorder1.FirstOrDefault()
+        });
+}
+</CodeSnippet>
 
 @code {
-   
+    private BubbleChartConfig? _config1;
+    private PSC.Blazor.Components.Chartjs.Chart? _chart1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _config1 = new BubbleChartConfig()
+        {
+            Options = new Options()
+            {
+                 Responsive = true,
+                 MaintainAspectRatio = false
+            }
+        };
+
+        _config1.Data.Labels = BubbleDataExamples.SimpleBubbleText;
+        _config1.Data.Datasets.Add(new BubbleDataset()
+            {
+                Label = "My First Dataset",
+                Data = BubbleDataExamples.SimpleBubble,
+                BackgroundColor = Colors.PaletteBorder1.FirstOrDefault()
+            });
+        _config1.Data.Datasets.Add(new BubbleDataset()
+            {
+                Label = "My Second Dataset",
+                Data = BubbleDataExamples.SimpleBubble2,
+                BackgroundColor = Colors.PaletteBorder2.FirstOrDefault()
+            });
+    }
+    public static class BubbleDataExamples
+    {
+        public static List<string> SimpleBubbleText = new List<string>() { "First Dataset" };
+        public static List<BubbleCoords> SimpleBubble = new List<BubbleCoords>() {
+            new BubbleCoords() { R = 7, X = 99999, Y = 12323 },
+            new BubbleCoords() { R = 7, X = 32353, Y = 71323 },
+            new BubbleCoords() { R = 7, X = 21421, Y = 62141 },
+            new BubbleCoords() { R = 7, X = 42152, Y = 62412 },
+            new BubbleCoords() { R = 7, X = 73523, Y = 12323 },
+            new BubbleCoords() { R = 7, X = 12423, Y = 62324 },
+        };
+        public static List<BubbleCoords> SimpleBubble2 = new List<BubbleCoords>() {
+            new BubbleCoords() { R = 7, X = 12323, Y = 99999 },
+            new BubbleCoords() { R = 7, X = 71323, Y = 32353 },
+            new BubbleCoords() { R = 7, X = 62141, Y = 21421 },
+            new BubbleCoords() { R = 7, X = 62412, Y = 42152 },
+            new BubbleCoords() { R = 7, X = 12323, Y = 73523 },
+            new BubbleCoords() { R = 7, X = 62324, Y = 12423 },
+        };
+    }
+    public static class Colors
+    {
+        public static List<string> Palette1 = new List<string>()
+        {
+            "rgba(255, 99, 132, 0.2)",
+            "rgba(255, 159, 64, 0.2)",
+            "rgba(255, 205, 86, 0.2)",
+            "rgba(75, 192, 192, 0.2)",
+            "rgba(54, 162, 235, 0.2)",
+            "rgba(153, 102, 255, 0.2)",
+            "rgba(201, 203, 207, 0.2)"
+        };
+
+        public static List<string> PaletteBorder1 = new List<string>()
+        {
+            "rgb(255, 99, 132)",
+            "rgb(255, 159, 64)",
+            "rgb(255, 205, 86)",
+            "rgb(75, 192, 192)",
+            "rgb(54, 162, 235)",
+            "rgb(153, 102, 255)",
+            "rgb(201, 203, 207)"
+        };
+
+        public static List<string> PaletteBorder2 = new List<string>()
+        {
+            "rgb(123, 42, 213)",
+            "rgb(255, 159, 23)",
+            "rgb(1, 12, 86)",
+            "rgb(75, 192, 192)",
+            "rgb(54, 1, 235)",
+            "rgb(153, 1, 42)",
+            "rgb(1, 203, 207)"
+        };
+    }
+
 }

@@ -18,6 +18,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Data;
 using WorkflowAutomation.Domain;
 using Accord.Math.Distances;
+using Accord.Statistics.Analysis;
+using Accord.Statistics.Models.Regression.Linear;
 
 namespace WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAnalysis
 {
@@ -83,6 +85,37 @@ namespace WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAna
             }
 
 
+
+            //понижаем размерность
+
+            // Let's create an analysis with centering (covariance method)
+            // but no standardization (correlation method) and whitening:
+            var pca = new PrincipalComponentAnalysis()
+            {
+                Method = PrincipalComponentMethod.Center,
+                Whiten = true
+            };
+            for (int i = 0; i < observations.Length; i++)
+            {
+                for (int j = 0; j < observations[i].Length; j++)
+                {
+
+                    observations[i][j] = Math.Round(observations[i][j], 4);
+                }
+            }
+            // Now we can learn the linear projection from the data
+            MultivariateLinearRegression transform = pca.Learn(observations);
+
+            // Finally, we can project all the data
+            // Or just its first components by setting
+            // NumberOfOutputs to the desired components:
+            pca.NumberOfOutputs = 2;
+
+            // And then calling transform again:
+            double[][] coords = pca.Transform(observations);
+
+
+
             //минимальное и максимальное значения
             double[] minValues = new double[observations[0].Length];
             double[] maxValues = new double[observations[0].Length];
@@ -116,6 +149,7 @@ namespace WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAna
                 }
             }
 
+
             // Задаем количество кластеров
             int k = request.ClusterCount;
 
@@ -147,14 +181,14 @@ namespace WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAna
                 var statuses = new List<ClusterStatus>();
 
                 //observations[i].Length - 1 - только статусы, без типа документа
-                for (int j=0;j<observations[i].Length - 1 ;j++) //(var requestStatusId in request.StatusesIds.Where(x => x != 2))
+                for (int j = 0; j < observations[i].Length - 1; j++) //(var requestStatusId in request.StatusesIds.Where(x => x != 2))
                 {
                     var status = new ClusterStatus
                     {
                         StatusId = request.StatusesIds[j],
                         StatusName = _dbContext.Statuses.First(s => s.IdStatus == request.StatusesIds[j]).Name,
                         StatusValue = originalObservations[i][j],
-                        StatusNormaliseValue = observations[i][j]
+                        StatusNormaliseValue = observations[i][j],
                     };
                     statuses.Add(status);
                 }
@@ -165,10 +199,13 @@ namespace WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAna
                     ClusterId = labels[i],
                     ClusterName = "ТУТ ПУСТО",
                     DocumentType = _dbContext.DocumentTypes.First(dt => dt.IdDocumentType == document.IdDocumentType).Name,
-                    Statuses = statuses
+                    Statuses = statuses,
+                    X = (int)(observations[i][0] * 10000),
+                    Y = (int)(observations[i][1] * 10000)
                 });
             }
             //TestMethod();
+
 
             return new OutputClustersVm { DocumentClusters = outputClustersDtoList };
         }
