@@ -69,7 +69,8 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentLis
 
             var allowedUserIds = allowedUsers.Select(x => x.IdUser).ToList();
             allowedDocuments = await _dbContext.Documents
-                .Where(document => allowedUserIds.Contains(document.IdSender) || allowedUserIds.Contains(document.IdReceiver))
+                //.Where(document => allowedUserIds.Contains(document.IdSender) || allowedUserIds.Contains(document.IdReceiver))    // - 15.05.2023 
+                .Where(document => allowedUserIds.Contains(document.IdSender) || document.IdReceiver == request.UserId )
                 .ToListAsync();
 
             // foreach (var user in allowedUsers)

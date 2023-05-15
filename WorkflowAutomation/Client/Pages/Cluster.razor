@@ -7,6 +7,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using System.ComponentModel.DataAnnotations
+@using Blazorise.DataGrid
 
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
@@ -20,6 +21,9 @@
 <EditForm Model="@outputClustersVm">
     <DataAnnotationsValidator />
 
+    <Button Clicked="ShowTable">Показать данные</Button>
+    @if(showTable)
+    {
     <table class="table">
         <thead>
             <tr>
@@ -64,6 +68,34 @@
             }
         </tbody>
     </table>
+    }
+
+    @*    <DataGrid TItem="OutputClustersDto"
+    Data="@outputClustersVm.DocumentClusters"
+    Responsive
+    Filterable
+    Sortable
+    SortMode="DataGridSortMode.Multiple"
+    ShowPager
+    ShowPageSizes
+    PagerPosition="DataGridPagerPosition.Bottom"
+    PagerOptions="new(){ ButtonSize=Blazorise.Size.Medium}">
+
+    <DataGridColumns>
+    <DataGridColumn Field="@nameof(OutputClustersDto.DocumentId)" Caption="ID документа" />
+    <DataGridColumn Field="@nameof(OutputClustersDto.DocumentName)" Caption="Тема" />
+    <DataGridColumn Field="@nameof(OutputClustersDto.ClusterId)" Caption="Класс документа" />
+    <DataGridColumn Field="@nameof(OutputClustersDto.DocumentType)" Caption="Тип документа" />
+    @foreach (var status in statuses.Where(status=>status!=2))
+    {
+    <DataGridColumn Field="@nameof(OutputClustersDto.Statuses.First(s=>s.StatusId == status).StatusId)" Caption="Тип документа" />
+    <DataGridColumn Field="@nameof(Stat)" Caption="Тип документа" />
+    }
+    </DataGridColumns>
+    </DataGrid>*@
+
+
+
 
     <PSC.Blazor.Components.Chartjs.Chart Config="_config1" @ref="_chart1" Height="400px"></PSC.Blazor.Components.Chartjs.Chart>
 
@@ -72,6 +104,7 @@
     private BubbleChartConfig? _config1;
     private PSC.Blazor.Components.Chartjs.Chart? _chart1;
 
+    private bool showTable = false;
     //заглушка для кластерного анализа
 
 
@@ -153,6 +186,12 @@
             exception.Redirect();
         }
     }
+
+    private async Task ShowTable()
+    {
+        showTable = !showTable;
+    }
+
     List<string> colors = new List<string>()
         {
              "rgb(255, 99, 132)",

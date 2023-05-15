@@ -20,6 +20,7 @@
 
 <PageTitle>@getDocumentDto.Title</PageTitle>
 
+<LoadingIndicator @bind-Visible="@visible" FullScreen="true" IndicatorBackground="Background.Light" SpinnerColor="Color.Light">
 <EditForm Model="@getDocumentDto">
     <DataAnnotationsValidator />
     <h4>Сведения о документе @Id </h4>
@@ -124,10 +125,12 @@
                 }
             </dd>
         }
-    </dl>
+        </dl>
 </EditForm>
-
+</LoadingIndicator>
 @code {
+    bool visible;
+
     private HubConnection? hubConnection;
     private NotificationMessage? notificationMessage { get; set; }
     private string? jwtToken;
@@ -147,6 +150,8 @@
     private ChangeStatusDto? changeStatusDto = new();
     protected override async Task OnInitializedAsync()
     {
+
+        visible = true;
         try
         {
             getDocumentDto.DocumentFiles = new();
@@ -177,13 +182,14 @@
             //var user = authState.User.Claims.Select(x=>x.Type).ToList();
             getUserInfoDto = await httpClient.GetFromJsonAsync<GetUserInfoDto>("UserInfo");
             await GetDocumentDto();
-
+            
        
         }
         catch (AccessTokenNotAvailableException exception)
         {
             exception.Redirect();
         }
+        visible = false;
     }
 
     private async Task GetDocumentDto()
