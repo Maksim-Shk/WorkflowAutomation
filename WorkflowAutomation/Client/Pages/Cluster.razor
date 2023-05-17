@@ -94,15 +94,12 @@
     </DataGridColumns>
     </DataGrid>*@
 
-
-
-
     <PSC.Blazor.Components.Chartjs.Chart Config="_config1" @ref="_chart1" Height="400px"></PSC.Blazor.Components.Chartjs.Chart>
 
 </EditForm>
 @code {
-    private BubbleChartConfig? _config1;
-    private PSC.Blazor.Components.Chartjs.Chart? _chart1;
+    private BubbleChartConfig? _config1 = new();
+    private PSC.Blazor.Components.Chartjs.Chart? _chart1 = new();
 
     private bool showTable = false;
     //заглушка для кластерного анализа
@@ -110,20 +107,8 @@
 
     StartClusterAnalysisDto startClusterAnalysisDto = new();
     OutputClustersVm outputClustersVm = new();
-    //List<Dictionary<int, string>> statuses = new List<Dictionary<int, string>>();
     List<int> statuses = new List<int> { 2, 4, 5 };
     List<string> StatusesNames = new List<String> { "Время до принятия" };
-    //DocumentListVm documentListVm = new();
-    //public class ClusterClass
-    //{
-    //    public int Id{ get; set; }
-    //    public string Title{ get; set; }
-    //    public string DateWork { get; set; }
-    //    public string DateCheck { get; set; }
-    //    public string DocClass{ get; set; }
-    //}
-
-    //public List<ClusterClass> Clusters;
 
     protected override async Task OnInitializedAsync()
     {
@@ -194,12 +179,12 @@
 
     List<string> colors = new List<string>()
         {
-             "rgb(255, 99, 132)",
-            "rgb(255, 159, 64)",
+            "rgb(255, 99, 132)",
+            "rgb(0, 0, 0)",
             "rgb(255, 205, 86)",
             "rgb(75, 192, 192)",
             "rgb(54, 162, 235)",
             "rgb(153, 102, 255)",
-            "rgb(201, 203, 207)"
+            "rgb(255, 159, 64)"
         };
 }
