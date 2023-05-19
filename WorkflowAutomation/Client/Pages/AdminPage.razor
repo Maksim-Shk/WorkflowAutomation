@@ -55,7 +55,7 @@
             UsersVm.AllUsers = new List<GetAllUsersListDto>();
             RolesVm.Roles = new List<RolesListLookupDto>();
             UsersVm = await Http.GetFromJsonAsync<AllUsersListVm>("GetUsers/GetAllUsers");
-            RolesVm = await Http.GetFromJsonAsync<RolesListVm>("Role");
+            RolesVm = await Http.GetFromJsonAsync<RolesListVm>("Role/AllRoles");
         }
         catch (AccessTokenNotAvailableException exception)
         {

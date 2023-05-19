@@ -72,7 +72,6 @@ namespace WorkflowAutomation.Server
                     options.Password.RequireNonAlphanumeric = false;
                 })
                 .AddEntityFrameworkStores<AuthDbContext>();
-
             //services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, UserClaimsPrincipalFactory<ApplicationUser, IdentityRole>>();
             //services.AddAuthorization(options =>
             //{

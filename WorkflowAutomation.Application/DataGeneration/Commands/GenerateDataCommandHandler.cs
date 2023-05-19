@@ -146,11 +146,11 @@ namespace WorkflowAutomation.Application.DataGeneration.Commands
                         docStatus.IdDocument = document.IdDocument;
                         if (j == 0) 
                         {
-                            docStatus.IdStatus = 4;//_dbContext.Statuses.FirstOrDefault(s => s.Name == "Включен в план работ").IdStatus;
+                            docStatus.IdStatus = 3;//_dbContext.Statuses.FirstOrDefault(s => s.Name == "Включен в план работ").IdStatus;
                         }
                         if (j == 1)
                         {
-                            docStatus.IdStatus = 3;// _dbContext.Statuses.FirstOrDefault(s => s.Name == "В процессе выполнения").IdStatus;
+                            docStatus.IdStatus = 4;// _dbContext.Statuses.FirstOrDefault(s => s.Name == "В процессе выполнения").IdStatus;
                         }
                         if (j == 2)
                         {

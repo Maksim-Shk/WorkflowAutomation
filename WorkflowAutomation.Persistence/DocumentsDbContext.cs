@@ -554,7 +554,80 @@ namespace WorkflowAutomation.Persistence
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("user_subdivision_id_user_fkey");
             });
+
+            modelBuilder.Entity<DocumentType>()
+                .HasData(
+                new DocumentType { IdDocumentType = 1, Name = "Служебная записка", ShortName = "СЗ" },
+                new DocumentType { IdDocumentType = 2, Name = "Приказ", ShortName = "Приказ" }
+                );
+
+            modelBuilder.Entity<Status>()
+                .HasData(
+                new Status { IdStatus = 1, Name = "Ожидает регистрации" },
+                new Status { IdStatus = 2, Name = "Зарегистрирован" },
+                new Status { IdStatus = 3, Name = "Включен в план работ" },
+                new Status { IdStatus = 4, Name = "В процессе выполнения" },
+                new Status { IdStatus = 5, Name = "Выполнен" },
+                new Status { IdStatus = 6, Name = "Удален" }
+                );
+
+            modelBuilder.Entity<AspNetRole>()
+                .HasData(
+                new AspNetRole { Id = "35e4b4a7-f767-43a9-9fd6-9aca58617027", Name = "Администратор", NormalizedName = "АДМИНИСТРАТОР", ConcurrencyStamp = null },
+                new AspNetRole { Id = "a1bd31a5-01dc-48e9-b65c-5070bd5b0cee", Name = "Зарегистрированный пользователь", NormalizedName = "ЗАРЕГИСТРИРОВАННЫЙ ПОЛЬЗОВАТЕЛЬ", ConcurrencyStamp = null },
+                new AspNetRole { Id = "53669294-44e0-4f22-9516-b3ff5146a70f", Name = "Заблокированный пользователь", NormalizedName = "ЗАБЛОКИРОВАННЫЙ ПОЛЬЗОВАТЕЛЬ", ConcurrencyStamp = null }
+                );
+
+            modelBuilder.Entity<Position>()
+                .HasData(
+                new Position { IdPosition = 1, Name = "Заведующий кафедры", IdSubordination = null, ShortName = "зав. каф." },
+                new Position { IdPosition = 2, Name = "Старший преподаватель", IdSubordination = 1, ShortName = "ст. преподаватель" },
+                new Position { IdPosition = 3, Name = "Преподаватель", IdSubordination = 1, ShortName = "преподаватель" },
+                new Position { IdPosition = 4, Name = "Программист", IdSubordination = null, ShortName = "программист" }
+                );
+
+            modelBuilder.Entity<Subdivision>()
+              .HasData(
+              new Subdivision { IdSubdivision = 2, Name = "Первый проректор", IdSubordination = 1, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 6, Name = "Проректор по общим вопросам", IdSubordination = 1, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 7, Name = "Научная библиотека", IdSubordination = 6, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 9, Name = "Отдел информационно-библиотечного обслуживания", IdSubordination = 7, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 10, Name = "Сектор регистрации пользователей и сервисных услуг", IdSubordination = 9, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 11, Name = "Отдел ремонта и обслуживания информационно-вычислительной техники", IdSubordination = 8, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 12, Name = "Отдел информационных систем", IdSubordination = 8, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 13, Name = "Отдел цифровых образовательных платформ", IdSubordination = 8, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 14, Name = "Отдел телекоммуникаций", IdSubordination = 8, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 15, Name = "Отдел информационной безопасности", IdSubordination = 8, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 16, Name = "Сектор телекоммуникационных сетей и интернет", IdSubordination = 14, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 17, Name = "Сектор телефонии и охранной сигнализации", IdSubordination = 14, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 18, Name = "Комиссия по обучению безопасным приемам работы и проверки знаний требований охраны труда работников отдела", IdSubordination = 17, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 19, Name = "Сектор поддержки мультимедийных комплексов", IdSubordination = 13, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 20, Name = "Сектор программно-технической поддержки цифровых образовательных платформ", IdSubordination = 13, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 21, Name = "Сектор сопровождения цифровых образовательных ресурсов", IdSubordination = 13, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 22, Name = "Сектор автоматизированной поддержки организации учебного процесса", IdSubordination = 12, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 23, Name = "Сектор сопровождения программных систем", IdSubordination = 12, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 24, Name = "Сектор систем баз данных", IdSubordination = 12, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 25, Name = "Сектор разработки и сопровождения сайтов", IdSubordination = 12, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 33, Name = "Учебно-научная лаборатория \"Компьютерное моделирование\"", IdSubordination = 26, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 34, Name = "Филиал кафедры прикладной математики", IdSubordination = 28, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 32, Name = "Филиал кафедры ПОВТАС", IdSubordination = 26, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 1, Name = "Ученый совет", IdSubordination = null, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 3, Name = "Аэрокосмический институт", IdSubordination = 2, ShortName = "АКИ", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 4, Name = "Институт менеджмента", IdSubordination = 2, ShortName = "ИМ", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 5, Name = "Факультет математики и информационных технологий", IdSubordination = 2, ShortName = "ФМИТ", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 8, Name = "Центр информационных технологий", IdSubordination = 6, ShortName = "ЦИТ", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 26, Name = "Кафедра программного обеспечения вычислительной техники и автоматизированных систем", IdSubordination = 5, ShortName = "кафедра ПОВТАС", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 27, Name = "Кафедра информатики", IdSubordination = 5, ShortName = "", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 28, Name = "Кафедра прикладной математики", IdSubordination = 5, ShortName = "кафедра ПМат", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 29, Name = "Кафедра вычислительной техники и защиты информации", IdSubordination = 5, ShortName = "кафедра ВТиЗИ", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 30, Name = "Кафедра геометрии и компьютерных наук", IdSubordination = 5, ShortName = "кафедра ГКН", CreationDate = DateTime.Now },
+              new Subdivision { IdSubdivision = 31, Name = "Кафедра компьютерной безопасности и математического обеспечения информационных систем", IdSubordination = 5, ShortName = "кафедра КБМОИС", CreationDate = DateTime.Now }
+             );
+
+
+            //  modelBuilder.Entity<DocumentType>()
         }
+
         public async Task<int> Save(CancellationToken cancellationToken)
         {
             return await this.SaveChangesAsync(cancellationToken);
