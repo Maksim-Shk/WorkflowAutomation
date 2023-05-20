@@ -5,15 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WorkflowAutomation.Application.Common.Mappings;
+using WorkflowAutomation.Application.Users.Queries.GetPositionUsers;
 using WorkflowAutomation.Domain;
 
-namespace WorkflowAutomation.Application.Documents.Queries.GetPositionList
+namespace WorkflowAutomation.Application.Positions.Queries.GetPositionList
 {
     public class PositionListLookupDto : IMapWith<Position>
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public int? IdSubordination { get; set; }
+        public bool IsRender { get; set; } = false;
+        public List<PositionUserDto> positionUsers { get; set; }
 
         public void Mapping(Profile profile)
         {

@@ -9,13 +9,13 @@ namespace WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionInfo
 {
     public enum RenderOption
     {
-        [Description("Не начата")]
+        [Description("Не отображать")]
         NotRender,
-        [Description("Не начата")]
+        [Description("Редактировать")]
         Edit,
-        [Description("Не начата")]
+        [Description("Перевести")]
         ChangeSubdivison,
-        [Description("Не начата")]
+        [Description("Уволить")]
         Remove
     }
 }

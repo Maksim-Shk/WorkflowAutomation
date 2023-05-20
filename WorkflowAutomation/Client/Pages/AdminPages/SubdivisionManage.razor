@@ -13,9 +13,7 @@
 <h2 style="text-align: center">Упраление подразделениями</h2>
 <hr />
 
-
-
-<Card>
+<Card Margin="Margin.Is4.OnX.Is4.OnY">
     <CardTitle Size="3">
         Создание подразделения
     </CardTitle>
@@ -24,14 +22,17 @@
     </CardText>
 
     <Button class="btn-primary" Size="Size.Large" Width="Width.Is25"
-    @onclick="(() => showCreateSubdivision = !showCreateSubdivision)"> Перейти к созданию </Button>
+            @onclick="(() => showCreateSubdivision = !showCreateSubdivision)">
+        Перейти к созданию
+    </Button>
     @if (showCreateSubdivision is true)
     {
         <Label> Создание подразделения</Label>
     }
+
 </Card>
 
-<Card Background="Background.Light">
+<Card Margin="Margin.Is4.OnX.Is4.OnY" Background="Background.Light">
     <CardTitle Size="3">
         Просмотр/редактирование подразделения
     </CardTitle>
@@ -88,7 +89,7 @@
                     <a href="SubDivisionInfo/@context.Item.Id"> @context.Item.Name</a>
                 </ItemTemplate>
             </ListView>
-        }           
+        }
     }
 
     @* Информация о выбранном подразделений*@
@@ -97,65 +98,116 @@
         <h2>Подразделение </h2>
         <hr />
         <dl class="row">
-            <dt class="col-sm-3">
+            <dt class="col-sm-2">
                 Название
             </dt>
-            <dd class="col-sm-8">
+            <dd class="col-sm-10">
                 <span class="tight">@subdivisionInfoDto.Name</span>
             </dd>
-            <dt class="col-sm-3">
+            <dt class="col-sm-2">
                 Подчиняется
             </dt>
-            <dd class="col-sm-8">
+            <dd class="col-sm-10">
                 <span class="tight">@subdivisionInfoDto.SubordinationName</span>
             </dd>
-            <dt class="col-sm-3">
+            <dt class="col-sm-2">
                 Дата создания
             </dt>
-            <dd class="col-sm-8">
+            <dd class="col-sm-10">
                 <span class="tight">@subdivisionInfoDto.CreateDate</span>
             </dd>
-            <dt class="col-sm-3">
+            <dt class="col-sm-2">
                 Сотрудники
             </dt>
-            <dd class="col-sm-8" style="margin-bottom:25%">
+            <dd class="col-sm-10" style="margin-bottom:25%">
                 <span class="tight">
-                @foreach (var posId in PositionsIdList)
-                {
-                    @if (posId != null)
+                    @foreach (var posId in PositionsIdList)
                     {
-                        @foreach (var item in subdivisionInfoDto.Users.Where(x => x.PositionId == posId).ToList())
+                        @if (posId != null)
                         {
-                            @if (item != null)
+                            @foreach (var item in subdivisionInfoDto.Users.Where(x => x.PositionId == posId && x.RemovalDate == null).ToList())
                             {
-                                <ContextMenuTrigger MenuId="myMenu" Data="item.Id">
+                                @if (item != null)
+                                {
+                                    <ContextMenuTrigger MenuId="myMenu" Data="item.Id">
 
-                                    <p>@item.Name @item.Position</p>
-                                    @if (item.Render == RenderOption.Edit)
-                                    {
-                                        <Div ElementId="#b-animate">
-                                            <Animate Anchor="#b-animate" Auto Animation="Blazorise.Animate.Animations.Fade" DelayMilliseconds="500">
-                                            <Card Margin="Margin.Is4.OnY">
-                                            <CardBody>
-                                            <Field ColumnSize="ColumnSize.Is4.OnDesktop">
-                                            <FieldLabel>Дата закрепления</FieldLabel>
-                                            <DatePicker @bind-Date="item.AppointmentDate" TValue="DateTime" Min="min" Max="DateTimeOffset.Now" DisplayFormat="dd/MM/Y" />
-                                            </Field>
+                                        <p>@item.Name @item.Position</p>
+                                        @if (item.Render == RenderOption.Edit)
+                                        {
+                                            <Div ElementId="#b-animate">
+                                                <Animate Anchor="#b-animate" Auto Animation="Blazorise.Animate.Animations.Fade" DelayMilliseconds="500">
+                                                <Card Margin="Margin.Is4.OnY">
+                                                <CardBody>
+                                                <Field ColumnSize="ColumnSize.Is4.OnDesktop">
+                                                <FieldLabel>Дата закрепления</FieldLabel>
+                                                <DatePicker @bind-Date="item.AppointmentDate" TValue="DateTime" Min="min" Max="DateTimeOffset.Now" DisplayFormat="dd/MM/Y" />
+                                                </Field>
 
-                                            <button class="btn-warning"> Подтвердить   </button>
-                                            <button type="button" class="btn-success" @onclick="()=>HideEditCard(item.Id)"> Скрыть</button>
-                                            </CardBody>
-                                            </Card>
-                                            </Animate>
+                                                <button class="btn-warning"> Подтвердить   </button>
+                                                <button type="button" class="btn-success" @onclick="()=>HideEditCard(item.Id)"> Скрыть</button>
+                                                </CardBody>
+                                                </Card>
+                                                </Animate>
+                                                </Div>
+                                        }
+                                        @if (item.Render == RenderOption.ChangeSubdivison)
+                                        {
+                                            <Div ElementId="#b-animate">
+                                                <Animate Anchor="#b-animate"
+                                                                  Auto Animation="Blazorise.Animate.Animations.Fade" DelayMilliseconds="500">
+                                                <Card Margin="Margin.Is4.OnY">
+                                                <CardBody>
+                                                <Field ColumnSize="ColumnSize.Is4.OnDesktop">
+                                                <FieldLabel>Новое подразделение</FieldLabel>
+
+                                                <Select @bind-SelectedValue="@updateSubdivisionDto.UpdatedSubdivisionUsers.First(u=>u.UserId == item.Id).NewSubdivisionId">
+                                            <ChildContent>
+                                                <SelectItem Disabled> Выбирите получателя....</SelectItem>
+                                                                    @foreach (var subdivision in subdivisionListVm.Subdivisions)
+                                                                        {
+                                                                            <SelectItem TValue="int" Value="@subdivision.Id">
+                                                                                @subdivision.Name
+                                                                            </SelectItem>
+                                                                        }
+                                                                    </ChildContent>
+                                                                    <Feedback>
+                                                                        <ValidationError />
+                                                                    </Feedback>
+                                                                </Select>
+                                                            </Field>
+
+                                                            <button type="button" class="btn-success" @onclick="()=>HideEditCard(item.Id)"> Скрыть</button>
+                                                        </CardBody>
+                                                    </Card>
+                                                </Animate>
                                             </Div>
-                                    }
-                                </ContextMenuTrigger>
-                                @*<div>@item.Name @item.Position </div>*@
+                                        }
+                                        @if (item.Render == RenderOption.Remove)
+                                        {
+                                            <Div ElementId="#b-animate">
+                                                <Animate Anchor="#b-animate" Auto Animation="Blazorise.Animate.Animations.Fade" DelayMilliseconds="500">
+                                                <Card Margin="Margin.Is4.OnY">
+                                                <CardBody>
+                                                <Field ColumnSize="ColumnSize.Is4.OnDesktop">
+                                                <FieldLabel>Подтверждение удаления</FieldLabel>
+                                                </Field>
+                                                <button type="button" class="btn-danger" @onclick="()=>item.RemovalDate = DateTime.Now"> Подтвердить   </button>
+                                                <button type="button" class="btn-success" @onclick="()=>HideEditCard(item.Id)"> Скрыть</button>
+                                                </CardBody>
+                                                </Card>
+                                                </Animate>
+                                                </Div>
+                                        }
+                                    </ContextMenuTrigger>
+
+                                    @*<div>@item.Name @item.Position </div>*@
+                                }
                             }
+                            <hr />
                         }
-                        <hr />
                     }
-                }
+
+                    <button class="btn-warning" @onclick="()=>UpdateSubdivision()"> Подтвердить   </button>
                 </span>
             </dd>
         </dl>
@@ -173,9 +225,14 @@
 
 </Card>
 
-
-
 @code {
+
+    protected async Task UpdateSubdivision()
+    {
+        var httpResponse = await Http.PutAsJsonAsync<UpdateSubdivisionDto>("Subdivision/UpdateSubdivision", updateSubdivisionDto);
+
+    }
+
     public bool showCreateSubdivision = false;
 
     DateTimeOffset min = DateTimeOffset.Now.AddYears(-50);
@@ -231,8 +288,6 @@
         StateHasChanged();
     }
 
-
-
     private TextEdit SearchOutput = new();
     private void SearchClick()
     {
@@ -245,7 +300,6 @@
     }
     string searchItemName = "";
     Item SearchNode { get; set; } = new();
-
 
     TreeView<Item> treeViewRef;
     List<Item> SearchResult { get; set; } = new();
@@ -267,8 +321,6 @@
             return ans;
         }
     }
-
-
 
     private IList<Item> expandedNodes = new List<Item>();
     private Item? selectedNodeTreeView { get; set; }
@@ -298,8 +350,6 @@
                 AllItems.Add(item);
             }
 
-
-
         }
         catch (AccessTokenNotAvailableException exception)
         {
@@ -315,7 +365,6 @@
 
     private async Task OnClickSubdivision()
     {
-
         //var httpResponse = await Http.PutAsJsonAsync("Role/", roleDto);
         //UpdateSubdivisionDto
         try
@@ -337,6 +386,7 @@
                     subdivisionInfoDto = await Http.GetFromJsonAsync<SubdivisionInfoDto>("Subdivision/GetSubdivisionInfo/" + SelectedItem.Id.ToString());
 
                     var positions = subdivisionInfoDto.Users
+                                    .Where(x => x.RemovalDate == null)
                                     .GroupBy(x => x.PositionId)
                                     .Select(x => x.First())
                                     .ToList()
@@ -344,15 +394,15 @@
                                     {
                                         Name = e.Position,
                                         IdPosition = e.PositionId
-                                    }).ToList()
-                                    ;
+                                    })
+                                    .ToList();
 
                     PositionsIdList = new List<int>();
                     foreach (var pos in positions)
                     {
                         PositionsIdList.Add(pos.IdPosition);
                     }
-                    updateSubdivisionDto.CreateDate = subdivisionInfoDto.CreateDate;
+                    updateSubdivisionDto.CreateDate = null;//subdivisionInfoDto.CreateDate;
                     updateSubdivisionDto.SubordinationId = subdivisionInfoDto.SubordinationId;
                     updateSubdivisionDto.SubdivisionId = SelectedItem.Id;
                     updateSubdivisionDto.Name = subdivisionInfoDto.Name;

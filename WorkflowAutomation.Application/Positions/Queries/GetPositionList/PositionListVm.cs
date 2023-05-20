@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WorkflowAutomation.Application.Documents.Queries.GetPositionList
+namespace WorkflowAutomation.Application.Positions.Queries.GetPositionList
 {
     public class PositionListVm
     {

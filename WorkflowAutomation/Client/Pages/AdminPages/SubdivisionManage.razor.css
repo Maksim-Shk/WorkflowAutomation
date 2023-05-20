@@ -1,0 +1,58 @@
+﻿.list-group-item.active {
+    background-color: #e6e7ee !important;
+    border-color: #0d6efd !important;
+}
+
+.bg-primary {
+    background-color: #e6e7ee !important;
+}
+
+.text-white {
+    color: black !important;
+}
+
+.list-group-scrollable {
+    overflow-y: scroll;
+    max-height: 300px !important;
+    max-width: 750px !important;
+    margin-bottom: 50px;
+}
+
+.form-control {
+    width: 750px !important;
+}
+
+.subscribe {
+    display: inline-flex;
+    width: auto;
+    max-width: 100%;
+}
+
+    .subscribe input,
+    .subscribe button {
+        display: block;
+        padding: 8px 10px;
+        border: 0;
+        background: transparent;
+        font: inherit;
+        box-sizing: border-box;
+    }
+
+    .subscribe input {
+        border: 1px solid #ccc;
+        border-right: 0;
+        border-radius: 6px 0 0 6px;
+    }
+
+    .subscribe button {
+        border: 1px solid #ccc;
+        border-radius: 0 6px 6px 0;
+        background: #004afa;
+        color: #fff;
+        text-transform: uppercase;
+    }
+
+.tight {
+    margin-top: 22.2em;
+    margin-bottom: 22.2em;
+}

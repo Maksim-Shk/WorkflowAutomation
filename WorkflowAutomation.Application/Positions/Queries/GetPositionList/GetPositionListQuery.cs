@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace WorkflowAutomation.Application.Documents.Queries.GetPositionList
+namespace WorkflowAutomation.Application.Positions.Queries.GetPositionList
 {
     public class GetPositionListQuery : IRequest<PositionListVm>
     {

@@ -1,6 +1,97 @@
-﻿@page "/AdminPosition"
-<h3>AdminPosition</h3>
+﻿@using WorkflowAutomation.Application.Positions.Queries.GetPositionList
+@using WorkflowAutomation.Application.Users.Queries.GetPositionUsers;
+@inject HttpClient httpClient
+@inject NavigationManager NavigationManager
+@page "/AdminPosition"
+
+<hr />
+<h2 style="text-align: center">Упраление должностями</h2>
+<hr />
+
+<Card Margin="Margin.Is4.OnX.Is4.OnY">
+    <CardTitle Margin="Margin.Is4.OnX.Is4.OnY" Size=" 3">
+        Список должностей
+    </CardTitle>
+    <CardText Margin="Margin.Is4.OnX.Is4.OnY">
+        Просмотр и редактирование должностей
+    </CardText>
+
+    @foreach (var position in positionListVm.Positions)
+    {
+        <hr />
+        <dl class="row">
+        <dt class="col-sm-4 text-center">
+                @position.Name
+        </dt>
+            <dd class="col-sm-8 text-center">
+                <Button Color="Color.Primary">
+                    <Icon Name="IconName.Edit" />
+                    @* Редактировать*@
+                </Button>
+                @*  Clicked=@ShowPositionUsers(@position.id)*@
+
+                <Button Color="Color.Primary" @onclick="(() => ShowPositionUsers(position))">
+                    <Icon Name="IconName.Eye" />
+                    @*      Показать*@
+                </Button>
+        </dd>
+        </dl>
+      @*  <Div> @item.Name
+            <Button Color="Color.Primary">
+                <Icon Name="IconName.Edit" />
+               @* Редактировать
+            </Button>
+            <Button Color="Color.Primary">
+                <Icon Name="IconName.Eye"/>
+          @*      Показать
+            </Button>
+        </Div>*@
+        @if (position.IsRender is true)
+        {
+            foreach (var user in position.positionUsers)
+            {
+                <Div>@user.FullName - @user.SubdivisionName</Div>
+                <Div>C @user.AppointmentDate </Div>
+            }
+        }
+        <hr />
+    }
+
+    @* <Button class="btn-primary" Size="Size.Large" Width="Width.Is25"
+    @onclick="(() => showCreateSubdivision = !showCreateSubdivision)">
+    Перейти к созданию
+    </Button>
+    @if (showCreateSubdivision is true)
+    {
+    <Label> Создание подразделения</Label>
+    }*@
+
+</Card>
 
 @code {
+    public PositionListVm positionListVm = new();
+    protected override async Task OnInitializedAsync()
+    {
+        positionListVm.Positions = new List<PositionListLookupDto>();
+        try
+        {
+            positionListVm = await httpClient.GetFromJsonAsync<PositionListVm>("Position/");
+        }
+        catch
+        {
+            NavigationManager.NavigateTo("/Admin");
+        }
+    }
 
+    public async Task ShowPositionUsers(PositionListLookupDto position)
+    {
+        if (position.IsRender == false)
+        {
+            var response = await httpClient.GetFromJsonAsync<PositionUsersListVm>("UserInfo/PositionUsers/" + position.Id);
+            position.positionUsers = response.Users.ToList();
+            position.IsRender = true;
+        }
+        else position.IsRender = false;
+
+    }
 }

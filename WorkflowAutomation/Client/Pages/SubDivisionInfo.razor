@@ -32,9 +32,9 @@
         {
             @if (posId != null)
             {
-                @foreach (var item in subdivisionInfoDto.Users.Where(x => x.PositionId == posId).ToList())
+                @foreach (var item in subdivisionInfoDto.Users.Where(x => x.PositionId == posId && x.RemovalDate == null).ToList())
                 {
-                    @if (item != null)
+                    @if (item != null )
                     {
                         <div>@item.Name @item.Position </div>
                     }

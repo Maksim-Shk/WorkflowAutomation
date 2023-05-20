@@ -15,8 +15,9 @@ using System.Reflection;
 using WorkflowAutomation.Application.Interfaces;
 using AutoMapper.QueryableExtensions;
 using Microsoft.Extensions.Logging;
-using WorkflowAutomation.Application.Documents.Queries.GetPositionList;
+using WorkflowAutomation.Application.Positions.Queries.GetPositionList;
 using WorkflowAutomation.Application.Users.Queries.GetUserInfo;
+using WorkflowAutomation.Application.Users.Queries.GetPositionUsers;
 
 namespace WorkflowAutomation.Server.Controllers
 {
@@ -46,12 +47,24 @@ namespace WorkflowAutomation.Server.Controllers
 
             return Ok(userId);
         }
+
         [HttpGet]
         public async Task<ActionResult<GetUserInfoDto>> GetUserInfo()
         {
             var command = new GetUserInfoQuery
             {
                 UserId = UserId
+            };
+            var dto = await Mediator.Send(command);
+            return Ok(dto);
+        }
+
+        [HttpGet("PositionUsers/{posId}")]
+        public async Task<ActionResult<PositionUsersListVm>> GetPositionUsers(int posId)
+        {
+            var command = new PositionUsersQuery
+            {
+                PositionId = posId
             };
             var dto = await Mediator.Send(command);
             return Ok(dto);

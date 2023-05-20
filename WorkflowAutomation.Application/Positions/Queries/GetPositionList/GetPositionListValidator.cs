@@ -1,7 +1,7 @@
 ﻿using System;
 using FluentValidation;
 
-namespace WorkflowAutomation.Application.Documents.Queries.GetPositionList
+namespace WorkflowAutomation.Application.Positions.Queries.GetPositionList
 {
     public class GetPositionListValidator : AbstractValidator<GetPositionListQuery>
     {

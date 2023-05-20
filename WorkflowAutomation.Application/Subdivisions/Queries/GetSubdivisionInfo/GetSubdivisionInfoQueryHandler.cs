@@ -58,7 +58,7 @@ namespace WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionInfo
                 subdivisionUser.Name = item.User.Surname + " " + item.User.Name + " " + item.User.Patronymic;
                 subdivisionUser.Id = item.User.IdUser;
                 subdivisionUser.AppointmentDate = SubdivisionUsers.First(u=>u.IdUser==item.User.IdUser).AppointmentDate;
-
+                subdivisionUser.RemovalDate = SubdivisionUsers.First(u => u.IdUser == item.User.IdUser).RemovalDate;
                 var userPosition = _dbContext.UserPositions.FirstOrDefault(up => up.IdUser == subdivisionUser.Id);
                 var position = await _dbContext.Positions.FirstAsync(p => p.IdPosition == userPosition.IdPosition);
               // var userAndUserPosition = _dbContext.Users
