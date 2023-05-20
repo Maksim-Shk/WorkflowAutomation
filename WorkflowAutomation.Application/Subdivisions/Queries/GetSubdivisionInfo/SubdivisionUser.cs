@@ -7,8 +7,7 @@ namespace WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionInfo
         public string Name { get; set; }
         public string Position { get; set; }
         public int PositionId { get; set; }
-        public bool IsRender { get; set; } = false;
-
+        public RenderOption Render { get; set; } = RenderOption.NotRender;
         public DateTime AppointmentDate {get;set;}
     }
 }

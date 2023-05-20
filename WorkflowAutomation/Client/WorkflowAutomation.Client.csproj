@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="C:\Users\PC-max\.nuget\packages\psc.blazor.components.chartjs\6.0.40\contentFiles\any\net6.0\libman.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Pages\ViewDocumentList.razor.css" />
   </ItemGroup>
 

@@ -42,13 +42,16 @@ namespace WorkflowAutomation.Server.Controllers
             var user = await _userManager.FindByEmailAsync(login.Email);
 
             var roles = await _userManager.GetRolesAsync(user);
-            var role = roles.FirstOrDefault();
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, login.Email),
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Role,role)
+                new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticationSettings.JwtSecurityKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

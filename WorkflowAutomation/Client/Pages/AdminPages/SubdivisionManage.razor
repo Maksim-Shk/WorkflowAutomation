@@ -2,172 +2,223 @@
 
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
+@using WorkflowAutomation.Application.Subdivisions.Commands.UpdateSubdivision;
 @using WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionInfo
 @using Blazorise.TreeView
 @using BlazorContextMenu
 
 @inject HttpClient Http
-<link href="/css/SundivisonManage.css" rel="stylesheet" />
-
-
 
 <hr />
 <h2 style="text-align: center">Упраление подразделениями</h2>
 <hr />
 
-<Switch TValue="bool" @bind-Checked=@Render>
-    @if (Render) {
-        <Label>Древовидная струкрутра</Label>
-       // @SelectedChangeTree();
+
+
+<Card>
+    <CardTitle Size="3">
+        Создание подразделения
+    </CardTitle>
+    <CardText>
+        Создать новое подразделение без добавления сотрудников
+    </CardText>
+
+    <Button class="btn-primary" Size="Size.Large" Width="Width.Is25"
+    @onclick="(() => showCreateSubdivision = !showCreateSubdivision)"> Перейти к созданию </Button>
+    @if (showCreateSubdivision is true)
+    {
+        <Label> Создание подразделения</Label>
     }
-    else{
-        <Label> Поиск</Label>
-        //@SelectedChangeList();
-    }
-</Switch>
+</Card>
 
-@if (Render)
-{
-    <TreeView @ref="@treeViewRef" Nodes="Items"
-          GetChildNodes="@(item => item.GetChilds(item.Id))"
-          HasChildNodes="@(item => item.GetChilds(item.Id)?.Any() == true)"
-          @bind-SelectedNode="selectedNodeTreeView"
-          @onclick="()=>SelectedChangeTree()">
-        <NodeContent >
-            @context.Name
-        </NodeContent>
-    </TreeView>
-}
-else{
-<div class="subscribe">
-<TextEdit @bind-Text="searchItemName">
+<Card Background="Background.Light">
+    <CardTitle Size="3">
+        Просмотр/редактирование подразделения
+    </CardTitle>
+    <CardText>
+        Выберите способ отображения подразделения, затем перейдите к нужному
+    </CardText>
 
-</TextEdit>
-<Button class="btn-primary" Clicked="@SearchClick">
-    Поиск
-</Button>
-</div>
-
-
-@if (SearchResult != null)
-{
-    <ListView Title="Поиск"
-          Data="SearchResult"
-          TextField="(item)=> item.Name"
-          ValueField="(item)=>item.Id.ToString()"
-          Mode="ListGroupMode.Selectable"
-          @bind-SelectedItem="selectedNodeListView"
-          @onclick="()=>SelectedChangeList()"
-          >
-        <ItemTemplate>  
-            <a href="SubDivisionInfo/@context.Item.Id" > @context.Item.Name</a>
-        </ItemTemplate>
-    </ListView>
-}}
-
-@* Информация о выбранном подразделений*@
-@if (selectedNodeListView != null || selectedNodeTreeView != null) 
-{ 
-<h2>Подразделение </h2>
-<hr />
-<dl class="row">
-    <dt class="col-sm-3">
-        Название
-    </dt>
-    <dd class="col-sm-8">
-        @subdivisionInfoDto.Name
-    </dd>
-    <dt class="col-sm-3">
-        Дата создания
-    </dt>
-    <dd class="col-sm-8">
-        @subdivisionInfoDto.CreateDate
-    </dd>
-        <dt class="col-sm-3" >
-        Сотрудники
-    </dt>
-
-        <dd class="col-sm-8" style="margin-bottom:25%">
-        @foreach (var posId in PositionsIdList)
+    <Switch TValue="bool" @bind-Checked=@Render>
+        @if (Render)
         {
-            @if (posId != null)
-            {
-                @foreach (var item in subdivisionInfoDto.Users.Where(x => x.PositionId == posId).ToList())
-                {
-                    @if (item != null)
-                    {
-                            <ContextMenuTrigger MenuId="myMenu" Data="item.Id">
+            <Label>Древовидная струкрутра</Label>
+            // @SelectedChangeTree();
+        }
+        else
+        {
+            <Label> Поиск</Label>
+            //@SelectedChangeList();
+        }
+    </Switch>
 
-                                <p>@item.Name @item.Position</p>
-                                @if (item.IsRender)
-                                {
-                                    <Div ElementId="#b-animate">
-                                        <Animate Anchor="#b-animate" Auto Animation="Blazorise.Animate.Animations.Fade" DelayMilliseconds="500">
+    @if (Render)
+    {
+        <TreeView @ref="@treeViewRef" Nodes="Items"
+              GetChildNodes="@(item => item.GetChilds(item.Id))"
+              HasChildNodes="@(item => item.GetChilds(item.Id)?.Any() == true)"
+              @bind-SelectedNode="selectedNodeTreeView"
+              @onclick="()=>SelectedChangeTree()">
+            <NodeContent>
+                @context.Name
+            </NodeContent>
+        </TreeView>
+    }
+    else
+    {
+        <div class="subscribe">
+            <TextEdit @bind-Text="searchItemName">
+
+            </TextEdit>
+            <Button class="btn-primary" Clicked="@SearchClick">
+                Поиск
+            </Button>
+        </div>
+
+        @if (SearchResult != null)
+        {
+            <ListView Title="Поиск"
+              Data="SearchResult"
+              TextField="(item)=> item.Name"
+              ValueField="(item)=>item.Id.ToString()"
+              Mode="ListGroupMode.Selectable"
+              @bind-SelectedItem="selectedNodeListView"
+              @onclick="()=>SelectedChangeList()">
+                <ItemTemplate>
+                    <a href="SubDivisionInfo/@context.Item.Id"> @context.Item.Name</a>
+                </ItemTemplate>
+            </ListView>
+        }           
+    }
+
+    @* Информация о выбранном подразделений*@
+    @if (selectedNodeListView != null || selectedNodeTreeView != null)
+    {
+        <h2>Подразделение </h2>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-3">
+                Название
+            </dt>
+            <dd class="col-sm-8">
+                <span class="tight">@subdivisionInfoDto.Name</span>
+            </dd>
+            <dt class="col-sm-3">
+                Подчиняется
+            </dt>
+            <dd class="col-sm-8">
+                <span class="tight">@subdivisionInfoDto.SubordinationName</span>
+            </dd>
+            <dt class="col-sm-3">
+                Дата создания
+            </dt>
+            <dd class="col-sm-8">
+                <span class="tight">@subdivisionInfoDto.CreateDate</span>
+            </dd>
+            <dt class="col-sm-3">
+                Сотрудники
+            </dt>
+            <dd class="col-sm-8" style="margin-bottom:25%">
+                <span class="tight">
+                @foreach (var posId in PositionsIdList)
+                {
+                    @if (posId != null)
+                    {
+                        @foreach (var item in subdivisionInfoDto.Users.Where(x => x.PositionId == posId).ToList())
+                        {
+                            @if (item != null)
+                            {
+                                <ContextMenuTrigger MenuId="myMenu" Data="item.Id">
+
+                                    <p>@item.Name @item.Position</p>
+                                    @if (item.Render == RenderOption.Edit)
+                                    {
+                                        <Div ElementId="#b-animate">
+                                            <Animate Anchor="#b-animate" Auto Animation="Blazorise.Animate.Animations.Fade" DelayMilliseconds="500">
                                             <Card Margin="Margin.Is4.OnY">
-                                                <CardBody>
-                                                    <Field ColumnSize="ColumnSize.Is4.OnDesktop">
-                                                        <FieldLabel>Дата закрепления</FieldLabel>
-                                                        <DatePicker @bind-Date="item.AppointmentDate" TValue="DateTime" Min="min" Max="DateTimeOffset.Now" DisplayFormat="dd/MM/Y" />
-                                                    </Field>
-                                                                                                        
-                                                    <button class="btn-warning"> Подтвердить   </button>
-                                                    <button type="button" class="btn-success"  @onclick="()=>HideEditCard(item.Id)"> Скрыть</button>
-                                                </CardBody>
+                                            <CardBody>
+                                            <Field ColumnSize="ColumnSize.Is4.OnDesktop">
+                                            <FieldLabel>Дата закрепления</FieldLabel>
+                                            <DatePicker @bind-Date="item.AppointmentDate" TValue="DateTime" Min="min" Max="DateTimeOffset.Now" DisplayFormat="dd/MM/Y" />
+                                            </Field>
+
+                                            <button class="btn-warning"> Подтвердить   </button>
+                                            <button type="button" class="btn-success" @onclick="()=>HideEditCard(item.Id)"> Скрыть</button>
+                                            </CardBody>
                                             </Card>
-                                        </Animate>
-                                    </Div>
-                                }
-                            </ContextMenuTrigger>
-                        @*<div>@item.Name @item.Position </div>*@
+                                            </Animate>
+                                            </Div>
+                                    }
+                                </ContextMenuTrigger>
+                                @*<div>@item.Name @item.Position </div>*@
+                            }
+                        }
+                        <hr />
                     }
                 }
-                <hr />
-            }
-        }
-    </dd>
-    </dl>
-}
-else{
-    <Label>empty</Label>
-}
+                </span>
+            </dd>
+        </dl>
+    }
+    else
+    {
+        <Label>Подразделение не выбрано</Label>
+    }
 
-<ContextMenu Id="myMenu">
-    <Item OnClick="@OnClick">Изменить данные</Item>
-    <Item OnClick="@OnClick">Сменить подразделение</Item>
-     <Item OnClick="@OnClick">Уволить</Item>
+    <ContextMenu Id="myMenu">
+        <Item OnClick="@OnClickChangeUserInfo">Изменить данные/</Item>
+        <Item OnClick="@OnClickChangeUserSubdivision">Сменить подразделение</Item>
+        <Item OnClick="@OnClickRemoveUser">Уволить</Item>
     </ContextMenu>
 
-
+</Card>
 
 
 
 @code {
+    public bool showCreateSubdivision = false;
 
     DateTimeOffset min = DateTimeOffset.Now.AddYears(-50);
 
-   
-    
-    
-   bool Render;
-    void HideEditCard(string id) { 
+    //Render Tree
+    bool Render;
+    void HideEditCard(string id)
+    {
         var user = subdivisionInfoDto.Users.FirstOrDefault(u => u.Id == id);
-        user.IsRender = false;
+        user.Render = RenderOption.NotRender;
         StateHasChanged();
-
     }
-    void OnClick(ItemClickEventArgs e)
+
+    void OnClickChangeUserInfo(ItemClickEventArgs e)
     {
         var user = subdivisionInfoDto.Users.FirstOrDefault(u => u.Id == e.Data.ToString());
-        if (user != null) 
-        { user.IsRender = true;
-
+        if (user != null)
+        {
+            user.Render = RenderOption.Edit;
         }
         StateHasChanged();
-            }
+    }
+    void OnClickChangeUserSubdivision(ItemClickEventArgs e)
+    {
+        var user = subdivisionInfoDto.Users.FirstOrDefault(u => u.Id == e.Data.ToString());
+        if (user != null)
+        {
+            user.Render = RenderOption.ChangeSubdivison;
+        }
+        StateHasChanged();
+    }
+    void OnClickRemoveUser(ItemClickEventArgs e)
+    {
+        var user = subdivisionInfoDto.Users.FirstOrDefault(u => u.Id == e.Data.ToString());
+        if (user != null)
+        {
+            user.Render = RenderOption.Remove;
+        }
+        StateHasChanged();
+    }
 
-     
-    
-    private void SelectedChangeList() {
+    private void SelectedChangeList()
+    {
         selectedNodeTreeView = null;
         OnClickSubdivision();
         StateHasChanged();
@@ -179,23 +230,23 @@ else{
         OnClickSubdivision();
         StateHasChanged();
     }
-    
 
-    
-private TextEdit SearchOutput = new();
+
+
+    private TextEdit SearchOutput = new();
     private void SearchClick()
     {
         List<Item> NodesForSearch = new List<Item>();
         NodesForSearch.AddRange(Items);
         NodesForSearch.AddRange(AllItems);
-        SearchResult = NodesForSearch.Where(node => node.Name.Contains(searchItemName,StringComparison.OrdinalIgnoreCase)).ToList();
+        SearchResult = NodesForSearch.Where(node => node.Name.Contains(searchItemName, StringComparison.OrdinalIgnoreCase)).ToList();
         //treeViewRef.ExpandedNodes.Add(SearchItem);
         StateHasChanged();
     }
     string searchItemName = "";
     Item SearchNode { get; set; } = new();
-    
-    
+
+
     TreeView<Item> treeViewRef;
     List<Item> SearchResult { get; set; } = new();
 
@@ -228,10 +279,10 @@ private TextEdit SearchOutput = new();
     protected override async Task OnInitializedAsync()
     {
         try
-        {  
+        {
             selectedNodeTreeView = null;
             selectedNodeListView = null;
-           
+
             subdivisionListVm.Subdivisions = new List<SubdivisionListLookupDto>();
             subdivisionListVm = await Http.GetFromJsonAsync<SubdivisionListVm>("Subdivision");
             Items = new List<Item>();
@@ -246,7 +297,7 @@ private TextEdit SearchOutput = new();
                 Item item = new Item() { Id = sub.Id, Name = sub.Name, SubId = sub.IdSubordination };
                 AllItems.Add(item);
             }
-           
+
 
 
         }
@@ -260,7 +311,13 @@ private TextEdit SearchOutput = new();
     public SubdivisionInfoDto subdivisionInfoDto { get; set; } = new();
 
 
-    private async Task OnClickSubdivision() {
+    public UpdateSubdivisionDto updateSubdivisionDto = new();
+
+    private async Task OnClickSubdivision()
+    {
+
+        //var httpResponse = await Http.PutAsJsonAsync("Role/", roleDto);
+        //UpdateSubdivisionDto
         try
         {
             Item? SelectedItem = new();
@@ -274,7 +331,8 @@ private TextEdit SearchOutput = new();
             }
             subdivisionInfoDto.Users = new();
             if (SelectedItem != null)
-            {   if (SelectedItem.Id != 0)
+            {
+                if (SelectedItem.Id != 0)
                 {
                     subdivisionInfoDto = await Http.GetFromJsonAsync<SubdivisionInfoDto>("Subdivision/GetSubdivisionInfo/" + SelectedItem.Id.ToString());
 
@@ -285,7 +343,7 @@ private TextEdit SearchOutput = new();
                                     .Select(e => new
                                     {
                                         Name = e.Position,
-                                        IdPosition = e.PositionId                                                                              
+                                        IdPosition = e.PositionId
                                     }).ToList()
                                     ;
 
@@ -293,6 +351,21 @@ private TextEdit SearchOutput = new();
                     foreach (var pos in positions)
                     {
                         PositionsIdList.Add(pos.IdPosition);
+                    }
+                    updateSubdivisionDto.CreateDate = subdivisionInfoDto.CreateDate;
+                    updateSubdivisionDto.SubordinationId = subdivisionInfoDto.SubordinationId;
+                    updateSubdivisionDto.SubdivisionId = SelectedItem.Id;
+                    updateSubdivisionDto.Name = subdivisionInfoDto.Name;
+                    updateSubdivisionDto.UpdatedSubdivisionUsers = new();
+                    foreach (var user in subdivisionInfoDto.Users)
+                    {
+                        updateSubdivisionDto.UpdatedSubdivisionUsers.Add(new UpdatesSubUsers
+                            {
+                                UserId = user.Id,
+                                AppointmentDate = user.AppointmentDate,
+                                NewSubdivisionId = null,
+                                RemovalDate = null
+                            });
                     }
                     StateHasChanged();
                 }

@@ -28,7 +28,19 @@ namespace WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionInfo
 
             var subdivision = _dbContext.Subdivisions.FirstOrDefault(x => x.IdSubdivision == request.SubdivisionId);
             dto.Name = subdivision.Name;
-            dto.CreateDate = DateTime.Now.AddYears(40);
+            if (subdivision.CreationDate != null)
+            {
+                dto.CreateDate = (DateTime)subdivision.CreationDate;
+            }
+            else dto.CreateDate = DateTime.MinValue;
+
+            //ID и название подразделения, которому подчиняется это подразделение
+            dto.SubordinationId = subdivision.IdSubordination;
+            var greaterSubdivision = await _dbContext.Subdivisions.FirstOrDefaultAsync(s => s.IdSubdivision == subdivision.IdSubordination);
+            if (greaterSubdivision != null)
+                dto.SubordinationName = greaterSubdivision.Name;
+            else dto.SubordinationName = null;
+
             dto.Users = new List<SubdivisionUser>();
             var SubdivisionUsers = await _dbContext.UserSubdivisions.Where(x => x.IdSubdivision == request.SubdivisionId).ToListAsync();
             var users = SubdivisionUsers.Select(su => su.IdUser).Intersect(_dbContext.Users.Select(u => u.IdUser)).ToList();

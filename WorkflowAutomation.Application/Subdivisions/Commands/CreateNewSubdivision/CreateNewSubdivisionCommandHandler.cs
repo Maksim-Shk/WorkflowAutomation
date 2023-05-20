@@ -37,7 +37,10 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
                         Name = request.Name,
                         IdSubordination = request.SubordinationId
                     };
-                    //subdivision.CreateDate = request.CreateDate;
+                    if (request.CreateDate != null)
+                        subdivision.CreationDate = request.CreateDate;
+                    else subdivision.CreationDate = DateTime.Now;
+
                     await _dbContext.Subdivisions.AddAsync(subdivision);
                     await _dbContext.Save(cancellationToken);
 
@@ -63,7 +66,8 @@ namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
                 }
                 catch
                 {
-                    //TODO: вынести в настройки  кастомное исключение в Middleware
+                    transaction.Rollback();
+                    //TODO: сделать кастомное исключение
                     throw new InvalidOperationException();
                 }
             }

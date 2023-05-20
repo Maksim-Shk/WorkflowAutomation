@@ -74,6 +74,7 @@ namespace WorkflowAutomation.Application.Subdivisions.Commands.UpdateSubdivision
                                         SbdUser.AppointmentDate = (DateTime)user.AppointmentDate;
                                         _dbContext.UserSubdivisions.Update(SbdUser);
                                     }
+                                    await _dbContext.Save(cancellationToken);
                                 }
                             }
                         }
@@ -91,6 +92,7 @@ namespace WorkflowAutomation.Application.Subdivisions.Commands.UpdateSubdivision
                 }
                 catch
                 {
+                    transaction.Rollback();
                     //TODO: вынести в кастомное исключение
                     throw new InvalidOperationException();
                 }
