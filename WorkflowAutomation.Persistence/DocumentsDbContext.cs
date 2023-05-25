@@ -12,7 +12,11 @@ namespace WorkflowAutomation.Persistence
     public partial class DocumentsDbContext : DbContext, IDocumentUserDbContext
     {
         public DocumentsDbContext(DbContextOptions<DocumentsDbContext> options)
-            : base(options) { }
+            : base(options)
+        {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
+        }
 
         public virtual DbSet<AppUser> Users { get; set; } = null!;
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; } = null!;

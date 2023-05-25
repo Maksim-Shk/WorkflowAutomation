@@ -124,18 +124,31 @@ namespace WorkflowAutomation.Application.Users.Queries.GetFullUserInfo
                 UserSubdivisionHistory positionAndSubdivision = new UserSubdivisionHistory();
                 if (pas.Type == "Subdivision")
                 {
+                    positionAndSubdivision.Type = HistoryType.Subdivision;
                     positionAndSubdivision.SubdivisionId = pas.Id;
                     positionAndSubdivision.SubdivisionName = pas.Name;
                     positionAndSubdivision.EmploymentDate = pas.EmploymentDate;
                     positionAndSubdivision.DismissalDate = pas.DismissalDate;
                     var userpositions = _dbContext.UserPositions.FirstOrDefault(userPos => userPos.IdUser == request.RequestedUserId
                                                                        && userPos.AppointmentDate.Date <= pas.EmploymentDate.Date
-                                                                       && ( userPos.RemovalDate >= pas.EmploymentDate || userPos.RemovalDate == null));
-                    positionAndSubdivision.PositionName = _dbContext.Positions.FirstOrDefault(pos => pos.IdPosition == userpositions.IdPosition).Name;
-                    positionAndSubdivision.PositonId = userpositions.IdPosition;
+                                                                       && (userPos.RemovalDate >= pas.EmploymentDate || userPos.RemovalDate == null));
+                    //Костыль для некорректно добавленых данных на тесте
+                    if (userpositions == null)
+                    {
+                        var bufUserPos = _dbContext.UserPositions.FirstOrDefault(userPos => userPos.IdUser == request.RequestedUserId);
+                        positionAndSubdivision.PositionName = _dbContext.Positions.FirstOrDefault(pos => pos.IdPosition == bufUserPos.IdPosition).Name;
+                        positionAndSubdivision.PositonId = bufUserPos.IdPosition;
+                    }
+                    //нормальный сценарий работы
+                    else
+                    {
+                        positionAndSubdivision.PositionName = _dbContext.Positions.FirstOrDefault(pos => pos.IdPosition == userpositions.IdPosition).Name;
+                        positionAndSubdivision.PositonId = userpositions.IdPosition;
+                    }
                 }
                 else
                 {
+                    positionAndSubdivision.Type = HistoryType.Position;
                     positionAndSubdivision.PositonId = pas.Id;
                     positionAndSubdivision.PositionName = pas.Name;
                     positionAndSubdivision.EmploymentDate = pas.EmploymentDate;
@@ -143,10 +156,22 @@ namespace WorkflowAutomation.Application.Users.Queries.GetFullUserInfo
                     var usersubdivision = _dbContext.UserSubdivisions.FirstOrDefault(userSub => userSub.IdUser == request.RequestedUserId
                                                                        && userSub.AppointmentDate.Date <= pas.EmploymentDate.Date
                                                                         && (userSub.RemovalDate >= pas.EmploymentDate || userSub.RemovalDate == null));
-                    positionAndSubdivision.SubdivisionName = _dbContext.Subdivisions.FirstOrDefault(sub => sub.IdSubdivision == usersubdivision.IdSubdivision).Name;
-                    positionAndSubdivision.SubdivisionId = usersubdivision.IdSubdivision;
+
+                    //Костыль для некорректно добавленых данных на тесте
+                    if (usersubdivision == null)
+                    {
+                        var bufUserSub = _dbContext.UserSubdivisions.FirstOrDefault(userSub => userSub.IdUser == request.RequestedUserId);
+                        positionAndSubdivision.SubdivisionName = _dbContext.Subdivisions.FirstOrDefault(sub => sub.IdSubdivision == bufUserSub.IdSubdivision).Name;
+                        positionAndSubdivision.SubdivisionId = bufUserSub.IdSubdivision;
+                    }
+                    //нормальный сценарий работы
+                    else
+                    {
+                        positionAndSubdivision.SubdivisionName = _dbContext.Subdivisions.FirstOrDefault(sub => sub.IdSubdivision == usersubdivision.IdSubdivision).Name;
+                        positionAndSubdivision.SubdivisionId = usersubdivision.IdSubdivision;
+                    }
                 }
-               
+
 
                 CultureInfo russian = new CultureInfo("ru-RU");
                 if (pas.DismissalDate != null)
@@ -155,7 +180,8 @@ namespace WorkflowAutomation.Application.Users.Queries.GetFullUserInfo
                     //.ToString("yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
                     positionAndSubdivision.WorkingTime = ConvertDateForUser.ToReadableString(time);
                 }
-                else {
+                else
+                {
                     var time = (DateTime.Now.Subtract(pas.EmploymentDate));
                     positionAndSubdivision.WorkingTime = ConvertDateForUser.ToReadableString(time);
                 }
@@ -169,12 +195,13 @@ namespace WorkflowAutomation.Application.Users.Queries.GetFullUserInfo
                 dto.UserSubdivisionHistory.Add(positionAndSubdivision);
                 int ass = 2 + 2;
             }
+            dto.UserSubdivisionHistory = dto.UserSubdivisionHistory.OrderBy(x=>x.EmploymentDate).ToList();
             //Distinct с тремя полями SubdivisionName и PositionName
-            if (dto.UserSubdivisionHistory != null)
-            dto.UserSubdivisionHistory = dto.UserSubdivisionHistory
-               .GroupBy(m => new { m.SubdivisionName, m.PositionName,})
-               .Select(group => group.First())  // instead of First you can also apply your logic here what you want to take, for example an OrderBy
-               .ToList();
+            //  if (dto.UserSubdivisionHistory != null)
+            //      dto.UserSubdivisionHistory = dto.UserSubdivisionHistory
+            //         .GroupBy(m => new { m.SubdivisionName, m.PositionName, })
+            //         .Select(group => group.First())  // instead of First you can also apply your logic here what you want to take, for example an OrderBy
+            //         .ToList();
             return dto;
         }
     }

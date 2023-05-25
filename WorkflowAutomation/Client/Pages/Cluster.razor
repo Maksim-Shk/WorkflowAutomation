@@ -156,9 +156,27 @@
                         });
                 }
 
+                string label = "";
+                if (count == 1)
+                {
+                    label = "Долгоая работа, быстрая проверка";
+                }
+                if (count == 2)
+                {
+                    label = "Долгоая работа, долгая проверка";
+                }
+                if (count == 3)
+                {
+                    label = "Быстрая работа, быстрая проверка";
+                }
+                if (count == 4)
+                {
+                    label = "Быстрая работа, долгая проверка";
+                }
+
                 _config1.Data.Datasets.Add(new BubbleDataset()
                     {
-                        Label = "Dataset " + count,
+                        Label = label,//"Dataset " + count,
                         Data = SimpleBubble,
                         BackgroundColor = colors[count - 1]
                     });

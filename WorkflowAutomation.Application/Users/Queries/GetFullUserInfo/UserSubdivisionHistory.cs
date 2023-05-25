@@ -9,5 +9,6 @@ namespace WorkflowAutomation.Application.Users.Queries.GetFullUserInfo
         public DateTime? DismissalDate { get; set; }
         public DateTime EmploymentDate { get; set; }
         public string WorkingTime { get; set; }
+        public HistoryType Type { get; set; }
     }
 }

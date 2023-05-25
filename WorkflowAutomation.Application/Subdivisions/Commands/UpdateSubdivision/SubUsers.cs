@@ -19,5 +19,9 @@ namespace WorkflowAutomation.Application.Subdivisions.Commands.UpdateSubdivision
         /// дата удаления пользователя (без привязки к другому подразделению)
         /// </summary>
         public DateTime? RemovalDate { get; set;}
+        /// <summary>
+        /// ID новой должности пользователя
+        /// </summary>
+        public int? NewPositionId { get; set; }
     }
 }

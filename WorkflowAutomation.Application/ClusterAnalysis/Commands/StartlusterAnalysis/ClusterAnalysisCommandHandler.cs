@@ -68,10 +68,11 @@ namespace WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAna
                 {
                     dates.Add((status.AppropriationDate - documentStatuses[i].DocumentStatuses.First(s => s.IdStatus == 2).AppropriationDate).TotalMinutes);
                 }
-                dates.Add(documentStatuses[i].IdDocumentType);
-
-                observations[i] = new double[statuses.Count + 1];
-                for (int j = 0; j < statuses.Count + 1; j++)
+                //------------------------         dates.Add(documentStatuses[i].IdDocumentType);
+                observations[i] = new double[statuses.Count];
+                //------------------------    observations[i] = new double[statuses.Count + 1];
+                //------------------------for (int j = 0; j < statuses.Count + 1; j++)
+                for (int j = 0; j < statuses.Count; j++)
                 {
                     observations[i][j] = dates[j];
                 }
@@ -161,13 +162,13 @@ namespace WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAna
             };
 
             // Выполняем кластеризацию
-            var clusters = kmeans.Learn(observations);
+            var clusters = kmeans.Learn(coords);
 
             // Получаем метки кластеров для каждого наблюдения
-            int[] labels = clusters.Decide(observations);
+            int[] labels = clusters.Decide(coords);
 
             // Выводим результаты
-            for (int i = 0; i < observations.Length; i++)
+            for (int i = 0; i < coords.Length; i++)
             {
                 _logger.LogInformation($"Документ {documents[i].Title}: Cluster {labels[i]}");
             }
@@ -175,20 +176,20 @@ namespace WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAna
 
             var outputClustersDtoList = new List<OutputClustersDto>();
 
-            for (int i = 0; i < observations.Length; i++)
+            for (int i = 0; i < coords.Length; i++)
             {
                 var document = _dbContext.Documents.First(d => d.IdDocument == documentStatuses[i].IdDocument);
                 var statuses = new List<ClusterStatus>();
 
                 //observations[i].Length - 1 - только статусы, без типа документа
-                for (int j = 0; j < observations[i].Length - 1; j++) //(var requestStatusId in request.StatusesIds.Where(x => x != 2))
+                for (int j = 0; j < coords[i].Length - 1; j++) //(var requestStatusId in request.StatusesIds.Where(x => x != 2))
                 {
                     var status = new ClusterStatus
                     {
                         StatusId = request.StatusesIds[j],
                         StatusName = _dbContext.Statuses.First(s => s.IdStatus == request.StatusesIds[j]).Name,
                         StatusValue = originalObservations[i][j],
-                        StatusNormaliseValue = observations[i][j],
+                        StatusNormaliseValue = coords[i][j],
                     };
                     statuses.Add(status);
                 }
@@ -200,8 +201,8 @@ namespace WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAna
                     ClusterName = "ТУТ ПУСТО",
                     DocumentType = _dbContext.DocumentTypes.First(dt => dt.IdDocumentType == document.IdDocumentType).Name,
                     Statuses = statuses,
-                    X = (int)(observations[i][0] * 10000),
-                    Y = (int)(observations[i][1] * 10000)
+                    X = (int)(coords[i][0] * 10000),
+                    Y = (int)(coords[i][1] * 10000)
                 });
             }
             //TestMethod();

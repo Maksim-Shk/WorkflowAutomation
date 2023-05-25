@@ -58,9 +58,9 @@
                 @removaDate
             </dd>
         }
-        <hr />
+
         <dt class="col-sm-3">
-            ТАБЛИЦА
+            История перемещений по подразделениям
         </dt>
 
         <table class="table table-striped table-hover">
@@ -74,7 +74,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var userHistory in GetFullUserInfoDto.UserSubdivisionHistory)
+                @foreach (var userHistory in GetFullUserInfoDto.UserSubdivisionHistory.Where(x=>x.Type == HistoryType.Subdivision))
                 {
                     <tr>
                         <td> @userHistory.SubdivisionName</td>
@@ -96,13 +96,52 @@
 
             </tbody>
         </table>
-        <hr />
+
+        <dt class="col-sm-3">
+            История должностей пользователя
+        </dt>
+
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Подразделение</th>
+                    <th>Должность</th>
+                    <th>Дата начала работы</th>
+                    <th>Дата увольнения/перемещения</th>
+                    <th>Стаж работы</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var userHistory in GetFullUserInfoDto.UserSubdivisionHistory.Where(x => x.Type == HistoryType.Position))
+                {
+                    <tr>
+                        <td> @userHistory.SubdivisionName</td>
+                        <td> @userHistory.PositionName</td>
+                        <td> @userHistory.EmploymentDate</td>
+                        @if (@userHistory.DismissalDate == null)
+                        {
+                            <td> — </td>
+                        }
+                        else
+                        {
+
+                            <td> @userHistory.DismissalDate</td>
+                        }
+                        <td> @userHistory.WorkingTime</td>
+                        @*  <td> <a href="UserInformation/doc.RecieverInfo.UserId">oc.RecieverInfo.UserInfo</a></td>*@
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+
+@*        <hr />
         <dt class="col-sm-3">
             Ещё данные
         </dt>
         <dd class="col-sm-8">
             GetFullUserInfoDto.SomeData
-        </dd>
+        </dd>*@
 
     </dl>
 
