@@ -25,13 +25,14 @@ namespace WorkflowAutomation.Application.Roles.Queries.GetRolesList
         {
             List<RolesListLookupDto> listLookupDtos = new List<RolesListLookupDto>();
 
-            var roles = await _dbContext.AspNetRoles.ToListAsync();
+            var roles = await _dbContext.AspNetRoles.Include(r=>r.Users).ToListAsync();
 
             foreach (var role in roles)
             {
                 RolesListLookupDto dto = new RolesListLookupDto();
                 dto.RoleId = role.Id;
                 dto.Name = role.Name;
+                dto.Count = role.Users.Count;
                 listLookupDtos.Add(dto);
             }
 

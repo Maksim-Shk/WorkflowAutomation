@@ -1,5 +1,6 @@
 ﻿@page "/managerole"
 
+@using WorkflowAutomation.Application.Roles.Commands.RemoveRoleFromUser;
 @using WorkflowAutomation.Application.Roles.Queries.GetRolesList
 @using WorkflowAutomation.Application.Users.Queries.GetAllUsers
 @using WorkflowAutomation.Application.Roles.Commands.SetRoleToUser
@@ -16,37 +17,114 @@
 @inject HttpClient Http
 
 @attribute [Authorize(Roles = "Администратор")]
-<PageTitle>Админ</PageTitle>
+<PageTitle>Установка прав</PageTitle>
 
-<EditForm Model="@roleDto" OnValidSubmit="@HandleValidSubmit">
-    <DataAnnotationsValidator />
+<style>
+    .autocomplete-custom .dropdown-menu {
+        max-height: 1000%;
+    }
 
-    <h6>Выберите пользователя</h6>
-    <InputSelect id="selectAllowedUser" class="form-control" @bind-Value="@roleDto.UserId">
+    body {
+        font-size: 16px;
+    }
+</style>
 
-        @foreach (var user in UsersVm.AllUsers)
-        {
-            <option value="@user.Id"> @user.Name @user.Surname @user.Patronymic @user.SubdivisionName @user.PositonName </option>
-        }
-    </InputSelect>
-    <h6>Выберите роль</h6>
-    <InputSelect id="selectRole" class="form-control" @bind-Value="@roleDto.RoleId">
+<Card>
+    <CardBody>
+        <CardTitle Size="3" Margin="Margin.Is3" TextAlignment="TextAlignment.Center">
+            <Div>Установка прав (ролей) пользователям</Div>
+        </CardTitle>
 
-        @foreach (var role in RolesVm.Roles)
-        {
-            <option value="@role.RoleId"> @role.Name </option>
-        }
-    </InputSelect>
-    <button type="submit" class="btn btn-primary"> Присвоить роль </button>
-
-    <br />
-</EditForm>
+        <dl class="row">
+            <dt class="col-sm-2">
+                Выбор пользователя
+            </dt>
+            <dd class="col-sm-10">
+                <span class="tight">
+                    <Autocomplete Class="w-75 autocomplete-custom"
+                                  TItem="GetAllUsersListDto"
+                                  TValue="string"
+                                  Data="@UsersVm.AllUsers"
+                                  TextField="@(( item ) => item.FullName)"
+                                  ValueField="@(( item ) => item.Id)"
+                                  @bind-SelectedValue="@SelectedUserId"
+                                  @bind-SelectedText="selectedUserAutoCompleteText"
+                                  Placeholder="Поиск..."
+                                  Filter="AutocompleteFilter.StartsWith"
+                                                FreeTyping
+                                  CustomFilter="@(( item, searchValue ) => item.FullName.IndexOf( searchValue, 0, StringComparison.CurrentCultureIgnoreCase ) >= 0 )">
+                        <NotFoundContent> Извините... @context не был найден! :( </NotFoundContent>
+                        <ItemContent>
+                            <Div Flex="Flex.InlineFlex.JustifyContent.Between" Width="Width.Is100">
+                                <Heading Margin="Margin.Is1.FromBottom">@context.Text</Heading>
+                                <Small>@context.Item.RolesString</Small>
+                            </Div>
+                            <Paragraph Margin="Margin.Is1.FromBottom">@context.Item.PositonName</Paragraph>
+                            <Paragraph Margin="Margin.Is1.FromBottom">@context.Item.SubdivisionName</Paragraph>
+                        </ItemContent>
+                    </Autocomplete>
+                </span>
+            </dd>
+            <dt class="col-sm-2">
+                Выбор роли
+            </dt>
+            <dd class="col-sm-10">
+                <Autocomplete @ref="roleAutocomplete"
+                              Class="w-75 autocomplete-custom"
+                              TItem="RolesListLookupDto"
+                              TValue="string"
+                              Data="@RolesVm.Roles"
+                              TextField="@(( item ) => item.Name)"
+                              ValueField="@(( item ) => item.RoleId)"
+                              @bind-SelectedValue="@SelectedRoleId"
+                              @bind-SelectedText="selectedRoleAutoCompleteText"
+                              Placeholder="Поиск..."
+                              Filter="AutocompleteFilter.StartsWith"
+                                        FreeTyping
+                              CustomFilter="@(( item, searchValue ) => item.Name.IndexOf( searchValue, 0, StringComparison.CurrentCultureIgnoreCase ) >= 0 )">
+                    <NotFoundContent> Извините... @context не был найден! :( </NotFoundContent>
+                    <ItemContent>
+                        <Div Flex="Flex.InlineFlex.JustifyContent.Between" Width="Width.Is100">
+                            <Heading Margin="Margin.Is1.FromBottom">@context.Text</Heading>
+                            <Small> Количество пользователей с этой ролью: @context.Item.Count</Small>
+                        </Div>
+                        <Paragraph Margin="Margin.Is1.FromBottom">@context.Value</Paragraph>
+                    </ItemContent>
+                </Autocomplete>
+            </dd>
+            <dt class="col-sm-2">
+                Выбор вида операции
+            </dt>
+            <dd class="col-sm-10">
+                <RadioGroup TValue="string" Name="colors" @bind-CheckedValue="@SelectedMode" Orientation="Orientation.Vertical">
+                    <Radio Value="@("Присвоить")">Присвоить</Radio>
+                    <Radio Value="@("Убрать")">Убрать</Radio>
+                </RadioGroup>
+            </dd>
+        </dl>
+        <Button Background="Background.Warning" Clicked="HandleValidSubmit">
+            Применить
+            <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.Edit" />
+        </Button>
+    </CardBody>
+</Card>
 
 @code {
+    public string checkedValue { get; set; } = "Присвоить";
+    public Autocomplete<RolesListLookupDto, string> roleAutocomplete = new();
+    public AllUsersListVm UsersVm = new();
+    public RolesListVm RolesVm = new();
 
-    AllUsersListVm UsersVm = new();
-    RolesListVm RolesVm = new();
-    SetRoleToUserDto roleDto = new();
+    public string SelectedUserId { get; set; }
+    public string SelectedRoleId { get; set; }
+    public string SelectedMode { get; set; }
+
+
+    public string selectedUserSearchValue { get; set; }
+    public string selectedUserAutoCompleteText { get; set; }
+
+    public string selectedRoleSearchValue { get; set; }
+    public string selectedRoleAutoCompleteText { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -65,6 +143,19 @@
 
     private async Task HandleValidSubmit()
     {
-        var httpResponse = await Http.PutAsJsonAsync("Role/", roleDto);
+        if (SelectedMode == "Присвоить")
+        {
+            var setRoleToUseDto = new SetRoleToUseDto();
+            setRoleToUseDto.UserId = SelectedUserId;
+            setRoleToUseDto.RoleId = SelectedRoleId;
+            var httpResponse = await Http.PutAsJsonAsync("Role/UpdateRole", setRoleToUseDto);
+        }
+        else if (SelectedMode == "Убрать")
+        {
+            var removeRoleFromUserDto = new RemoveRoleFromUserDto();
+            removeRoleFromUserDto.UserId = SelectedUserId;
+            removeRoleFromUserDto.RoleId = SelectedRoleId;
+            var httpResponse = await Http.PutAsJsonAsync("Role/DeleteRole", removeRoleFromUserDto);
+        }
     }
 }

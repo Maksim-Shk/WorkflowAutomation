@@ -32,6 +32,7 @@ namespace WorkflowAutomation.Application.Users.Queries.GetAllUsers
                 userListDto.Surname = User.Surname;
                 if (User.Patronymic != null)
                     userListDto.Patronymic = User.Patronymic;
+                userListDto.FullName = User.Surname + " " + User.Name + " " + User.Patronymic;
 
                 //TODO: FirstAsync не соотвествует св€зи многие ко многим!
                 var UserSubdivision = await _dbContext.UserSubdivisions
@@ -51,6 +52,17 @@ namespace WorkflowAutomation.Application.Users.Queries.GetAllUsers
                     userListDto.PositonName = Positon.Name;
                 }
                 else userListDto.PositonName = "ƒолжность не заполнена";
+
+                var userRoles = _dbContext.AspNetUsers.Include(x => x.Roles).FirstOrDefault(u => u.Id == User.IdUser).Roles.ToList();
+                if (userRoles != null)
+                    for (int i = 0; i < userRoles.Count; i++)
+                    {
+                        if (i != userRoles.Count - 1)
+                            userListDto.RolesString += userRoles[i].Name + ", ";
+                        else
+                            userListDto.RolesString += userRoles[i].Name;
+                    }
+                else userListDto.RolesString = "–оль не присвоена";
                 allUsersListVm.AllUsers.Add(userListDto);
 
             }

@@ -1,6 +1,5 @@
 using System;
 using FluentValidation;
-using WorkflowAutomation.Application.Documents.Commands.UserInfoCommand;
 
 namespace WorkflowAutomation.Application.Roles.Commands.SetRoleToUser
 {

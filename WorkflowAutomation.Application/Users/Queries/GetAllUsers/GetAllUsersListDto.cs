@@ -6,7 +6,9 @@ namespace WorkflowAutomation.Application.Users.Queries.GetAllUsers
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Patronymic { get; set; }
+        public string FullName { get; set; }
         public string SubdivisionName { get; set; }
         public string PositonName { get; set; }
+        public string RolesString { get; set; }
     }
 }
