@@ -1,4 +1,4 @@
-﻿a{
-    text-decoration:none;
-    
+﻿.plain_test {
+    text-decoration: none;
+    color: #ff0000
 }

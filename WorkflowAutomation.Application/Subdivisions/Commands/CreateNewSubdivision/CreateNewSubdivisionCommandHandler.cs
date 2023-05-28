@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using WorkflowAutomation.Application.Interfaces;
 using WorkflowAutomation.Domain;
 
-namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
+namespace WorkflowAutomation.Application.Subdivisions.Commands.CreateNewSubdivision
 {
     public class CreateNewSubdivisionCommandHandler
         : IRequestHandler<CreateNewSubdivisionCommand, int>

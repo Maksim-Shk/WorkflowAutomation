@@ -13,6 +13,21 @@
 @using WorkflowAutomation.Client.Services
 @using WorkflowAutomation.Shared.Identity
 
+<PageTitle>Регистрация пользователя</PageTitle>
+
+<Breadcrumb Mode="BreadcrumbMode.Auto">
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/Admin">Администрирование СЭД</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/register">Регистрация пользователя</BreadcrumbLink>
+    </BreadcrumbItem>
+</Breadcrumb>
+
+<hr />
+<h2 style="text-align: center">Регистрация нового пользователя</h2>
+<hr />
+
 @if (ShowErrors)
 {
     <div class="alert alert-danger" role="alert">
@@ -23,11 +38,11 @@
     </div>
 }
 <div class="card">
-    <h4 class="card-header">Регистрация</h4>
+    <h4 class="card-header">Данные пользователя</h4>
     <div class="card-body">
         <EditForm Model="@registerDto" OnValidSubmit="@HandleRegistration">
             <DataAnnotationsValidator />
-            <label>Логин</label>
+            <label>Логин (электронная почта)</label>
             <div class="form-group">
                 <InputText id="login" style="margin-block:10px" class="form-control" placeholder="Логин " @bind-Value="registerDto.Email" />
                 <ValidationMessage For="@(() => registerDto.Email)" style="margin-bottom:10px" />
@@ -45,9 +60,9 @@
                 <ValidationMessage For="@(() =>registerDto.ConfirmPassword)" RepeatPasswordstyle="margin-bottom:10px" />
             </div>
             <button type="submit" class="btn btn-primary">
-                Зарегистрироваться
+                Зарегистрировать
             </button>
-            <NavLink href="" class="btn btn-link">Отмена</NavLink>
+            <NavLink href="/Admin" class="btn btn-link"> Отмена</NavLink>
         </EditForm>
     </div>
 </div>
@@ -75,11 +90,11 @@
         }
     }
       
-
     private async void HandleValidSubmit()
     {
 
     }
+
     protected override async Task OnInitializedAsync()
     {
         try

@@ -1,7 +1,7 @@
 using FluentValidation;
 using WorkflowAutomation.Application.Documents.Commands.CreateNewDocument;
 
-namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
+namespace WorkflowAutomation.Application.Subdivisions.Commands.CreateNewSubdivision
 {
     public class ChangeStatusCommandValidator : AbstractValidator<CreateNewSubdivisionCommand>
     {

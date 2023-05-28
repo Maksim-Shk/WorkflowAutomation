@@ -2,7 +2,7 @@ using System;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
+namespace WorkflowAutomation.Application.Subdivisions.Commands.CreateNewSubdivision
 {
     public class CreateNewSubdivisionCommand : IRequest<int>
     {

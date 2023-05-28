@@ -4,6 +4,17 @@
 @inject NavigationManager NavigationManager
 @page "/AdminPosition"
 
+<PageTitle>Упраление должностями</PageTitle>
+
+<Breadcrumb Mode="BreadcrumbMode.Auto">
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/Admin">Администрирование СЭД</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/AdminPosition">Упраление должностями</BreadcrumbLink>
+    </BreadcrumbItem>
+</Breadcrumb>
+
 <hr />
 <h2 style="text-align: center">Упраление должностями</h2>
 <hr />
@@ -95,3 +106,11 @@
 
     }
 }
+
+
+<style>
+    a {
+        text-decoration: none;
+        color: black;
+    }
+</style>

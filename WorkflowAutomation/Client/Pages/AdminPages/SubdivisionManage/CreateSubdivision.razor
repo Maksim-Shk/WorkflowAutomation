@@ -1,0 +1,84 @@
+﻿@page "/CreateSubdivision"
+@using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList;
+@using WorkflowAutomation.Application.Subdivisions.Commands.CreateNewSubdivision
+@inject HttpClient Http
+
+<link href="/css/DefaultStyle.css" rel="stylesheet" />
+
+<PageTitle>Упраление подразделениями</PageTitle>
+
+<Breadcrumb Mode="BreadcrumbMode.Auto" Class="text-decoration: none">
+    <BreadcrumbItem Class="breadcrumb-item">
+        <BreadcrumbLink To="/Admin">Администрирование СЭД</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem Class="breadcrumb-item">
+        <BreadcrumbLink To="/SubdivisionManage">Упраление подразделениями</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem Class="breadcrumb-item">
+        <BreadcrumbLink To="/CreateSubdivision">Создание подразделения</BreadcrumbLink>
+    </BreadcrumbItem>
+</Breadcrumb>
+
+<hr />
+<h2 style="text-align: center">Создание нового подразделения</h2>
+<hr />
+
+<dl class="row">
+    <dt class="col-sm-2">
+        Наименование
+    </dt>
+    <dd class="col-sm-10">
+        <TextEdit Width="Width.Is50" id="Title" class="form-control" @bind-Text="@subdivisionDto.Name"></TextEdit>
+    </dd>
+    <dt class="col-sm-2">
+        Короткое наименование 
+    </dt>
+    <dd class="col-sm-10">
+        <TextEdit Width="Width.Is50" id="Title" class="form-control"></TextEdit>
+    </dd>
+    <dt class="col-sm-2">
+        Подразделение, которому подчиняется данное
+    </dt>
+    <dd class="col-sm-10">
+        <Select @bind-SelectedValue="@subdivisionDto.SubordinationId" Width="Width.Is50">
+            <ChildContent>
+                <SelectItem Disabled TValue="int"> Выберите тип документа</SelectItem>
+                @foreach (var docType in subdivisionListVm.Subdivisions)
+                {
+                    <SelectItem TValue="int" Value="@docType.Id">
+                        @docType.Name
+                    </SelectItem>
+                }
+            </ChildContent>
+            <Feedback>
+                <ValidationError />
+            </Feedback>
+        </Select>
+    </dd>
+    <dt class="col-sm-2">
+        Дата создания подразделения
+    </dt>
+    <dd class="col-sm-10">
+        <DatePicker @bind-Date="SelectDate" TValue="DateTime?"
+                    InputMode="DateInputMode.Date"
+                    Width="Width.Is50"
+        SelectionMode="DateInputSelectionMode.Range"/>
+    </dd>
+</dl>
+
+
+<Button Color=" Color.Primary" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
+    <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.PlusCircle" /> Создать
+</Button>
+
+@code {
+    public NewSubdivisionDto subdivisionDto { get; set; } = new();
+    private SubdivisionListVm subdivisionListVm = new();
+    public DateTime? SelectDate { get; set; } = DateTime.Now;
+    protected override async Task OnInitializedAsync()
+    {
+        SelectDate = DateTime.Now;
+        subdivisionListVm.Subdivisions = new List<SubdivisionListLookupDto>();
+        subdivisionListVm = await Http.GetFromJsonAsync<SubdivisionListVm>("Subdivision");
+    }
+}

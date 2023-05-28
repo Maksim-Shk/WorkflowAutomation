@@ -1,36 +1,31 @@
-﻿@page "/SubdivisionManage"
-
+﻿@page "/ManageSubdivisionUsers"
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
 @using WorkflowAutomation.Application.Subdivisions.Commands.UpdateSubdivision;
 @using WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionInfo
 @using Blazorise.TreeView
 @using BlazorContextMenu
-
 @inject HttpClient Http
 
+<link href="/css/DefaultStyle.css" rel="stylesheet" />
+
+<PageTitle>Упраление пользователями</PageTitle>
+
+<Breadcrumb Mode="BreadcrumbMode.Auto" Class="text-decoration: none">
+    <BreadcrumbItem Class="breadcrumb-item">
+        <BreadcrumbLink To="/Admin">Администрирование СЭД</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem Class="breadcrumb-item">
+        <BreadcrumbLink To="/SubdivisionManage">Упраление подразделениями</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem Class="breadcrumb-item">
+        <BreadcrumbLink To="/ManageSubdivisionUsers">Управление пользователями подразделения</BreadcrumbLink>
+    </BreadcrumbItem>
+</Breadcrumb>
+
 <hr />
-<h2 style="text-align: center">Упраление подразделениями</h2>
+<h2 style="text-align: center">Управление пользователями в рамках подразделения</h2>
 <hr />
-
-<Card Margin="Margin.Is4.OnX.Is4.OnY">
-    <CardTitle Size="3">
-        Создание подразделения
-    </CardTitle>
-    <CardText>
-        Создать новое подразделение без добавления сотрудников
-    </CardText>
-
-    <Button class="btn-primary" Size="Size.Large" Width="Width.Is25"
-            @onclick="(() => showCreateSubdivision = !showCreateSubdivision)">
-        Перейти к созданию
-    </Button>
-    @if (showCreateSubdivision is true)
-    {
-        <Label> Создание подразделения</Label>
-    }
-
-</Card>
 
 <Card Margin="Margin.Is4.OnX.Is4.OnY" Background="Background.Light">
     <CardTitle Size="3">
@@ -162,7 +157,7 @@
 
                                                 <Select @bind-SelectedValue="@updateSubdivisionDto.UpdatedSubdivisionUsers.First(u=>u.UserId == item.Id).NewSubdivisionId">
                                             <ChildContent>
-                                                <SelectItem Disabled> Выбирите получателя....</SelectItem>
+                                                <SelectItem Disabled> Выберите новое подразделение....</SelectItem>
                                                                     @foreach (var subdivision in subdivisionListVm.Subdivisions)
                                                                         {
                                                                             <SelectItem TValue="int" Value="@subdivision.Id">
@@ -230,7 +225,6 @@
     protected async Task UpdateSubdivision()
     {
         var httpResponse = await Http.PutAsJsonAsync<UpdateSubdivisionDto>("Subdivision/UpdateSubdivision", updateSubdivisionDto);
-
     }
 
     public bool showCreateSubdivision = false;
