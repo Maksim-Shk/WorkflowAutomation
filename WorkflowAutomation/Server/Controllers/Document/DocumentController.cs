@@ -20,6 +20,7 @@ using WorkflowAutomation.Application.Documents.Commands.DeleteDocument;
 using WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentList;
 using WorkflowAutomation.Application.Documents.Queries.GetOneDocument;
 using Microsoft.AspNetCore.SignalR.Client;
+using WorkflowAutomation.Application.Documents.Queries.GetDocumentsStatistics;
 
 namespace WorkflowAutomation.Server.Controllers
 {
@@ -46,7 +47,7 @@ namespace WorkflowAutomation.Server.Controllers
 
         [HttpPost("CreateNewDocument/{jwtToken}")]
         [Authorize]
-        public async Task<ActionResult<int>> CreateNewDocument([FromForm]CreateNewDocumentDto createNewDocumentDto, string jwtToken)
+        public async Task<ActionResult<int>> CreateNewDocument([FromForm] CreateNewDocumentDto createNewDocumentDto, string jwtToken)
         {
             var command = _mapper.Map<CreateNewDocumentCommand>(createNewDocumentDto);
             command.UserId = UserId.ToString();
@@ -61,7 +62,7 @@ namespace WorkflowAutomation.Server.Controllers
             var adress = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}" + "/notificationHub/";
             command.Uri = new Uri(adress, UriKind.Absolute);
             var docId = await Mediator.Send(command);
-            
+
             return Ok(docId);
         }
 
@@ -93,31 +94,31 @@ namespace WorkflowAutomation.Server.Controllers
         [Authorize]
         public async Task<ActionResult<DocumentDto>> GetDocument(int id)
         {
-          //  string workingDirectory = Environment.CurrentDirectory;
+            //  string workingDirectory = Environment.CurrentDirectory;
             // This will get the current PROJECT bin directory (ie ../bin/)
-         //   string projectDirectory = Directory.GetParent(workingDirectory).Parent.FullName;
-        //    var uploadDirectory = projectDirectory + @"\WorkflowAutomation\Server\Development\unsafe_uploads";
+            //   string projectDirectory = Directory.GetParent(workingDirectory).Parent.FullName;
+            //    var uploadDirectory = projectDirectory + @"\WorkflowAutomation\Server\Development\unsafe_uploads";
             var query = new GetDocumentQuery
             {
                 DocumentId = id,
                 UserId = UserId,
-              //  DirectoryPath = uploadDirectory
+                //  DirectoryPath = uploadDirectory
             };
             var dto = await Mediator.Send(query);
             return Ok(dto);
         }
-       //[HttpGet("GetDocument/{id}")]
-       //[Authorize]
-       //public async Task<ActionResult<AnotherGetDocumentDto>> GetDocument(int id)
-       //{
-       //    var query = new AnotherGetDocumentQuery
-       //    {
-       //        DocumentId = id,
-       //        UserId = UserId
-       //    };
-       //    var vm = await Mediator.Send(query);
-       //    return Ok(vm);
-       //}
+        //[HttpGet("GetDocument/{id}")]
+        //[Authorize]
+        //public async Task<ActionResult<AnotherGetDocumentDto>> GetDocument(int id)
+        //{
+        //    var query = new AnotherGetDocumentQuery
+        //    {
+        //        DocumentId = id,
+        //        UserId = UserId
+        //    };
+        //    var vm = await Mediator.Send(query);
+        //    return Ok(vm);
+        //}
 
         [HttpPut("{id}")]
         [Authorize]
@@ -127,6 +128,19 @@ namespace WorkflowAutomation.Server.Controllers
             command.UserId = UserId;
             await Mediator.Send(command);
             return NoContent();
+        }
+
+        [HttpGet("GetDocumentsStatistics")]
+        [Authorize]
+        public async Task<ActionResult<DocumentDto>> GetDocumentStat()
+        {
+            var query = new GetDocumentsStatisticsQuery
+            {
+                UserId = UserId,
+                StatusIds = new List<int> { 3, 4, 5, 6 }
+            };
+            var dto = await Mediator.Send(query);
+            return Ok(dto);
         }
 
     }
