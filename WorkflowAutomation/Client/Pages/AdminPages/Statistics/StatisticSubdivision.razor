@@ -1,0 +1,92 @@
+﻿@using WorkflowAutomation.Application.Documents.Queries.GetDocumentStatisticBySubdivision
+
+@using Blazorise.DataGrid
+
+@inject HttpClient httpClient
+@inject NavigationManager NavigationManager
+@page "/StatisticSubdivision"
+
+<PageTitle>Статистика СЭД</PageTitle>
+
+<Breadcrumb Mode="BreadcrumbMode.Auto">
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/Admin">Администрирование СЭД</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/Statistics">Статистика СЭД</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/StatisticSubdivision">Отчет по подразделениям</BreadcrumbLink>
+    </BreadcrumbItem>
+</Breadcrumb>
+
+<hr />
+<h2 style="text-align: center">Просмотр статистики документооборота подразделений</h2>
+<hr />
+
+<Accordion>
+    @foreach (var group in documentStatisticBySubdivisionListVm.StatisticSubdivisionSet)
+    {
+        <Collapse>
+            <CollapseHeader>
+                <Heading Size="HeadingSize.Is5">
+                    <AccordionToggle>
+                        <b>@group.GroupName</b>: @group.StatisticSet.Count
+                    </AccordionToggle>
+                </Heading>
+            </CollapseHeader>
+            <CollapseBody>
+                <DataGrid TItem="DocumentBySubdivisionDto"
+                      Data="@group.StatisticSet"
+                        Responsive
+                        Filterable
+                        Sortable
+                      SortMode="DataGridSortMode.Multiple"
+                        ShowPager
+                        ShowPageSizes
+                      PagerPosition="DataGridPagerPosition.Bottom"
+                      PagerOptions="new(){ ButtonSize=Blazorise.Size.Medium}">
+
+                <DataGridColumns>
+                    <DataGridColumn Field="@nameof(DocumentBySubdivisionDto.Title)" Caption="Тема" Filterable="false"></DataGridColumn>
+                    <DataGridColumn Field="@nameof(DocumentBySubdivisionDto.AppointmentDate)" Caption="Дата присвоения статуса" Filterable="false"></DataGridColumn>
+                    <DataGridColumn Field="@nameof(DocumentBySubdivisionDto.AllStatusTime)" Caption="Время нахождения в статусе (часы)" Filterable="false">
+                        <DisplayTemplate>
+                            @{
+                                    TimeSpan timeSpan = (context as DocumentBySubdivisionDto).AllStatusTime;
+                                    if (timeSpan.TotalHours != 0)
+                                    {
+                                        <Div>@Math.Round(timeSpan.TotalHours,0)</Div>
+                                    }
+                                    else if (timeSpan.TotalMinutes != 0)
+                                    {
+                                        double time = timeSpan.TotalMinutes / 60;
+                                        time = Math.Round(time, 2);
+                                        <Div>@time</Div>
+                                    }
+                                    else
+                                    {
+                                        <Div>0</Div>
+                                    }
+                                }
+                            </DisplayTemplate>
+                        </DataGridColumn>
+                        <DataGridColumn Field="@nameof(DocumentBySubdivisionDto.SubdivisionName)" Caption="Подразделение" Filterable="false"></DataGridColumn>
+                        <DataGridColumn Field="@nameof(DocumentBySubdivisionDto.PositionName)" Caption="Должность" Filterable="false"></DataGridColumn>
+                    </DataGridColumns>
+                </DataGrid>
+            </CollapseBody>
+        </Collapse>
+    }
+</Accordion>
+@code {
+    public DocumentStatisticBySubdivisionListVm documentStatisticBySubdivisionListVm = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        documentStatisticBySubdivisionListVm.StatisticSubdivisionSet = new List<StatisticSubdivisionSet>();
+
+        documentStatisticBySubdivisionListVm = await httpClient.GetFromJsonAsync<DocumentStatisticBySubdivisionListVm>("Document/BySubdivisionStatistics");
+        documentStatisticBySubdivisionListVm.StatisticSubdivisionSet = documentStatisticBySubdivisionListVm.StatisticSubdivisionSet.OrderByDescending(s => s.StatisticSet.Count()).ToList();
+    }
+}

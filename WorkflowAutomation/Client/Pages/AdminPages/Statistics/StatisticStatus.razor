@@ -4,7 +4,7 @@
 
 @inject HttpClient httpClient
 @inject NavigationManager NavigationManager
-@page "/DocumentStatistics"
+@page "/StatisticStatus"
 
 <PageTitle>Статистика СЭД</PageTitle>
 
@@ -13,12 +13,15 @@
         <BreadcrumbLink To="/Admin">Администрирование СЭД</BreadcrumbLink>
     </BreadcrumbItem>
     <BreadcrumbItem>
-        <BreadcrumbLink To="/DocumentStatistics">Статистика СЭД</BreadcrumbLink>
+        <BreadcrumbLink To="/Statistics">Статистика СЭД</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/StatisticStatus">Отчет по статусам</BreadcrumbLink>
     </BreadcrumbItem>
 </Breadcrumb>
 
 <hr />
-<h2 style="text-align: center">Просмотр статистики и формирование отчетов</h2>
+<h2 style="text-align: center">Просмотр статистики документов по статусам</h2>
 <hr />
 
 <Accordion>
@@ -28,19 +31,19 @@
             <CollapseHeader>
                 <Heading Size="HeadingSize.Is5">
                     <AccordionToggle>
-                        @group.GroupName, общее число документов: @group.StatisticSet.Count
+                        <b>@group.GroupName</b>: @group.StatisticSet.Count
                     </AccordionToggle>
                 </Heading>
             </CollapseHeader>
             <CollapseBody>
                 <DataGrid TItem="DocumentStatisticsDto"
                       Data="@group.StatisticSet"
-                      Responsive
-                      Filterable
-                      Sortable
+                        Responsive
+                        Filterable
+                        Sortable
                       SortMode="DataGridSortMode.Multiple"
-                      ShowPager
-                      ShowPageSizes
+                        ShowPager
+                        ShowPageSizes
                       PagerPosition="DataGridPagerPosition.Bottom"
                       PagerOptions="new(){ ButtonSize=Blazorise.Size.Medium}">
 
@@ -48,8 +51,8 @@
                     <DataGridColumn Field="@nameof(DocumentStatisticsDto.Title)" Caption="Тема" Filterable="false"></DataGridColumn>
                     <DataGridColumn Field="@nameof(DocumentStatisticsDto.AppointmentDate)" Caption="Дата присвоения статуса" Filterable="false"></DataGridColumn>
                     <DataGridColumn Field="@nameof(DocumentStatisticsDto.StatusTime)" Caption="Время нахождения в статусе (часы)" Filterable="false">
-                          <DisplayTemplate>
-                              @{
+                        <DisplayTemplate>
+                            @{
                                     TimeSpan timeSpan = (context as DocumentStatisticsDto).StatusTime;
                                     if (timeSpan.TotalHours != 0)
                                     {
@@ -66,10 +69,10 @@
                                         <Div>0</Div>
                                     }
                                 }
-                          </DisplayTemplate>
-                    </DataGridColumn>
-                    <DataGridColumn Field="@nameof(DocumentStatisticsDto.SubdivisionName)" Caption="Подразделение" Filterable="false"></DataGridColumn>
-                    <DataGridColumn Field="@nameof(DocumentStatisticsDto.PositionName)" Caption="Должность" Filterable="false"></DataGridColumn>
+                            </DisplayTemplate>
+                        </DataGridColumn>
+                        <DataGridColumn Field="@nameof(DocumentStatisticsDto.SubdivisionName)" Caption="Подразделение" Filterable="false"></DataGridColumn>
+                        <DataGridColumn Field="@nameof(DocumentStatisticsDto.PositionName)" Caption="Должность" Filterable="false"></DataGridColumn>
                     </DataGridColumns>
                 </DataGrid>
             </CollapseBody>

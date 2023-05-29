@@ -19,7 +19,9 @@ using WorkflowAutomation.Application.Documents.Queries.GetDocumentList;
 using WorkflowAutomation.Application.Documents.Commands.DeleteDocument;
 using WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentList;
 using WorkflowAutomation.Application.Documents.Queries.GetOneDocument;
-using Microsoft.AspNetCore.SignalR.Client;
+using WorkflowAutomation.Application.Documents.Queries.GetDocumentStatisticBySubdivision;
+
+    using Microsoft.AspNetCore.SignalR.Client;
 using WorkflowAutomation.Application.Documents.Queries.GetDocumentsStatistics;
 
 namespace WorkflowAutomation.Server.Controllers
@@ -132,12 +134,24 @@ namespace WorkflowAutomation.Server.Controllers
 
         [HttpGet("GetDocumentsStatistics")]
         [Authorize]
-        public async Task<ActionResult<DocumentDto>> GetDocumentStat()
+        public async Task<ActionResult> GetDocumentStat()
         {
             var query = new GetDocumentsStatisticsQuery
             {
                 UserId = UserId,
                 StatusIds = new List<int> { 3, 4, 5, 6 }
+            };
+            var dto = await Mediator.Send(query);
+            return Ok(dto);
+        }
+
+        [HttpGet("BySubdivisionStatistics")]
+        [Authorize]
+        public async Task<ActionResult> GetBySubdivisionStatistics()
+        {
+            var query = new GetDocumentStatisticBySubdivisionQuery
+            {
+                UserId = UserId,
             };
             var dto = await Mediator.Send(query);
             return Ok(dto);

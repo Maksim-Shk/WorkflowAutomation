@@ -42,7 +42,8 @@ namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentsStatistic
                 statisticSet.GroupName = _dbContext.Statuses.First(s=>s.IdStatus == statusId).Name;
                 statisticSet.StatisticSet = new();
 
-                foreach (var document in documents.Where(d=>d.DocumentStatuses.FirstOrDefault(s=>s.IdStatus == statusId) != null).ToList())
+
+                foreach (var document in documents.Where(d=>d.DocumentStatuses.Last() == d.DocumentStatuses.FirstOrDefault(s=>s.IdStatus == statusId)).ToList())
                 {
                     var status = document.DocumentStatuses.FirstOrDefault(s => s.IdStatus == statusId);
                     var DocumentStatistic = new DocumentStatisticsDto();

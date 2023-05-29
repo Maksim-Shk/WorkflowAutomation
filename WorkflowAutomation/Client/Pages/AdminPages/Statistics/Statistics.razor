@@ -1,0 +1,57 @@
+﻿@inject NavigationManager NavigationManager
+@page "/Statistics"
+
+<PageTitle>Статистика СЭД</PageTitle>
+
+<Breadcrumb Mode="BreadcrumbMode.Auto">
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/Admin">Администрирование СЭД</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/Statistics">Статистика СЭД</BreadcrumbLink>
+    </BreadcrumbItem>
+</Breadcrumb>
+
+<hr />
+<h2 style="text-align: center">Просмотр статистики и формирование отчетов</h2>
+<hr />
+
+<CardDeck Margin="Margin.Is3">
+    <Card>
+        <CardBody>
+            <CardTitle Size="3" TextAlignment="TextAlignment.Center">
+                <a href="/StatisticStatus">Отчет по статусам</a>
+            </CardTitle>
+            <CardText Margin="Margin.Is3">
+                <h5>
+                    Просмотр всех документов в системе, сгрупированных по их текущим статусам.
+                </h5>
+            </CardText>
+
+            <Button Type="ButtonType.Link" Color=" Color.Primary" To="/StatisticStatus" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
+                <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.LongArrowAltRight" /> Перейти
+            </Button>
+        </CardBody>
+    </Card>
+
+    <Card>
+        <CardBody>
+            <CardTitle Size="3" TextAlignment="TextAlignment.Center">
+                <a href="/StatisticSubdivision">Отчет по подразделениям</a>
+            </CardTitle>
+            <CardText Margin="Margin.Is3">
+                <h5>
+                    Просмотр всех документов в системе, сгрупированных по подразделениям.
+                </h5>
+            </CardText>
+
+            <Button Type="ButtonType.Link" Color=" Color.Primary" To="/StatisticSubdivision" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
+                <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.LongArrowAltRight" /> Перейти
+            </Button>
+        </CardBody>
+    </Card>
+</CardDeck>
+
+@code {
+
+}
