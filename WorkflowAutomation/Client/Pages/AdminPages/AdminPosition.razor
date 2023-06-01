@@ -1,5 +1,6 @@
 ﻿@using WorkflowAutomation.Application.Positions.Queries.GetPositionList
-@using WorkflowAutomation.Application.Users.Queries.GetPositionUsers;
+@using WorkflowAutomation.Application.Users.Queries.GetPositionUsers
+@using Blazorise.DataGrid
 @inject HttpClient httpClient
 @inject NavigationManager NavigationManager
 @page "/AdminPosition"
@@ -29,53 +30,47 @@
 
     @foreach (var position in positionListVm.Positions)
     {
-        <hr />
-        <dl class="row">
-        <dt class="col-sm-4 text-center">
-                @position.Name
-        </dt>
-            <dd class="col-sm-8 text-center">
-                <Button Color="Color.Primary">
-                    <Icon Name="IconName.Edit" />
-                    @* Редактировать*@
-                </Button>
-                @*  Clicked=@ShowPositionUsers(@position.id)*@
+        <Collapse>
+            <CollapseHeader>
+                <Heading Size="HeadingSize.Is5">
+                    <AccordionToggle>
+                        <b>@position.Name </b>
+                        <Button Color="Color.Primary">
+                            <Icon Name="IconName.Edit" />
+                            @* Редактировать*@
+                        </Button>
+                        @*  Clicked=@ShowPositionUsers(@position.id)*@
 
-                <Button Color="Color.Primary" @onclick="(() => ShowPositionUsers(position))">
-                    <Icon Name="IconName.Eye" />
-                    @*      Показать*@
-                </Button>
-        </dd>
-        </dl>
-      @*  <Div> @item.Name
-            <Button Color="Color.Primary">
-                <Icon Name="IconName.Edit" />
-               @* Редактировать
-            </Button>
-            <Button Color="Color.Primary">
-                <Icon Name="IconName.Eye"/>
-          @*      Показать
-            </Button>
-        </Div>*@
-        @if (position.IsRender is true)
-        {
-            foreach (var user in position.positionUsers)
-            {
-                <Div>@user.FullName - @user.SubdivisionName</Div>
-                <Div>C @user.AppointmentDate </Div>
-            }
-        }
-        <hr />
+                        <Button Color="Color.Primary" @onclick="(() => ShowPositionUsers(position))">
+                            <Icon Name="IconName.Eye" />
+                            @*      Показать*@
+                        </Button>
+                        @*   <b>@group.GroupName</b>: @group.StatisticSet.Count*@
+                    </AccordionToggle>
+                </Heading>
+            </CollapseHeader>
+            <CollapseBody>
+                <DataGrid TItem="PositionUserDto"
+                      Data="@position.positionUsers"
+                        Responsive
+                        Filterable
+                        Sortable
+                      SortMode="DataGridSortMode.Multiple"
+                        ShowPager
+                        ShowPageSizes
+                      PagerPosition="DataGridPagerPosition.Bottom"
+                      PagerOptions="new(){ ButtonSize=Blazorise.Size.Medium}">
+                <DataGridColumns>
+                    <DataGridColumn Field="@nameof(PositionUserDto.FullName)" Caption="Полное имя" Filterable="false"></DataGridColumn>
+                    <DataGridColumn Field="@nameof(PositionUserDto.SubdivisionName)" Caption="Подразделение" Filterable="false"></DataGridColumn>
+                    <DataGridColumn Field="@nameof(PositionUserDto.AppointmentDate)" Caption="Дата начала работы" Filterable="false"></DataGridColumn>
+                </DataGridColumns>
+                </DataGrid>
+                </CollapseBody>
+                </Collapse>
     }
 
-    @* <Button class="btn-primary" Size="Size.Large" Width="Width.Is25"
-    @onclick="(() => showCreateSubdivision = !showCreateSubdivision)">
-    Перейти к созданию
-    </Button>
-    @if (showCreateSubdivision is true)
-    {
-    <Label> Создание подразделения</Label>
-    }*@
+
 
 </Card>
 
@@ -87,6 +82,12 @@
         try
         {
             positionListVm = await httpClient.GetFromJsonAsync<PositionListVm>("Position/");
+            foreach (var position in positionListVm.Positions)
+            {
+                var response = await httpClient.GetFromJsonAsync<PositionUsersListVm>("UserInfo/PositionUsers/" + position.Id);
+                position.positionUsers = response.Users.ToList();
+                position.IsRender = true;
+            }
         }
         catch
         {
