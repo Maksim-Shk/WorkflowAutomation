@@ -1,0 +1,180 @@
+﻿@page "/UserInformation/{text?}"
+
+@using WorkflowAutomation.Application.Users.Queries.GetFullUserInfo
+
+@inject HttpClient httpClient
+@inject NavigationManager NavigationManager
+
+<PageTitle>@(GetFullUserInfoDto.Name + " " + GetFullUserInfoDto.Surname + " " + GetFullUserInfoDto.Patronymic)</PageTitle>
+
+<EditForm Model="@GetFullUserInfoDto">
+    <DataAnnotationsValidator />
+
+    <h2> Профиль пользователя СЭД </h2>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">
+            ФИО пользователя
+        </dt>
+        <dd class="col-sm-8">
+            @(GetFullUserInfoDto.Name + " " + GetFullUserInfoDto.Surname + " " + GetFullUserInfoDto.Patronymic)
+        </dd>
+        <dt class="col-sm-3">
+            Подразделение
+        </dt>
+        <dd class="col-sm-8">
+            <div> <a href="SubDivisionInfo/@GetFullUserInfoDto.SubdivisionId"> @GetFullUserInfoDto.SubdivisionName</a></div>
+        </dd>
+        <dt class="col-sm-3">
+            Должность
+        </dt>
+        <dd class="col-sm-8">
+            @GetFullUserInfoDto.PositonName
+        </dd>
+        <dt class="col-sm-3">
+            Роль
+        </dt>
+        <dd class="col-sm-8">
+            @GetFullUserInfoDto.RoleName
+        </dd>
+        <dt class="col-sm-3">
+            Дата регистрации
+        </dt>
+        <dd class="col-sm-8">
+            @GetFullUserInfoDto.RegistrationDate
+        </dd>
+        <dt class="col-sm-3">
+            Дата последнего входа в систему
+        </dt>
+        <dd class="col-sm-8">
+            @GetFullUserInfoDto.LastOnlineDate
+        </dd>
+
+        @if (removaDate != null)
+        {
+            <dt class="col-sm-3">
+                Дата увольнения
+            </dt>
+            <dd class="col-sm-8">
+                @removaDate
+            </dd>
+        }
+
+        <dt class="col-sm-3">
+            История перемещений по подразделениям
+        </dt>
+
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Подразделение</th>
+                    <th>Должность</th>
+                    <th>Дата начала работы</th>
+                    <th>Дата увольнения/перемещения</th>
+                    <th>Стаж работы</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var userHistory in GetFullUserInfoDto.UserSubdivisionHistory.Where(x=>x.Type == HistoryType.Subdivision))
+                {
+                    <tr>
+                        <td> @userHistory.SubdivisionName</td>
+                        <td> @userHistory.PositionName</td>
+                        <td> @userHistory.EmploymentDate</td>
+                        @if (@userHistory.DismissalDate == null)
+                        {
+                            <td> — </td>
+                        }
+                        else
+                        {
+                            <td> @userHistory.DismissalDate</td>
+                        }
+                        <td> @userHistory.WorkingTime</td>
+                        @*  <td> <a href="UserInformation/doc.RecieverInfo.UserId">oc.RecieverInfo.UserInfo</a></td>*@
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+
+        <dt class="col-sm-3">
+            История должностей пользователя
+        </dt>
+
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Подразделение</th>
+                    <th>Должность</th>
+                    <th>Дата начала работы</th>
+                    <th>Дата увольнения/перемещения</th>
+                    <th>Стаж работы</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var userHistory in GetFullUserInfoDto.UserSubdivisionHistory.Where(x => x.Type == HistoryType.Position))
+                {
+                    <tr>
+                        <td> @userHistory.SubdivisionName</td>
+                        <td> @userHistory.PositionName</td>
+                        <td> @userHistory.EmploymentDate</td>
+                        @if (@userHistory.DismissalDate == null)
+                        {
+                            <td> — </td>
+                        }
+                        else
+                        {
+                            <td> @userHistory.DismissalDate</td>
+                        }
+                        <td> @userHistory.WorkingTime</td>
+                        @*  <td> <a href="UserInformation/doc.RecieverInfo.UserId">oc.RecieverInfo.UserInfo</a></td>*@
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+
+@*        <hr />
+        <dt class="col-sm-3">
+            Ещё данные
+        </dt>
+        <dd class="col-sm-8">
+            GetFullUserInfoDto.SomeData
+        </dd>*@
+
+    </dl>
+
+</EditForm>
+
+@code {
+    //ФИО, подразделение, должность, роль, дата регистриция , дата последнего входа в систему, дата увольнения(если есть), история работы(таблица)
+
+    [Parameter]
+    public string? Text { get; set; }
+
+    FullUserInfoDto GetFullUserInfoDto = new();
+
+    private DateTime? removaDate { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            GetFullUserInfoDto.UserSubdivisionHistory = new List<UserSubdivisionHistory>();
+            Text = Text ?? "default";
+            GetFullUserInfoDto = await httpClient.GetFromJsonAsync<FullUserInfoDto>("GetUsers/GetFullUserInfo/" + Text);
+
+            var list = GetFullUserInfoDto.UserSubdivisionHistory.Where(x => x.DismissalDate == null).ToList();
+            if (list.Count > 0)
+                removaDate = list.MaxBy(x => x.DismissalDate).DismissalDate;
+            else removaDate = null;
+        }
+        catch
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
+
+
+}

@@ -1,0 +1,423 @@
+﻿@page "/ManageSubdivisionUsers"
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
+@using WorkflowAutomation.Application.Subdivisions.Commands.UpdateSubdivision;
+@using WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionInfo
+@using Blazorise.TreeView
+@using BlazorContextMenu
+@inject HttpClient Http
+
+<link href="/css/DefaultStyle.css" rel="stylesheet" />
+
+<PageTitle>Упраление пользователями</PageTitle>
+
+<Breadcrumb Mode="BreadcrumbMode.Auto" Class="text-decoration: none">
+    <BreadcrumbItem Class="breadcrumb-item">
+        <BreadcrumbLink To="/Admin">Администрирование СЭД</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem Class="breadcrumb-item">
+        <BreadcrumbLink To="/SubdivisionManage">Упраление подразделениями</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem Class="breadcrumb-item">
+        <BreadcrumbLink To="/ManageSubdivisionUsers">Управление пользователями подразделения</BreadcrumbLink>
+    </BreadcrumbItem>
+</Breadcrumb>
+
+<hr />
+<h2 style="text-align: center">Управление пользователями в рамках подразделения</h2>
+<hr />
+
+<Card Margin="Margin.Is4.OnX.Is4.OnY" Background="Background.Light">
+    <CardTitle Size="3">
+        Просмотр/редактирование подразделения
+    </CardTitle>
+    <CardText>
+        Выберите способ отображения подразделения, затем перейдите к нужному
+    </CardText>
+
+    <Switch TValue="bool" @bind-Checked=@Render>
+        @if (Render)
+        {
+            <Label>Древовидная струкрутра</Label>
+            // @SelectedChangeTree();
+        }
+        else
+        {
+            <Label> Поиск</Label>
+            //@SelectedChangeList();
+        }
+    </Switch>
+
+    @if (Render)
+    {
+        <TreeView @ref="@treeViewRef" Nodes="Items"
+              GetChildNodes="@(item => item.GetChilds(item.Id))"
+              HasChildNodes="@(item => item.GetChilds(item.Id)?.Any() == true)"
+              @bind-SelectedNode="selectedNodeTreeView"
+              @onclick="()=>SelectedChangeTree()">
+            <NodeContent>
+                @context.Name
+            </NodeContent>
+        </TreeView>
+    }
+    else
+    {
+        <div class="subscribe">
+            <TextEdit @bind-Text="searchItemName">
+
+            </TextEdit>
+            <Button class="btn-primary" Clicked="@SearchClick">
+                Поиск
+            </Button>
+        </div>
+
+        @if (SearchResult != null)
+        {
+            <ListView Title="Поиск"
+              Data="SearchResult"
+              TextField="(item)=> item.Name"
+              ValueField="(item)=>item.Id.ToString()"
+              Mode="ListGroupMode.Selectable"
+              @bind-SelectedItem="selectedNodeListView"
+              @onclick="()=>SelectedChangeList()">
+                <ItemTemplate>
+                    <a href="SubDivisionInfo/@context.Item.Id"> @context.Item.Name</a>
+                </ItemTemplate>
+            </ListView>
+        }
+    }
+
+    @* Информация о выбранном подразделений*@
+    @if (selectedNodeListView != null || selectedNodeTreeView != null)
+    {
+        <h2>Подразделение </h2>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                Название
+            </dt>
+            <dd class="col-sm-10">
+                <span class="tight">@subdivisionInfoDto.Name</span>
+            </dd>
+            <dt class="col-sm-2">
+                Подчиняется
+            </dt>
+            <dd class="col-sm-10">
+                <span class="tight">@subdivisionInfoDto.SubordinationName</span>
+            </dd>
+            <dt class="col-sm-2">
+                Дата создания
+            </dt>
+            <dd class="col-sm-10">
+                <span class="tight">@subdivisionInfoDto.CreateDate</span>
+            </dd>
+            <dt class="col-sm-2">
+                Сотрудники
+            </dt>
+            <dd class="col-sm-10" style="margin-bottom:25%">
+                <span class="tight">
+                    @foreach (var posId in PositionsIdList)
+                    {
+                        @if (posId != null)
+                        {
+                            @foreach (var item in subdivisionInfoDto.Users.Where(x => x.PositionId == posId && x.RemovalDate == null).ToList())
+                            {
+                                @if (item != null)
+                                {
+                                    <ContextMenuTrigger MenuId="myMenu" Data="item.Id">
+
+                                        <p>@item.Name @item.Position</p>
+                                        @if (item.Render == RenderOption.Edit)
+                                        {
+                                            <Div ElementId="#b-animate">
+                                                <Animate Anchor="#b-animate" Auto Animation="Blazorise.Animate.Animations.Fade" DelayMilliseconds="500">
+                                                <Card Margin="Margin.Is4.OnY">
+                                                <CardBody>
+                                                <Field ColumnSize="ColumnSize.Is4.OnDesktop">
+                                                <FieldLabel>Дата закрепления</FieldLabel>
+                                                <DatePicker @bind-Date="item.AppointmentDate" TValue="DateTime" Min="min" Max="DateTimeOffset.Now" DisplayFormat="dd/MM/Y" />
+                                                </Field>
+
+                                                <button class="btn-warning"> Подтвердить   </button>
+                                                <button type="button" class="btn-success" @onclick="()=>HideEditCard(item.Id)"> Скрыть</button>
+                                                </CardBody>
+                                                </Card>
+                                                </Animate>
+                                                </Div>
+                                        }
+                                        @if (item.Render == RenderOption.ChangeSubdivison)
+                                        {
+                                            <Div ElementId="#b-animate">
+                                                <Animate Anchor="#b-animate"
+                                                                  Auto Animation="Blazorise.Animate.Animations.Fade" DelayMilliseconds="500">
+                                                <Card Margin="Margin.Is4.OnY">
+                                                <CardBody>
+                                                <Field ColumnSize="ColumnSize.Is4.OnDesktop">
+                                                <FieldLabel>Новое подразделение</FieldLabel>
+
+                                                <Select @bind-SelectedValue="@updateSubdivisionDto.UpdatedSubdivisionUsers.First(u=>u.UserId == item.Id).NewSubdivisionId">
+                                            <ChildContent>
+                                                <SelectItem Disabled> Выберите новое подразделение....</SelectItem>
+                                                                    @foreach (var subdivision in subdivisionListVm.Subdivisions)
+                                                                        {
+                                                                            <SelectItem TValue="int" Value="@subdivision.Id">
+                                                                                @subdivision.Name
+                                                                            </SelectItem>
+                                                                        }
+                                                                    </ChildContent>
+                                                                    <Feedback>
+                                                                        <ValidationError />
+                                                                    </Feedback>
+                                                                </Select>
+                                                            </Field>
+
+                                                            <button type="button" class="btn-success" @onclick="()=>HideEditCard(item.Id)"> Скрыть</button>
+                                                        </CardBody>
+                                                    </Card>
+                                                </Animate>
+                                            </Div>
+                                        }
+                                        @if (item.Render == RenderOption.Remove)
+                                        {
+                                            <Div ElementId="#b-animate">
+                                                <Animate Anchor="#b-animate" Auto Animation="Blazorise.Animate.Animations.Fade" DelayMilliseconds="500">
+                                                <Card Margin="Margin.Is4.OnY">
+                                                <CardBody>
+                                                <Field ColumnSize="ColumnSize.Is4.OnDesktop">
+                                                <FieldLabel>Подтверждение удаления</FieldLabel>
+                                                </Field>
+                                                <button type="button" class="btn-danger" @onclick="()=>item.RemovalDate = DateTime.Now"> Подтвердить   </button>
+                                                <button type="button" class="btn-success" @onclick="()=>HideEditCard(item.Id)"> Скрыть</button>
+                                                </CardBody>
+                                                </Card>
+                                                </Animate>
+                                                </Div>
+                                        }
+                                    </ContextMenuTrigger>
+
+                                    @*<div>@item.Name @item.Position </div>*@
+                                }
+                            }
+                            <hr />
+                        }
+                    }
+
+                    <button class="btn-warning" @onclick="()=>UpdateSubdivision()"> Подтвердить   </button>
+                </span>
+            </dd>
+        </dl>
+    }
+    else
+    {
+        <Label>Подразделение не выбрано</Label>
+    }
+
+    <ContextMenu Id="myMenu">
+        <Item OnClick="@OnClickChangeUserInfo">Изменить данные/</Item>
+        <Item OnClick="@OnClickChangeUserSubdivision">Сменить подразделение</Item>
+        <Item OnClick="@OnClickRemoveUser">Уволить</Item>
+    </ContextMenu>
+
+</Card>
+
+@code {
+
+    protected async Task UpdateSubdivision()
+    {
+        var httpResponse = await Http.PutAsJsonAsync<UpdateSubdivisionDto>("Subdivision/UpdateSubdivision", updateSubdivisionDto);
+    }
+
+    public bool showCreateSubdivision = false;
+
+    DateTimeOffset min = DateTimeOffset.Now.AddYears(-50);
+
+    //Render Tree
+    bool Render;
+    void HideEditCard(string id)
+    {
+        var user = subdivisionInfoDto.Users.FirstOrDefault(u => u.Id == id);
+        user.Render = RenderOption.NotRender;
+        StateHasChanged();
+    }
+
+    void OnClickChangeUserInfo(ItemClickEventArgs e)
+    {
+        var user = subdivisionInfoDto.Users.FirstOrDefault(u => u.Id == e.Data.ToString());
+        if (user != null)
+        {
+            user.Render = RenderOption.Edit;
+        }
+        StateHasChanged();
+    }
+    void OnClickChangeUserSubdivision(ItemClickEventArgs e)
+    {
+        var user = subdivisionInfoDto.Users.FirstOrDefault(u => u.Id == e.Data.ToString());
+        if (user != null)
+        {
+            user.Render = RenderOption.ChangeSubdivison;
+        }
+        StateHasChanged();
+    }
+    void OnClickRemoveUser(ItemClickEventArgs e)
+    {
+        var user = subdivisionInfoDto.Users.FirstOrDefault(u => u.Id == e.Data.ToString());
+        if (user != null)
+        {
+            user.Render = RenderOption.Remove;
+        }
+        StateHasChanged();
+    }
+
+    private void SelectedChangeList()
+    {
+        selectedNodeTreeView = null;
+        OnClickSubdivision();
+        StateHasChanged();
+
+    }
+    private void SelectedChangeTree()
+    {
+        selectedNodeListView = null;
+        OnClickSubdivision();
+        StateHasChanged();
+    }
+
+    private TextEdit SearchOutput = new();
+    private void SearchClick()
+    {
+        List<Item> NodesForSearch = new List<Item>();
+        NodesForSearch.AddRange(Items);
+        NodesForSearch.AddRange(AllItems);
+        SearchResult = NodesForSearch.Where(node => node.Name.Contains(searchItemName, StringComparison.OrdinalIgnoreCase)).ToList();
+        //treeViewRef.ExpandedNodes.Add(SearchItem);
+        StateHasChanged();
+    }
+    string searchItemName = "";
+    Item SearchNode { get; set; } = new();
+
+    TreeView<Item> treeViewRef;
+    List<Item> SearchResult { get; set; } = new();
+
+    private List<Item> Items;
+    public static List<Item> AllItems;
+
+    public class Item
+    {
+        public int Id { get; set; }
+        public int? SubId { get; set; }
+        public string Name { get; set; }
+        //public List<Item> Children { get; set; }
+
+        public List<Item> GetChilds(int id)
+        {
+            List<Item> ans = new List<Item>();
+            ans = AllItems.Where(x => x.SubId == id).ToList();
+            return ans;
+        }
+    }
+
+    private IList<Item> expandedNodes = new List<Item>();
+    private Item? selectedNodeTreeView { get; set; }
+    private Item? selectedNodeListView { get; set; }
+
+    private SubdivisionListVm subdivisionListVm = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            selectedNodeTreeView = null;
+            selectedNodeListView = null;
+
+            subdivisionListVm.Subdivisions = new List<SubdivisionListLookupDto>();
+            subdivisionListVm = await Http.GetFromJsonAsync<SubdivisionListVm>("Subdivision");
+            Items = new List<Item>();
+            AllItems = new List<Item>();
+            foreach (var sub in subdivisionListVm.Subdivisions.Where(x => x.IdSubordination == null))
+            {
+                Item item = new Item() { Id = sub.Id, Name = sub.Name, SubId = sub.IdSubordination };
+                Items.Add(item);
+            }
+            foreach (var sub in subdivisionListVm.Subdivisions.Where(x => x.IdSubordination != null))
+            {
+                Item item = new Item() { Id = sub.Id, Name = sub.Name, SubId = sub.IdSubordination };
+                AllItems.Add(item);
+            }
+
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+
+    public List<int> PositionsIdList { get; set; } = new();
+    public SubdivisionInfoDto subdivisionInfoDto { get; set; } = new();
+
+
+    public UpdateSubdivisionDto updateSubdivisionDto = new();
+
+    private async Task OnClickSubdivision()
+    {
+        //var httpResponse = await Http.PutAsJsonAsync("Role/", roleDto);
+        //UpdateSubdivisionDto
+        try
+        {
+            Item? SelectedItem = new();
+            if (selectedNodeListView != null)
+            {
+                SelectedItem = selectedNodeListView;
+            }
+            else if (selectedNodeTreeView != null)
+            {
+                SelectedItem = selectedNodeTreeView;
+            }
+            subdivisionInfoDto.Users = new();
+            if (SelectedItem != null)
+            {
+                if (SelectedItem.Id != 0)
+                {
+                    subdivisionInfoDto = await Http.GetFromJsonAsync<SubdivisionInfoDto>("Subdivision/GetSubdivisionInfo/" + SelectedItem.Id.ToString());
+
+                    var positions = subdivisionInfoDto.Users
+                                    .Where(x => x.RemovalDate == null)
+                                    .GroupBy(x => x.PositionId)
+                                    .Select(x => x.First())
+                                    .ToList()
+                                    .Select(e => new
+                                    {
+                                        Name = e.Position,
+                                        IdPosition = e.PositionId
+                                    })
+                                    .ToList();
+
+                    PositionsIdList = new List<int>();
+                    foreach (var pos in positions)
+                    {
+                        PositionsIdList.Add(pos.IdPosition);
+                    }
+                    updateSubdivisionDto.CreateDate = null;//subdivisionInfoDto.CreateDate;
+                    updateSubdivisionDto.SubordinationId = subdivisionInfoDto.SubordinationId;
+                    updateSubdivisionDto.SubdivisionId = SelectedItem.Id;
+                    updateSubdivisionDto.Name = subdivisionInfoDto.Name;
+                    updateSubdivisionDto.UpdatedSubdivisionUsers = new();
+                    foreach (var user in subdivisionInfoDto.Users)
+                    {
+                        updateSubdivisionDto.UpdatedSubdivisionUsers.Add(new UpdatesSubUsers
+                            {
+                                UserId = user.Id,
+                                AppointmentDate = user.AppointmentDate,
+                                NewSubdivisionId = null,
+                                RemovalDate = null
+                            });
+                    }
+                    StateHasChanged();
+                }
+            }
+        }
+        catch
+        {
+            return;
+        }
+    }
+}

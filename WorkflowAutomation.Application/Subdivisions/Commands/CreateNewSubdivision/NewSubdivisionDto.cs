@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using WorkflowAutomation.Application.Common.Mappings;
 using WorkflowAutomation.Application.Documents.Commands.UserInfoCommand;
 
-namespace WorkflowAutomation.Application.Documents.Commands.CreateNewDocument
+namespace WorkflowAutomation.Application.Subdivisions.Commands.CreateNewSubdivision
 {
     public class NewSubdivisionDto : IMapWith<CreateNewSubdivisionCommand>
     {

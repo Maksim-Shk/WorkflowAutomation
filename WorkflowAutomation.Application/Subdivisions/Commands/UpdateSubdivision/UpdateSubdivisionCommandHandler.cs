@@ -66,13 +66,33 @@ namespace WorkflowAutomation.Application.Subdivisions.Commands.UpdateSubdivision
                                     }
                                     else if (user.RemovalDate != null)
                                     {
-                                        SbdUser.RemovalDate = (DateTime)user.RemovalDate;
+                                        SbdUser.RemovalDate = ((DateTime)user.RemovalDate).ToUniversalTime();
                                         _dbContext.UserSubdivisions.Update(SbdUser);
                                     }
                                     if (user.AppointmentDate != null)
                                     {
-                                        SbdUser.AppointmentDate = (DateTime)user.AppointmentDate;
+                                        SbdUser.AppointmentDate =  ((DateTime)user.AppointmentDate).ToUniversalTime();
                                         _dbContext.UserSubdivisions.Update(SbdUser);
+                                    }
+                                    await _dbContext.Save(cancellationToken);
+                                }
+
+                                var posUser = await _dbContext.UserPositions.FirstOrDefaultAsync(pu => pu.IdUser == user.UserId);
+                                if (posUser != null)
+                                {
+                                    if (user.NewPositionId != null)
+                                    {
+                                        DateTime transitDate = DateTime.Now;
+                                        posUser.RemovalDate = transitDate;
+                                        UserPosition userPosition = new()
+                                        {
+                                            IdUser = user.UserId,
+                                            RemovalDate = null,
+                                            IdPosition = (int)user.NewPositionId,
+                                            AppointmentDate = transitDate
+                                        };
+                                        _dbContext.UserPositions.Update(posUser);
+                                        await _dbContext.UserPositions.AddAsync(userPosition, cancellationToken);
                                     }
                                 }
                             }
@@ -91,6 +111,7 @@ namespace WorkflowAutomation.Application.Subdivisions.Commands.UpdateSubdivision
                 }
                 catch
                 {
+                    transaction.Rollback();
                     //TODO: вынести в кастомное исключение
                     throw new InvalidOperationException();
                 }

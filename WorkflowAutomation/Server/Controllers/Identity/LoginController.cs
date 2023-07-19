@@ -20,6 +20,7 @@ namespace WorkflowAutomation.Server.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly AuthJwtOptions _authenticationSettings;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public LoginController(
             IOptions<AuthJwtOptions> authenticationOptions,
@@ -40,11 +41,17 @@ namespace WorkflowAutomation.Server.Controllers
 
             var user = await _userManager.FindByEmailAsync(login.Email);
 
-            var claims = new[]
+            var roles = await _userManager.GetRolesAsync(user);
+            var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, login.Email),
                 new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticationSettings.JwtSecurityKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

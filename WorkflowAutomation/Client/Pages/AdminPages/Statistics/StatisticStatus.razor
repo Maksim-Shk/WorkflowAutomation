@@ -1,0 +1,91 @@
+﻿@using WorkflowAutomation.Application.Documents.Queries.GetDocumentsStatistics
+
+@using Blazorise.DataGrid
+
+@inject HttpClient httpClient
+@inject NavigationManager NavigationManager
+@page "/StatisticStatus"
+
+<PageTitle>Статистика СЭД</PageTitle>
+
+<Breadcrumb Mode="BreadcrumbMode.Auto">
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/Admin">Администрирование СЭД</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/Statistics">Статистика СЭД</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/StatisticStatus">Отчет по статусам</BreadcrumbLink>
+    </BreadcrumbItem>
+</Breadcrumb>
+
+<hr />
+<h2 style="text-align: center">Просмотр статистики документов по статусам</h2>
+<hr />
+
+<Accordion>
+    @foreach (var group in documentStatisticsListVm.StaticticSet)
+    {
+        <Collapse>
+            <CollapseHeader>
+                <Heading Size="HeadingSize.Is5">
+                    <AccordionToggle>
+                        <b>@group.GroupName</b>: @group.StatisticSet.Count
+                    </AccordionToggle>
+                </Heading>
+            </CollapseHeader>
+            <CollapseBody>
+                <DataGrid TItem="DocumentStatisticsDto"
+                      Data="@group.StatisticSet"
+                        Responsive
+                        Filterable
+                        Sortable
+                      SortMode="DataGridSortMode.Multiple"
+                        ShowPager
+                        ShowPageSizes
+                      PagerPosition="DataGridPagerPosition.Bottom"
+                      PagerOptions="new(){ ButtonSize=Blazorise.Size.Medium}">
+
+                <DataGridColumns>
+                    <DataGridColumn Field="@nameof(DocumentStatisticsDto.Title)" Caption="Тема" Filterable="false"></DataGridColumn>
+                    <DataGridColumn Field="@nameof(DocumentStatisticsDto.AppointmentDate)" Caption="Дата присвоения статуса" Filterable="false"></DataGridColumn>
+                    <DataGridColumn Field="@nameof(DocumentStatisticsDto.StatusTime)" Caption="Время нахождения в статусе (часы)" Filterable="false">
+                        <DisplayTemplate>
+                            @{
+                                    TimeSpan timeSpan = (context as DocumentStatisticsDto).StatusTime;
+                                    if (timeSpan.TotalHours != 0)
+                                    {
+                                        <Div>@Math.Round(timeSpan.TotalHours,0)</Div>
+                                    }
+                                    else if (timeSpan.TotalMinutes != 0)
+                                    {
+                                        double time = timeSpan.TotalMinutes / 60;
+                                        time = Math.Round(time, 2);
+                                        <Div>@time</Div>
+                                    }
+                                    else
+                                    {
+                                        <Div>0</Div>
+                                    }
+                                }
+                            </DisplayTemplate>
+                        </DataGridColumn>
+                        <DataGridColumn Field="@nameof(DocumentStatisticsDto.SubdivisionName)" Caption="Подразделение" Filterable="false"></DataGridColumn>
+                        <DataGridColumn Field="@nameof(DocumentStatisticsDto.PositionName)" Caption="Должность" Filterable="false"></DataGridColumn>
+                    </DataGridColumns>
+                </DataGrid>
+            </CollapseBody>
+        </Collapse>
+    }
+</Accordion>
+@code {
+    public DocumentStatisticsListVm documentStatisticsListVm = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        documentStatisticsListVm.StaticticSet = new List<StatisticSets>();
+
+        documentStatisticsListVm = await httpClient.GetFromJsonAsync<DocumentStatisticsListVm>("Document/GetDocumentsStatistics");
+    }
+}

@@ -17,6 +17,8 @@ using WorkflowAutomation.Domain;
 using WorkflowAutomation.Application.Roles.Queries.GetRolesList;
 using WorkflowAutomation.Application.Roles.Commands.SetRoleToUser;
 using WorkflowAutomation.Application.Roles.Queries.GetUserRolesList;
+using WorkflowAutomation.Application.Roles.Commands.RemoveRoleFromUser;
+using Microsoft.AspNetCore.Identity;
 
 namespace WorkflowAutomation.Server.Controllers
 {
@@ -54,11 +56,21 @@ namespace WorkflowAutomation.Server.Controllers
             var vm = await Mediator.Send(query);
             return Ok(vm);
         }
-        [HttpPut]
+        [HttpPut("UpdateRole")]
         [Authorize]
-        public async Task<ActionResult> DeleteUpdate([FromBody] SetRoleToUserDto setRoleToUserDto)
+        public async Task<ActionResult> Update([FromBody] SetRoleToUserCommand setRoleToUserDto)
         {
             var command = _mapper.Map<SetRoleToUserCommand>(setRoleToUserDto);
+            //command.UserId = UserId;
+            await Mediator.Send(command);
+            return NoContent();
+        }
+
+        //[Authorize(Roles = "admin")]
+        [HttpPut("DeleteRole")]
+        public async Task<IActionResult> Delete([FromBody] RemoveRoleFromUserDto setRoleToUserDto)
+        {
+            var command = _mapper.Map<RemoveRoleFromUserCommand>(setRoleToUserDto);
             //command.UserId = UserId;
             await Mediator.Send(command);
             return NoContent();

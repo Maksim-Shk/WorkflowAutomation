@@ -72,7 +72,6 @@ namespace WorkflowAutomation.Server
                     options.Password.RequireNonAlphanumeric = false;
                 })
                 .AddEntityFrameworkStores<AuthDbContext>();
-
             //services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, UserClaimsPrincipalFactory<ApplicationUser, IdentityRole>>();
             //services.AddAuthorization(options =>
             //{
@@ -87,8 +86,6 @@ namespace WorkflowAutomation.Server
 
             services.AddOptions();
             services.Configure<AuthJwtOptions>(Configuration.GetSection("JwtSettings"));
-
-
 
             var authSettings = Configuration.GetSection("JwtSettings").Get<AuthJwtOptions>();
 
@@ -148,7 +145,6 @@ namespace WorkflowAutomation.Server
             });
 
             app.UseCors("AllowAll");
-            //app.UseIdentityServer();
             app.UseAuthentication();
             app.UseAuthorization();
             

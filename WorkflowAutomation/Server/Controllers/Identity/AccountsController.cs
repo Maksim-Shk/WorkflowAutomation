@@ -27,10 +27,9 @@ namespace WorkflowAutomation.Server.Controllers
         {
             var newUser = new ApplicationUser { UserName = dto.Email, Email = dto.Email };
             var result = await _userManager.CreateAsync(newUser, dto.Password);
-
             var allRoles = _roleManager.Roles.ToList();
-
-            await _userManager.AddToRoleAsync(newUser, allRoles.FirstOrDefault(r=>r.NormalizedName == "гюпецхярпхпнбюммши онкэгнбюрекэ").Name);
+            var role = allRoles.FirstOrDefault(r => r.NormalizedName == "гюпецхярпхпнбюммши онкэгнбюрекэ").Name;
+            await _userManager.AddToRoleAsync(newUser, role);
 
             if (!result.Succeeded)
             {

@@ -1,0 +1,70 @@
+﻿@page "/SubdivisionManage"
+
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
+@using WorkflowAutomation.Application.Subdivisions.Commands.UpdateSubdivision;
+@using WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionInfo
+@using Blazorise.TreeView
+@using BlazorContextMenu
+
+@inject HttpClient Http
+
+<link href="/css/DefaultStyle.css" rel="stylesheet" />
+
+<PageTitle>Упраление подразделениями</PageTitle>
+
+<Breadcrumb Mode="BreadcrumbMode.Auto" Class="text-decoration: none">
+    <BreadcrumbItem Class="breadcrumb-item">
+        <BreadcrumbLink To="/Admin">Администрирование СЭД</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem Class="breadcrumb-item">
+        <BreadcrumbLink To="/SubdivisionManage">Упраление подразделениями</BreadcrumbLink>
+    </BreadcrumbItem>
+</Breadcrumb>
+
+<hr />
+<h2 style="text-align: center">Упраление подразделениями</h2>
+<hr />
+
+<CardDeck Margin="Margin.Is3">
+    <Card>
+        <CardBody>
+            <CardTitle Size="3" TextAlignment="TextAlignment.Center">
+                <a href="CreateSubdivision">Создание подразделения</a>
+            </CardTitle>
+            <CardText Margin="Margin.Is3">
+                <h5>
+                    Создать новое подразделение без добавления сотрудников
+                </h5>
+            </CardText>
+
+            <Button Type="ButtonType.Link" Color=" Color.Primary" To="CreateSubdivision/" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
+                <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.LongArrowAltRight" /> Перейти
+            </Button>
+        </CardBody>
+    </Card>
+
+    <Card>
+        <CardBody>
+            <CardTitle Size="3" TextAlignment="TextAlignment.Center">
+                <a href="ManageSubdivisionUsers">Управление кадрами подразделения</a>
+            </CardTitle>
+            <CardText Margin="Margin.Is3">
+                <h5>
+                    Выберите способ отображения подразделения, затем перейдите к нужному. Вы увидите список сотрудников подразделения. С помощью контекстного меню вы можете отредактировать данные сотрудника, перевести его в другое подразделение, или уволить
+                </h5>
+            </CardText>
+
+            <Button Type="ButtonType.Link" Color=" Color.Primary" To="ManageSubdivisionUsers/" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
+                <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.LongArrowAltRight" /> Перейти
+            </Button>
+        </CardBody>
+    </Card>
+</CardDeck>
+
+@code {
+
+}
+
+
+

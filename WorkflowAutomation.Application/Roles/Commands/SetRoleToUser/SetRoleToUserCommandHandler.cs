@@ -10,12 +10,12 @@ using WorkflowAutomation.Domain;
 
 namespace WorkflowAutomation.Application.Roles.Commands.SetRoleToUser
 {
-    public class SetRoleToUserCommandHandler :
+    public class SetRoleToUserCommandCommandHandler :
           IRequestHandler<SetRoleToUserCommand>
     {
         private readonly IDocumentUserDbContext _dbContext;
 
-        public SetRoleToUserCommandHandler(IDocumentUserDbContext dbContext) =>
+        public SetRoleToUserCommandCommandHandler(IDocumentUserDbContext dbContext) =>
             _dbContext = dbContext;
 
         public async Task<Unit> Handle(SetRoleToUserCommand request,

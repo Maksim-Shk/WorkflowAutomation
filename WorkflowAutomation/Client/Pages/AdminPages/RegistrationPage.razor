@@ -1,0 +1,109 @@
+﻿@page "/register"
+@inject NavigationManager NavigationManager
+@inject IAuthService AuthService
+
+@using Microsoft.Extensions.Logging;
+@using System.ComponentModel.DataAnnotations;
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using WorkflowAutomation.Domain
+@using WorkflowAutomation.Application.Documents.Queries.GetSubdivisionList
+@using WorkflowAutomation.Application.Positions.Queries.GetPositionList
+@using WorkflowAutomation.Application.Documents.Commands.UserInfoCommand
+@using WorkflowAutomation.Client.Services
+@using WorkflowAutomation.Shared.Identity
+
+<PageTitle>Регистрация пользователя</PageTitle>
+
+<Breadcrumb Mode="BreadcrumbMode.Auto">
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/Admin">Администрирование СЭД</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/register">Регистрация пользователя</BreadcrumbLink>
+    </BreadcrumbItem>
+</Breadcrumb>
+
+<hr />
+<h2 style="text-align: center">Регистрация нового пользователя</h2>
+<hr />
+
+@if (ShowErrors)
+{
+    <div class="alert alert-danger" role="alert">
+        @foreach (var error in Errors)
+        {
+            <p>@error</p>
+        }
+    </div>
+}
+<div class="card">
+    <h4 class="card-header">Данные пользователя</h4>
+    <div class="card-body">
+        <EditForm Model="@registerDto" OnValidSubmit="@HandleRegistration">
+            <DataAnnotationsValidator />
+            <label>Логин (электронная почта)</label>
+            <div class="form-group">
+                <InputText id="login" style="margin-block:10px" class="form-control" placeholder="Логин " @bind-Value="registerDto.Email" />
+                <ValidationMessage For="@(() => registerDto.Email)" style="margin-bottom:10px" />
+            </div>
+            <div class="form-group">
+                <label>Пароль</label>
+                <InputText id="password" style="margin-block:10px" class="form-control" placeholder="Пароль "
+                           @bind-Value="registerDto.Password" />
+                <ValidationMessage For="@(() => registerDto.Password)" style="margin-bottom:10px" />
+            </div>
+            <div class="form-group">
+                <label>Повторить пароль</label>
+                <InputText id="repeatpassword" style="margin-block:10px" class="form-control" placeholder="Повторите пароль "
+                           @bind-Value="registerDto.ConfirmPassword" />
+                <ValidationMessage For="@(() =>registerDto.ConfirmPassword)" RepeatPasswordstyle="margin-bottom:10px" />
+            </div>
+            <button type="submit" class="btn btn-primary">
+                Зарегистрировать
+            </button>
+            <NavLink href="/Admin" class="btn btn-link"> Отмена</NavLink>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+
+    private RegisterDto registerDto = new RegisterDto();
+    private bool ShowErrors;
+    private IEnumerable<string> Errors;
+
+    private async Task HandleRegistration()
+    {
+        ShowErrors = false;
+
+        var result = await AuthService.Register(registerDto);
+
+        if (result.Successful)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            Errors = result.Errors;
+            ShowErrors = true;
+        }
+    }
+      
+    private async void HandleValidSubmit()
+    {
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+}

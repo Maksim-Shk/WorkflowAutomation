@@ -91,12 +91,19 @@ namespace WorkflowAutomation.Client
 
         private byte[] ParseBase64WithoutPadding(string base64)
         {
-            switch (base64.Length % 4)
+            string converted = base64.Replace('-', '+');
+            converted = converted.Replace('_', '/');
+            switch (converted.Length % 4)
             {
-                case 2: base64 += "=="; break;
-                case 3: base64 += "="; break;
+                case 2: converted += "=="; break;
+                case 3: converted += "="; break;
             }
-            return Convert.FromBase64String(base64);
+            return Convert.FromBase64String(converted);
         }
+       // private byte[] ParseBase64WithoutPadding(string base64)
+       // {
+       //     var a = Convert.FromBase64String(base64);
+       //     return a;
+       // }
     }
 }

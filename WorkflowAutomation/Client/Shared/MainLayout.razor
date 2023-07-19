@@ -32,6 +32,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+      // httpClient.GetAsync("GenerateData/Generate");
+
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 

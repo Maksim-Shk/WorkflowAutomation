@@ -15,6 +15,7 @@
 
 <PageTitle>Документооборот ОГУ</PageTitle>
 
+<LoadingIndicator @bind-Visible="@visible" FullScreen="true" IndicatorBackground="Background.Light" SpinnerColor="Color.Light">
 @if (!string.IsNullOrEmpty(getUserInfoDto.Name))
 {
     <h1>Здравствуйте, @getUserInfoDto.Surname @getUserInfoDto.Name @getUserInfoDto.Patronymic</h1>
@@ -54,12 +55,17 @@
 }
 <hr />
 
-@code{
+</LoadingIndicator>
+
+@code {
+    bool visible;
     private RecentActivityDocumentListVm recentActivityDocumentListVm = new();
     private GetUserInfoDto getUserInfoDto = new();
     private RolesListVm rolesListVm = new();
     protected override async Task OnInitializedAsync()
     {
+        visible = true;
+
         recentActivityDocumentListVm.RecentDocuments = new List<RecentActivityDocumentLookupDto>();
         recentActivityDocumentListVm = await httpClient.GetFromJsonAsync<RecentActivityDocumentListVm>("ActivityDocument/RecentActivityDocument");
         rolesListVm.Roles = new List<RolesListLookupDto>();
@@ -75,5 +81,7 @@
         {
             getUserInfoDto = await httpClient.GetFromJsonAsync<GetUserInfoDto>("UserInfo");
         }
+
+        visible = false;
     }
 }

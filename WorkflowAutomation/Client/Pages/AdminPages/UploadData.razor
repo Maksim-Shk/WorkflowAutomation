@@ -1,0 +1,251 @@
+﻿@page "/uploadData"
+
+@using Microsoft.AspNetCore.Http;
+@using Microsoft.Extensions.Logging;
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@using Microsoft.AspNetCore.SignalR.Client
+@using System.ComponentModel.DataAnnotations;
+@using System.Net.Http.Headers
+@using System.Linq
+
+@*@inject ILogger<CreateNewDocumentDto> Logger*@
+@inject HttpClient Http
+
+<PageTitle>Загрузка данных</PageTitle>
+
+<Breadcrumb Mode="BreadcrumbMode.Auto">
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/Admin">Администрирование СЭД</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/uploadData">Загрузка данных в СЭД</BreadcrumbLink>
+    </BreadcrumbItem>
+</Breadcrumb>
+
+<hr />
+<h2 style="text-align: center"> Загрузка данных в СЭД </h2>
+<hr />
+
+<CardDeck>
+    <Card>
+        <CardBody>
+            <CardTitle>
+                <h3>Загрузка пользователей</h3>
+            </CardTitle>
+
+            <CardText Margin="Margin.Is3">
+                <h5>
+                    Загрузите файл в формате .csv, который содержит информацию о пользователе в следующем формате: имя, фамилия, отчество, должность, подразделение, дата регистрации, логин, хеш-пароля, роль
+                </h5>
+            </CardText>
+
+            <p>
+                <label>
+                    Прикрепите до @maxAllowedFiles файлов:
+                    <FileEdit OnChange="@OnInputFileChange" />
+                </label>
+            </p>
+
+            @if (files.Count > 0)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <ul>
+                            @foreach (var file in files)
+                            {
+                                <li>
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-file-earmark-word" viewBox="0 0 16 16">
+                                        <path d="M5.485 6.879a.5.5 0 1 0-.97.242l1.5 6a.5.5 0 0 0 .967.01L8 9.402l1.018 3.73a.5.5 0 0 0 .967-.01l1.5-6a.5.5 0 0 0-.97-.242l-1.036 4.144-.997-3.655a.5.5 0 0 0-.964 0l-.997 3.655L5.485 6.88z" />
+                                        <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
+                                    </svg> File: @file.Name
+                                    <br>
+                                    <Span> @SizeSuffix(file.Size) </Span>
+                                    <Span>@file.Type</Span>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+
+            <Button Type="ButtonType.Link" Color=" Color.Primary" To="managerole/" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
+                <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.Upload" /> Загрузить
+            </Button>
+        </CardBody>
+    </Card>
+
+    <Card>
+        <CardBody>
+            <CardTitle>
+                <h3>Загрузка подразделений</h3>
+            </CardTitle>
+
+            <CardText Margin="Margin.Is3">
+                <h5>
+                    Загрузите файл в формате .csv, который содержит информацию о подразделениях в следующем формате: наименование подразделения, короткое наименование, дата создания, наименование подразделения, которому подчиняется
+                </h5>
+            </CardText>
+
+            <p>
+                <label>
+                    Прикрепите до @maxAllowedFiles файлов:
+                    <FileEdit OnChange="@OnInputFileChange" />
+                </label>
+            </p>
+
+            @if (files.Count > 0)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <ul>
+                            @foreach (var file in files)
+                            {
+                                <li>
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-file-earmark-word" viewBox="0 0 16 16">
+                                        <path d="M5.485 6.879a.5.5 0 1 0-.97.242l1.5 6a.5.5 0 0 0 .967.01L8 9.402l1.018 3.73a.5.5 0 0 0 .967-.01l1.5-6a.5.5 0 0 0-.97-.242l-1.036 4.144-.997-3.655a.5.5 0 0 0-.964 0l-.997 3.655L5.485 6.88z" />
+                                        <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
+                                    </svg> File: @file.Name
+                                    <br>
+                                    <Span> @SizeSuffix(file.Size) </Span>
+                                    <Span>@file.Type</Span>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+
+            <Button Type="ButtonType.Link" Color=" Color.Primary" To="managerole/" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
+                <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.Upload" /> Загрузить
+            </Button>
+        </CardBody>
+
+    </Card>
+</CardDeck>
+@code {
+    private List<File> files = new();
+
+    private int maxAllowedFiles = 1;
+    private bool shouldRender;
+    private bool upload = false;
+
+    MultipartFormDataContent requestContent = new();
+    private List<UploadResult> uploadResults = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    public class UploadResult
+    {
+        public bool Uploaded { get; set; }
+        public string? FileName { get; set; }
+        public string? StoredFileName { get; set; }
+        public int ErrorCode { get; set; }
+    }
+
+    private class File
+    {
+        public string? Name { get; set; }
+
+        public string? Type { get; set; }
+
+        public long Size { get; set; }
+    }
+
+    private string FirstUpper(string str)
+    {
+        str = str.ToLower();
+        return str.Substring(0, 1).ToUpper() + (str.Length > 1 ? str.Substring(1) : "");
+    }
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        shouldRender = false;
+        //TODO: maxFileSize - вынести в настройки/получать из бэка
+        long maxFileSize = 1024 * 150000;
+        upload = false;
+
+        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+        {
+            if (uploadResults.SingleOrDefault(
+                f => f.FileName == file.Name) is null)
+            {
+                try
+                {
+                    files.Add(new()
+                        {
+                            Name = file.Name,
+                            Type = file.ContentType,
+                            Size = file.Size
+                        });
+
+                    var fileContent =
+                        new StreamContent(file.OpenReadStream(maxFileSize));
+
+                    fileContent.Headers.ContentType =
+                        new MediaTypeHeaderValue(file.ContentType);
+
+                    requestContent.Add(fileContent, "FilesToUpload", file.Name);
+                    upload = true;
+                }
+                catch (Exception ex)
+                {
+                    //Logger.LogInformation(
+                    //    "{FileName} not uploaded (Err: 6): {Message}",
+                    //    file.Name, ex.Message);
+
+                    uploadResults.Add(
+                        new()
+                            {
+                                FileName = file.Name,
+                                ErrorCode = 6,
+                                Uploaded = false
+                            });
+                }
+            }
+        }
+        shouldRender = true;
+    }
+
+    static readonly string[] SizeSuffixes =
+               { "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
+    static string SizeSuffix(long value, int decimalPlaces = 1)
+    {
+        if (decimalPlaces < 0) { throw new ArgumentOutOfRangeException("decimalPlaces"); }
+        if (value < 0) { return "-" + SizeSuffix(-value, decimalPlaces); }
+        if (value == 0) { return string.Format("{0:n" + decimalPlaces + "} bytes", 0); }
+
+        // mag is 0 for bytes, 1 for KB, 2, for MB, etc.
+        int mag = (int)Math.Log(value, 1024);
+
+        // 1L << (mag * 10) == 2 ^ (10 * mag)
+        // [i.e. the number of bytes in the unit corresponding to mag]
+        decimal adjustedSize = (decimal)value / (1L << (mag * 10));
+
+        // make adjustment when the value is large enough that
+        // it would round up to 1000 or more
+        if (Math.Round(adjustedSize, decimalPlaces) >= 1000)
+        {
+            mag += 1;
+            adjustedSize /= 1024;
+        }
+
+        return string.Format("{0:n" + decimalPlaces + "} {1}",
+            adjustedSize,
+            SizeSuffixes[mag]);
+    }
+}
+
+
+<style>
+    a {
+        text-decoration: none;
+        color: black;
+    }
+</style>

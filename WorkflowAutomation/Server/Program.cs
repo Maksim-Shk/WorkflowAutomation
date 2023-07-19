@@ -42,6 +42,8 @@ namespace WorkflowAutomation.Server
                 //.UseSerilog()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    //webBuilder.UseWebRoot("wwwroot");
+                    //webBuilder.UseStaticWebAssets();
                     webBuilder.UseStartup<Startup>();
                 });
     }

@@ -7,11 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Pages\ViewDocumentList.razor.css" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Pages\ViewDocumentList.razor.css" />
+    <Content Remove="C:\Users\PC-max\.nuget\packages\psc.blazor.components.chartjs\6.0.40\contentFiles\any\net6.0\libman.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +24,7 @@
     <PackageReference Include="Blazorise.DataGrid" Version="1.2.0" />
     <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.2.0" />
     <PackageReference Include="Blazorise.Icons.Material" Version="1.2.0" />
+    <PackageReference Include="Blazorise.LoadingIndicator" Version="1.2.0" />
     <PackageReference Include="Blazorise.Snackbar" Version="1.2.0" />
     <PackageReference Include="Blazorise.TreeView" Version="1.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.10" />
@@ -39,6 +36,7 @@
 	<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.10" />
 	<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.10" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+    <PackageReference Include="PSC.Blazor.Components.Chartjs" Version="6.0.40" />
   </ItemGroup>
 
   <ItemGroup>

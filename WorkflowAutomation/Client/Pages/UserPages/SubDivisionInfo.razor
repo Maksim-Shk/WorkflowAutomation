@@ -1,0 +1,83 @@
+﻿@page "/SubDivisionInfo/{Id:int}"
+
+@using WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionInfo
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@inject NavigationManager NavigationManager
+@inject HttpClient httpClient
+
+<PageTitle>@subdivisionInfoDto.Name</PageTitle>
+
+<h2>Подразделение @Id</h2>
+<hr />
+<dl class="row">
+    <dt class="col-sm-3">
+        Название
+    </dt>
+    <dd class="col-sm-8">
+        @subdivisionInfoDto.Name
+    </dd>
+    <dt class="col-sm-3">
+        Дата создания
+    </dt>
+    <dd class="col-sm-8">
+        @subdivisionInfoDto.CreateDate
+    </dd>
+    <dt class="col-sm-3">
+        Сотрудники
+    </dt>
+
+    <dd class="col-sm-8">
+        @foreach (var posId in PositionsIdList)
+        {
+            @if (posId != null)
+            {
+                @foreach (var item in subdivisionInfoDto.Users.Where(x => x.PositionId == posId && x.RemovalDate == null).ToList())
+                {
+                    @if (item != null )
+                    {
+                        <div>@item.Name @item.Position </div>
+                    }
+                }
+                <hr/>
+            }
+        }
+    </dd>
+</dl>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    public List<int> PositionsIdList { get; set; }
+    public SubdivisionInfoDto subdivisionInfoDto { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            PositionsIdList = new List<int>();
+            subdivisionInfoDto = new();
+            subdivisionInfoDto.Users = new();
+            subdivisionInfoDto = await httpClient.GetFromJsonAsync<SubdivisionInfoDto>("Subdivision/GetSubdivisionInfo/" + Id);
+
+            var positions = subdivisionInfoDto.Users
+                            .GroupBy(x => x.PositionId)
+                            .Select(x => x.First())
+                            .ToList()
+                            .Select(e => new {
+                                Name = e.Position,
+                                IdPosition = e.PositionId
+                            }).ToList();
+
+            PositionsIdList = new List<int>();
+            foreach (var pos in positions)
+            {
+                PositionsIdList.Add(pos.IdPosition);
+            }
+        }
+        catch
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+}

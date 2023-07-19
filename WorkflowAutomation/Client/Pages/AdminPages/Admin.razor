@@ -2,48 +2,168 @@
 @using WorkflowAutomation.Client.Components
 
 <PageTitle>Администрирование СЭД</PageTitle>
+
+<Breadcrumb Mode="BreadcrumbMode.Auto">
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/Admin">Администрирование СЭД</BreadcrumbLink>
+    </BreadcrumbItem>
+</Breadcrumb>
+
 <hr />
 <h2 style="text-align: center"> Администрирование Системы Электронного Документооборота </h2>
-<hr/>
+<hr />
 
-<style>
-    a{
-        text-decoration:none;
-        color:black;
-    }
-</style>
+@*
 <h3>
-    <a href="/SubdivisionManage">Упраление подразделениями</a> 
+    <a href="/SubdivisionManage">Упраление подразделениями</a>
     <MyCircle Text="?" SubText="Здесь будет описание данной опции/функции"></MyCircle>
 </h3>
 
 <h3>
-    <a href="#"> Управление должностями </a>
+    <a href="/AdminPosition"> Управление должностями </a>
     <MyCircle Text="?" SubText="Здесь будет описание данной опции/функции"></MyCircle>
 </h3>
 
 <h3>
-   <a href="#"> Регистрация пользователей </a>
-    <MyCircle Text="?" SubText="Здесь будет описание данной опции/функции"></MyCircle> 
+    <a href="#"> Регистрация пользователей </a>
+    <MyCircle Text="?" SubText="Здесь будет описание данной опции/функции"></MyCircle>
 </h3>
 
 <h3>
-   <a href="#"> Установка ролей пользователям </a>
-    <MyCircle Text="?" SubText="Здесь будет описание данной опции/функции"></MyCircle> 
+    <a href="#"> Установка ролей пользователям </a>
+    <MyCircle Text="?" SubText="Здесь будет описание данной опции/функции"></MyCircle>
 </h3>
 
 <h3>
     <a href="#"> Статистика о сбоях </a>
-    <MyCircle Text="?" SubText="Здесь будет описание данной опции/функции"></MyCircle> 
+    <MyCircle Text="?" SubText="Здесь будет описание данной опции/функции"></MyCircle>
 </h3>
 
 <h3>
-    <a   href="#"> Конфигурация  документооборота </a>
-    <MyCircle Text="?" SubText="Здесь будет описание данной опции/функции"></MyCircle> 
+    <a href="#"> Конфигурация  документооборота </a>
+    <MyCircle Text="?" SubText="Здесь будет описание данной опции/функции"></MyCircle>
 </h3>
-<h6 style="color:red">  Для перехода к функционалу нажмите на текст</h6>
+<h6 style="color:red">  Для перехода к функционалу нажмите на текст</h6>*@
 
+<CardDeck Margin="Margin.Is3">
+    <Card>
+        <CardBody>
+            <CardTitle Size="3" TextAlignment="TextAlignment.Center">
+                <a href="managerole">Установка прав (ролей) пользователям</a>
+            </CardTitle>
+            <CardText Margin="Margin.Is3">
+                <h5>
+                    Добавление/удаление прав доступа определенному пользователю
+                </h5>
+            </CardText>
+
+            <Button Type="ButtonType.Link" Color=" Color.Primary" To="managerole/" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
+                <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.LongArrowAltRight" /> Перейти
+            </Button>
+        </CardBody>
+    </Card>
+
+    <Card>
+        <CardBody>
+            <CardTitle Size="3" TextAlignment="TextAlignment.Center">
+                <a href="/AdminPosition">Упраление должностями</a>
+            </CardTitle>
+            <CardText Margin="Margin.Is3">
+                <h5>
+                    Вывод информации по должностям. 
+                    Перевод сотрудников на другую должнность
+                </h5>
+            </CardText>
+
+            <Button Type="ButtonType.Link" Color=" Color.Primary" To="AdminPosition/" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
+                <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.LongArrowAltRight" /> Перейти
+            </Button>
+        </CardBody>
+    </Card>
+
+    <Card>
+        <CardBody>
+            <CardTitle Size="3" TextAlignment="TextAlignment.Center">
+                <a href="/uploadData">Загрузка (импорт) данных</a>
+            </CardTitle>
+            <CardText Margin="Margin.Is3">
+                <h5>
+                    Загрузка в систему данных о подразделениях/должностях/пользователях/прав доступа пользователей
+                </h5>
+            </CardText>
+
+            <Button Type="ButtonType.Link" Color=" Color.Primary" To="uploadData/" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
+                <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.LongArrowAltRight" /> Перейти
+            </Button>
+        </CardBody>
+    </Card>
+</CardDeck>
+
+<CardDeck Margin="Margin.Is3">
+    <Card>
+        <CardBody>
+            <CardTitle Size="3" TextAlignment="TextAlignment.Center">
+                <a href="/register">Регистрация пользователей</a>
+            </CardTitle>
+            <CardText Margin="Margin.Is3">
+                <h5>
+                    Регистрация новых пользователей в системе
+                </h5>
+            </CardText>
+
+            <Button Type="ButtonType.Link" Color=" Color.Primary" To="/register" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
+                <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.LongArrowAltRight" /> Перейти
+            </Button>
+        </CardBody>
+    </Card>
+
+    <Card>
+        <CardBody>
+            <CardTitle Size="3" TextAlignment="TextAlignment.Center">
+                <a href="/SubdivisionManage">Упраление сотрудниками в подразделениях</a>
+            </CardTitle>
+            <CardText Margin="Margin.Is3">
+                <h5>
+                    Вывод информации по подразделениям.
+                    Управление сотрудниками в выбранном подразделении: редактирование данных, перевод в другое подразделение, увольнение.
+                </h5>
+            </CardText>
+
+            <Button Type="ButtonType.Link" Color=" Color.Primary" To="SubdivisionManage/" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
+                <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.LongArrowAltRight" /> Перейти
+            </Button>
+        </CardBody>
+    </Card>
+
+    <Card>
+        <CardBody>
+            <CardTitle Size="3" TextAlignment="TextAlignment.Center">
+                <a href="/Statistics">Просмотр статистики</a>
+            </CardTitle>
+            <CardText Margin="Margin.Is3">
+                <h5>
+                    Формирование статистического отчета
+                </h5>
+            </CardText>
+
+            <Button Type="ButtonType.Link" Color=" Color.Primary" To="Statistics/" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
+                <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.LongArrowAltRight" /> Перейти
+            </Button>
+        </CardBody>
+    </Card>
+</CardDeck>
+
+<CardDeck Margin="Margin.Is3">
+
+</CardDeck>
 @code {
     //Там будет редирект на страницу управления подразделениями, страницу управления должностями,
     //  установка роли пользователю, статистика о сбоях, регистрация пользователя, конфигурация документаоборота
 }
+
+<style>
+    a {
+        text-decoration: none;
+        color: black;
+    }
+</style>
