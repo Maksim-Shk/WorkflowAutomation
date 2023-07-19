@@ -46,40 +46,58 @@
 <h6 style="color:red">  Для перехода к функционалу нажмите на текст</h6>*@
 
 <CardDeck Margin="Margin.Is3">
-    <Card>
-        <CardBody>
-            <CardTitle Size="3" TextAlignment="TextAlignment.Center">
-                <a href="managerole">Установка прав (ролей) пользователям</a>
-            </CardTitle>
-            <CardText Margin="Margin.Is3">
-                <h5>
-                    Добавление/удаление прав доступа определенному пользователю
-                </h5>
-            </CardText>
+    @*    <Card>
+    <CardBody>
+    <CardTitle Size="3" TextAlignment="TextAlignment.Center">
+    <a href="managerole">Установка прав (ролей) пользователям</a>
+    </CardTitle>
+    <CardText Margin="Margin.Is3">
+    <h5>
+    Добавление/удаление прав доступа определенному пользователю
+    </h5>
+    </CardText>
 
-            <Button Type="ButtonType.Link" Color=" Color.Primary" To="managerole/" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
-                <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.LongArrowAltRight" /> Перейти
-            </Button>
-        </CardBody>
-    </Card>
+    <Button Type="ButtonType.Link" Color=" Color.Primary" To="managerole/" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
+    <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.LongArrowAltRight" /> Перейти
+    </Button>
+    </CardBody>
+    </Card>*@
 
-    <Card>
-        <CardBody>
-            <CardTitle Size="3" TextAlignment="TextAlignment.Center">
-                <a href="/AdminPosition">Упраление должностями</a>
-            </CardTitle>
-            <CardText Margin="Margin.Is3">
-                <h5>
-                    Вывод информации по должностям. 
-                    Перевод сотрудников на другую должнность
-                </h5>
-            </CardText>
+    @*    <Card>
+    <CardBody>
+    <CardTitle Size="3" TextAlignment="TextAlignment.Center">
+    <a href="/ChangeUserStatistic">Отчет по кадровым изменениям</a>
+    </CardTitle>
+    <CardText Margin="Margin.Is3">
+    <h5>
+    Вывод информации по кадровым перемещениями сотрудников.
+    Незаблокированные пользователи выделены цветом.
+    </h5>
+    </CardText>
 
-            <Button Type="ButtonType.Link" Color=" Color.Primary" To="AdminPosition/" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
-                <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.LongArrowAltRight" /> Перейти
-            </Button>
-        </CardBody>
-    </Card>
+    <Button Type="ButtonType.Link" Color=" Color.Primary" To="ChangeUserStatistic/" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
+    <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.LongArrowAltRight" /> Перейти
+    </Button>
+    </CardBody>
+    </Card>*@
+
+    @*    <Card>
+    <CardBody>
+    <CardTitle Size="3" TextAlignment="TextAlignment.Center">
+    <a href="/AdminPosition">Упраление должностями</a>
+    </CardTitle>
+    <CardText Margin="Margin.Is3">
+    <h5>
+    Вывод информации по должностям.
+    Перевод сотрудников на другую должнность
+    </h5>
+    </CardText>
+
+    <Button Type="ButtonType.Link" Color=" Color.Primary" To="AdminPosition/" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
+    <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.LongArrowAltRight" /> Перейти
+    </Button>
+    </CardBody>
+    </Card>*@
 
     <Card>
         <CardBody>
@@ -97,35 +115,16 @@
             </Button>
         </CardBody>
     </Card>
-</CardDeck>
-
-<CardDeck Margin="Margin.Is3">
-    <Card>
-        <CardBody>
-            <CardTitle Size="3" TextAlignment="TextAlignment.Center">
-                <a href="/register">Регистрация пользователей</a>
-            </CardTitle>
-            <CardText Margin="Margin.Is3">
-                <h5>
-                    Регистрация новых пользователей в системе
-                </h5>
-            </CardText>
-
-            <Button Type="ButtonType.Link" Color=" Color.Primary" To="/register" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
-                <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.LongArrowAltRight" /> Перейти
-            </Button>
-        </CardBody>
-    </Card>
 
     <Card>
         <CardBody>
             <CardTitle Size="3" TextAlignment="TextAlignment.Center">
-                <a href="/SubdivisionManage">Упраление сотрудниками в подразделениях</a>
+                <a href="/SubdivisionManage">Просмотр сотрудниками по ОШС</a>
             </CardTitle>
             <CardText Margin="Margin.Is3">
                 <h5>
                     Вывод информации по подразделениям.
-                    Управление сотрудниками в выбранном подразделении: редактирование данных, перевод в другое подразделение, увольнение.
+@*                    Управление сотрудниками в выбранном подразделении: редактирование данных, перевод в другое подразделение, увольнение.*@
                 </h5>
             </CardText>
 
@@ -135,22 +134,47 @@
         </CardBody>
     </Card>
 
-    <Card>
-        <CardBody>
-            <CardTitle Size="3" TextAlignment="TextAlignment.Center">
-                <a href="/Statistics">Просмотр статистики</a>
-            </CardTitle>
-            <CardText Margin="Margin.Is3">
-                <h5>
-                    Формирование статистического отчета
-                </h5>
-            </CardText>
+    @*    <Card>
+    <CardBody>
+    <CardTitle Size="3" TextAlignment="TextAlignment.Center">
+    <a href="/register">Регистрация пользователей</a>
+    </CardTitle>
+    <CardText Margin="Margin.Is3">
+    <h5>
+    Регистрация новых пользователей в системе
+    </h5>
+    </CardText>
 
-            <Button Type="ButtonType.Link" Color=" Color.Primary" To="Statistics/" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
-                <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.LongArrowAltRight" /> Перейти
-            </Button>
-        </CardBody>
-    </Card>
+    <Button Type="ButtonType.Link" Color=" Color.Primary" To="/register" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
+    <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.LongArrowAltRight" /> Перейти
+    </Button>
+    </CardBody>
+    </Card>*@
+
+</CardDeck>
+
+<CardDeck Margin="Margin.Is3">
+
+
+
+
+
+    @*    <Card>
+    <CardBody>
+    <CardTitle Size="3" TextAlignment="TextAlignment.Center">
+    <a href="/Statistics">Просмотр статистики</a>
+    </CardTitle>
+    <CardText Margin="Margin.Is3">
+    <h5>
+    Формирование статистического отчета
+    </h5>
+    </CardText>
+
+    <Button Type="ButtonType.Link" Color=" Color.Primary" To="Statistics/" Float="Float.Default" Size="Size.Medium" TextAlignment="TextAlignment.Center">
+    <Icon Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.LongArrowAltRight" /> Перейти
+    </Button>
+    </CardBody>
+    </Card>*@
 </CardDeck>
 
 <CardDeck Margin="Margin.Is3">

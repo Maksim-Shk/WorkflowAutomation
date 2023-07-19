@@ -23,6 +23,19 @@ using Accord.Statistics.Models.Regression.Linear;
 
 namespace WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAnalysis
 {
+
+
+    public class BufOriginal
+    {
+        public double X { get; set; }
+        public double Y { get; set; }
+    }
+    public class BufNorm
+    {
+        public double X { get; set; }
+        public double Y { get; set; }
+    }
+
     public class ClusterAnalysisCommandHandler
         : IRequestHandler<ClusterAnalysisCommand, OutputClustersVm>
     {
@@ -33,6 +46,7 @@ namespace WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAna
         public ClusterAnalysisCommandHandler(IDocumentUserDbContext dbContext,
              IMapper mapper, ILogger<ClusterAnalysisCommandHandler> logger) =>
              (_dbContext, _mapper, _logger) = (dbContext, mapper, logger);
+
 
         public async Task<OutputClustersVm> Handle(ClusterAnalysisCommand request,
            CancellationToken cancellationToken)
@@ -85,7 +99,11 @@ namespace WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAna
                 Array.Copy(observations[i], originalObservations[i], observations[i].Length);
             }
 
-
+            var bufOriginalList = new List<BufOriginal>();
+            foreach (var item in originalObservations)
+            {
+                bufOriginalList.Add(new BufOriginal { X = item[0], Y = item[1] });
+            }
 
             //понижаем размерность
 
@@ -150,6 +168,12 @@ namespace WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAna
                 }
             }
 
+            var bufNormList = new List<BufNorm>();
+            foreach (var item in observations)
+            {
+                bufNormList.Add(new BufNorm { X = item[0], Y = item[1] });
+            }
+
 
             // Задаем количество кластеров
             int k = request.ClusterCount;
@@ -182,7 +206,7 @@ namespace WorkflowAutomation.Application.ClusterAnalysis.Commands.StartlusterAna
                 var statuses = new List<ClusterStatus>();
 
                 //observations[i].Length - 1 - только статусы, без типа документа
-                for (int j = 0; j < coords[i].Length - 1; j++) //(var requestStatusId in request.StatusesIds.Where(x => x != 2))
+                for (int j = 0; j < coords[i].Length; j++) //(var requestStatusId in request.StatusesIds.Where(x => x != 2))
                 {
                     var status = new ClusterStatus
                     {

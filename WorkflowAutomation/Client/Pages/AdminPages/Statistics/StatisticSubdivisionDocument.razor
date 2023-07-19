@@ -49,14 +49,22 @@
 
                 <DataGridColumns>
                     <DataGridColumn Field="@nameof(DocumentBySubdivisionDto.Title)" Caption="Тема" Filterable="false"></DataGridColumn>
-                    <DataGridColumn Field="@nameof(DocumentBySubdivisionDto.AppointmentDate)" Caption="Дата присвоения статуса" Filterable="false"></DataGridColumn>
+                    <DataGridColumn Field="@nameof(DocumentBySubdivisionDto.AppointmentDate)" Caption="Дата присвоения статуса" Filterable="false">
+                        <DisplayTemplate>
+                           @{
+                                    var date = (context as DocumentBySubdivisionDto).AppointmentDate;
+                                    date.AddHours(random.Next(1, 24));
+                                }
+                                <Div>@date</Div>
+                        </DisplayTemplate>
+                    </DataGridColumn>
                     <DataGridColumn Field="@nameof(DocumentBySubdivisionDto.AllStatusTime)" Caption="Время нахождения в статусе (часы)" Filterable="false">
                         <DisplayTemplate>
                             @{
                                     TimeSpan timeSpan = (context as DocumentBySubdivisionDto).AllStatusTime;
                                     if (timeSpan.TotalHours != 0)
                                     {
-                                        <Div>@Math.Round(timeSpan.TotalHours,0)</Div>
+                                        <Div>@Math.Round(timeSpan.TotalHours/100,0)</Div>
                                     }
                                     else if (timeSpan.TotalMinutes != 0)
                                     {
@@ -70,8 +78,8 @@
                                     }
                                 }
                             </DisplayTemplate>
-                        </DataGridColumn>
-                        <DataGridColumn Field="@nameof(DocumentBySubdivisionDto.SubdivisionName)" Caption="Подразделение" Filterable="false"></DataGridColumn>
+                        </DataGridColumn>@*
+                        <DataGridColumn Field="@nameof(DocumentBySubdivisionDto.SubdivisionName)" Caption="Подразделение" Filterable="false"></DataGridColumn>*@
                         <DataGridColumn Field="@nameof(DocumentBySubdivisionDto.PositionName)" Caption="Должность" Filterable="false"></DataGridColumn>
                     </DataGridColumns>
                 </DataGrid>
@@ -81,7 +89,7 @@
 </Accordion>
 @code {
     public DocumentStatisticBySubdivisionListVm documentStatisticBySubdivisionListVm = new();
-
+    Random random = new();
     protected override async Task OnInitializedAsync()
     {
         documentStatisticBySubdivisionListVm.StatisticSubdivisionSet = new List<StatisticSubdivisionSet>();

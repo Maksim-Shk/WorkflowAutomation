@@ -1,0 +1,150 @@
+﻿@using WorkflowAutomation.Application.Positions.Queries.GetPositionList
+@using WorkflowAutomation.Application.Users.Queries.GetPositionUsers
+@using Blazorise.DataGrid
+@inject HttpClient httpClient
+@inject NavigationManager NavigationManager
+@page "/ChangeUserStatistic"
+
+<PageTitle>Отчет по кадровым изменениям</PageTitle>
+
+<Breadcrumb Mode="BreadcrumbMode.Auto">
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/Admin">Администрирование СЭД</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/ChangeUserStatistic">Отчет по кадровым изменениям</BreadcrumbLink>
+    </BreadcrumbItem>
+</Breadcrumb>
+
+<hr />
+<h2 style="text-align: center">Отчет по кадровым изменениям</h2>
+<hr />
+<table class="table">
+    <thead>
+        <tr>
+            <th>ФИО</th>
+            <th>Подразделение</th>
+            <th>Должность</th>
+            <th>Дата регистрации</th>
+            <th>Дата перемещения</th>
+            <th>Дата увольнения</th>
+            <th>Статус</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Users)
+        {
+            <tr class="@GetRowStyle(user)">
+                <td>@user.FullName</td>
+                <td>@user.Department</td>
+                <td>@user.Position</td>
+                <td>@user.RegistrationDate.ToShortDateString()</td>
+                <td>
+                    @if (@user.TransferDate == null)
+                    {
+                        <Div TextAlignment="TextAlignment.Center">-</Div>
+                    }
+                    @user.TransferDate?.ToShortDateString()
+                    
+                </td>
+                <td>
+                    @if (@user.ResignationDate == null)
+                    {
+                        <Div TextAlignment="TextAlignment.Center">-</Div>
+                    }
+                    @user.ResignationDate?.ToShortDateString()
+                    
+                </td>
+                <td>@user.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    // Модель пользователя
+    public class User
+    {
+        public string FullName { get; set; }
+        public string Department { get; set; }
+        public string Position { get; set; }
+        public DateTime RegistrationDate { get; set; }
+        public DateTime? TransferDate { get; set; }
+        public DateTime? ResignationDate { get; set; }
+        public string Status { get; set; }
+        public bool IsHighlighted { get; set; } // Поле для выделения записи
+    }
+
+    // Список пользователей
+    private List<User> Users { get; set; } = new List<User>
+    {
+        new User
+        {
+            FullName = "Иван Тихонов Сергеевич",
+            Department = "Кафедра программного обеспечения вычислительной техники и автоматизированных систем",
+            Position = "Преподаватель",
+            RegistrationDate = new DateTime(2021, 4, 15),
+            TransferDate = new DateTime(2022, 7, 12),
+            ResignationDate = null,
+            Status = "Имеет доступ",
+            IsHighlighted = true // Выделение записи красным цветом
+        },
+        new User
+        {
+            FullName = "Петров Петр Петрович",
+            Department = "Кафедра информатики",
+            Position = "Преподаватель",
+            RegistrationDate = new DateTime(2022, 5, 20),
+            TransferDate = null,
+            ResignationDate = new DateTime(2023, 2, 10),
+            Status = "Заблокирован",
+            IsHighlighted = false // Выделение записи стандартным цветом
+        },
+        new User
+        {
+            FullName = "Светлана Петрова Валерьевна",
+            Department = "Кафедра компьютерной безопасности и математического обеспечения информационных систем",
+            Position = "Преподаватель",
+            RegistrationDate = new DateTime(2022, 6, 30),
+            TransferDate = null,
+            ResignationDate = new DateTime(2023, 3, 11),
+            Status = "Заблокирован",
+            IsHighlighted = false // Выделение записи стандартным цветом
+        },
+        new User
+        {
+            FullName = "Петров Петр Петрович",
+            Department = "Кафедра информатики",
+            Position = "Преподаватель",
+            RegistrationDate = new DateTime(2021, 8, 14),
+            TransferDate = null,
+            ResignationDate = new DateTime(2023, 1, 11),
+            Status = "Имеет доступ",
+            IsHighlighted = true // Выделение записи стандартным цветом
+        },
+        new User
+        {
+            FullName = "Кафедра прикладной математики",
+            Department = "Кафедра информатики",
+            Position = "Преподаватель",
+            RegistrationDate = new DateTime(2022, 5, 20),
+            TransferDate = null,
+            ResignationDate = new DateTime(2023, 2, 10),
+            Status = "Заблокирован",
+            IsHighlighted = false // Выделение записи стандартным цветом
+        }
+    };
+
+    // Метод для получения стиля строки на основе поля IsHighlighted
+    private string GetRowStyle(User user)
+    {
+        if (user.IsHighlighted)
+        {
+            return "table-danger"; // Красный цвет для выделенных записей
+        }
+        else
+        {
+            return string.Empty; // Используется стандартный стиль
+        }
+    }
+}
