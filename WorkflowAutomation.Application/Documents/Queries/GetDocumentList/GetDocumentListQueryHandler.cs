@@ -3,49 +3,48 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using WorkflowAutomation.Application.Interfaces;
 
-namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentList
+namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentList;
+
+public class GetDocumentListQueryHandler 
+    : IRequestHandler<GetDocumentListQuery, DocumentListVm>
 {
-    public class GetDocumentListQueryHandler 
-        : IRequestHandler<GetDocumentListQuery, DocumentListVm>
+    private readonly IDocumentUserDbContext _dbContext;
+    private readonly IMapper _mapper;
+
+    public GetDocumentListQueryHandler(IDocumentUserDbContext dbContext,
+        IMapper mapper) =>
+        (_dbContext, _mapper) = (dbContext, mapper);
+
+    public async Task<DocumentListVm> Handle(GetDocumentListQuery request,
+        CancellationToken cancellationToken)
     {
-        private readonly IDocumentUserDbContext _dbContext;
-        private readonly IMapper _mapper;
+        List<GetDocumentListLookupDto> listLookupDtos = new List<GetDocumentListLookupDto>();
 
-        public GetDocumentListQueryHandler(IDocumentUserDbContext dbContext,
-            IMapper mapper) =>
-            (_dbContext, _mapper) = (dbContext, mapper);
+        var AllowedDocuments = await _dbContext.Documents.ToListAsync();
 
-        public async Task<DocumentListVm> Handle(GetDocumentListQuery request,
-            CancellationToken cancellationToken)
+        foreach (var doc in AllowedDocuments)
         {
-            List<GetDocumentListLookupDto> listLookupDtos = new List<GetDocumentListLookupDto>();
+            GetDocumentListLookupDto dto = new GetDocumentListLookupDto();
+            dto.Id = doc.IdDocument;
+            dto.Title = doc.Title;
+            dto.CreateDate = doc.CreateDate;
+            dto.RemoveDate = doc.RemoveDate;
 
-            var AllowedDocuments = await _dbContext.Documents.ToListAsync();
+            var docType = await _dbContext.DocumentTypes.FirstAsync(t => t.IdDocumentType == doc.IdDocumentType);
+            dto.DocumentType = docType.Name;
 
-            foreach (var doc in AllowedDocuments)
-            {
-                GetDocumentListLookupDto dto = new GetDocumentListLookupDto();
-                dto.Id = doc.IdDocument;
-                dto.Title = doc.Title;
-                dto.CreateDate = doc.CreateDate;
-                dto.RemoveDate = doc.RemoveDate;
+            var sender = await _dbContext.Users.FirstAsync(t => t.IdUser == doc.IdSender);
+            dto.SenderInfo.UserInfo = sender.Name + " " + sender.Surname + " " + sender.Patronymic;
+            dto.SenderInfo.UserId = sender.IdUser;
 
-                var docType = await _dbContext.DocumentTypes.FirstAsync(t => t.IdDocumentType == doc.IdDocumentType);
-                dto.DocumentType = docType.Name;
+            var reciever = await _dbContext.Users.FirstAsync(t => t.IdUser == doc.IdReceiver);
+            dto.RecieverInfo.UserInfo = reciever.Name + " " + reciever.Surname + " " + reciever.Patronymic;
+            dto.RecieverInfo.UserId= reciever.IdUser;
 
-                var sender = await _dbContext.Users.FirstAsync(t => t.IdUser == doc.IdSender);
-                dto.SenderInfo.UserInfo = sender.Name + " " + sender.Surname + " " + sender.Patronymic;
-                dto.SenderInfo.UserId = sender.IdUser;
-
-                var reciever = await _dbContext.Users.FirstAsync(t => t.IdUser == doc.IdReceiver);
-                dto.RecieverInfo.UserInfo = reciever.Name + " " + reciever.Surname + " " + reciever.Patronymic;
-                dto.RecieverInfo.UserId= reciever.IdUser;
-
-                listLookupDtos.Add(dto);
-            }
-
-            return new DocumentListVm { Documents = listLookupDtos };
-
+            listLookupDtos.Add(dto);
         }
+
+        return new DocumentListVm { Documents = listLookupDtos };
+
     }
 }

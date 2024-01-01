@@ -1,18 +1,15 @@
-using System;
 using FluentValidation;
-using WorkflowAutomation.Application.Documents.Commands.UserInfoCommand;
 
-namespace WorkflowAutomation.Application.Statuses.Commands.ChangeStatus
+namespace WorkflowAutomation.Application.Statuses.Commands.ChangeStatus;
+
+public class ChangeStatusCommandValidator : AbstractValidator<ChangeStatusCommand>
 {
-    public class ChangeStatusCommandValidator : AbstractValidator<ChangeStatusCommand>
+    public ChangeStatusCommandValidator()
     {
-        public ChangeStatusCommandValidator()
-        {
-            RuleFor(deleteNoteCommand => deleteNoteCommand.DocumentId).NotNull().GreaterThanOrEqualTo(0);
-            RuleFor(deleteNoteCommand => deleteNoteCommand.UserId).NotEmpty();
-            RuleFor(deleteNoteCommand => deleteNoteCommand.StatusId).NotNull().GreaterThanOrEqualTo(0);
-            RuleFor(deleteNoteCommand => deleteNoteCommand.JwtToken).NotEmpty();
-            RuleFor(deleteNoteCommand => deleteNoteCommand.Uri).NotEmpty();
-        }
+        RuleFor(deleteNoteCommand => deleteNoteCommand.DocumentId).NotNull().GreaterThanOrEqualTo(0);
+        RuleFor(deleteNoteCommand => deleteNoteCommand.UserId).NotEmpty();
+        RuleFor(deleteNoteCommand => deleteNoteCommand.StatusId).NotNull().GreaterThanOrEqualTo(0);
+        RuleFor(deleteNoteCommand => deleteNoteCommand.JwtToken).NotEmpty();
+        RuleFor(deleteNoteCommand => deleteNoteCommand.Uri).NotEmpty();
     }
 }

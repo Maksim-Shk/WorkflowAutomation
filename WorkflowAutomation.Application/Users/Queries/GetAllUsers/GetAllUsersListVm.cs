@@ -1,7 +1,6 @@
-namespace WorkflowAutomation.Application.Users.Queries.GetAllUsers
+namespace WorkflowAutomation.Application.Users.Queries.GetAllUsers;
+
+public class AllUsersListVm
 {
-    public class AllUsersListVm
-    {
-        public IList<GetAllUsersListDto> AllUsers{ get; set; }
-    }
+    public IList<GetAllUsersListDto> AllUsers{ get; set; }
 }

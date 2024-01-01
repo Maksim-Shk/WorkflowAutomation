@@ -1,8 +1,7 @@
-namespace WorkflowAutomation.Application.Documents.Queries.GetOneDocument
+namespace WorkflowAutomation.Application.Documents.Queries.GetOneDocument;
+
+public class DocFile
 {
-    public class DocFile
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-    }
+    public int Id { get; set; }
+    public string Name { get; set; }
 }

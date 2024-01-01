@@ -1,9 +1,8 @@
-﻿namespace WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionUsersInfo
+﻿namespace WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionUsersInfo;
+
+public class SubdivisionUsersInfoVm
 {
-    public class SubdivisionUsersInfoVm
-    {
-        public string SubdivisionName { get; set; }
-        public int SubdivisionId { get; set; }
-        public IList<SubdivisionUsersInfoDto> Users { get; set; }
-    }
+    public string SubdivisionName { get; set; }
+    public int SubdivisionId { get; set; }
+    public IList<SubdivisionUsersInfoDto> Users { get; set; }
 }

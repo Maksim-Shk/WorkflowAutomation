@@ -1,14 +1,7 @@
-﻿using Accord.IO;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WorkflowAutomation.Application.Documents.Commands.CreateNewDocument;
 using WorkflowAutomation.Application.Interfaces;
 using WorkflowAutomation.Domain;
 

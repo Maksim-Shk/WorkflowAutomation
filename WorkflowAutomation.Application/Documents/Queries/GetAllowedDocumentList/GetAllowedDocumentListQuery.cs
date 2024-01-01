@@ -1,9 +1,8 @@
 ﻿using MediatR;
 
-namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentList
+namespace WorkflowAutomation.Application.Documents.Queries.GetAllowedDocumentList;
+
+public class GetAllowedDocumentListQuery : IRequest<AllowedDocumentListVm>
 {
-    public class GetAllowedDocumentListQuery : IRequest<AllowedDocumentListVm>
-    {
-        public string UserId { get; set; }
-    }
+    public string UserId { get; set; }
 }

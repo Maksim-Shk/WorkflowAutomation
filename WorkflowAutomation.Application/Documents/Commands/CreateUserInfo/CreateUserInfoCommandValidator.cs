@@ -1,4 +1,3 @@
-using System;
 using FluentValidation;
 
 namespace WorkflowAutomation.Application.Documents.Commands.UserInfoCommand

@@ -1,8 +1,8 @@
 using MediatR;
-namespace WorkflowAutomation.Application.Roles.Queries.GetUserRolesList
+
+namespace WorkflowAutomation.Application.Roles.Queries.GetUserRolesList;
+
+public class GetUserRolesListQuery : IRequest<UserRolesListVm>
 {
-    public class GetUserRolesListQuery : IRequest<UserRolesListVm>
-    {
-        public string UserId { get; set; }
-    }
+    public string UserId { get; set; }
 }

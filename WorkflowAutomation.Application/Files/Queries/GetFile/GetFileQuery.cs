@@ -1,10 +1,9 @@
 using MediatR;
 
-namespace WorkflowAutomation.Application.Files.Queries.GetFile
+namespace WorkflowAutomation.Application.Files.Queries.GetFile;
+
+public class GetFileQuery : IRequest<FileDto>
 {
-    public class GetFileQuery : IRequest<FileDto>
-    {
-        public int FileId { get; set; }
-        public string UserId { get; set; }
-    }
+    public int FileId { get; set; }
+    public string UserId { get; set; }
 }

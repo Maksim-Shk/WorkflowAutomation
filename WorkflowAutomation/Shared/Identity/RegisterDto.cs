@@ -1,24 +1,22 @@
 using System.ComponentModel.DataAnnotations;
-using System.Xml.Linq;
 
-namespace WorkflowAutomation.Shared.Identity
+namespace WorkflowAutomation.Shared.Identity;
+
+public class RegisterDto
 {
-    public class RegisterDto
-    {
-        [Required]
-        [EmailAddress]
-        [Display(Name = "Электронная почта")]
-        public string Email { get; set; }
+    [Required]
+    [EmailAddress]
+    [Display(Name = "Электронная почта")]
+    public string Email { get; set; }
 
-        [Required]
-        [StringLength(100, ErrorMessage = "{0} Должен иметь длину от {2} до {1} символов.", MinimumLength = 6)]
-        [DataType(DataType.Password)]
-        [Display(Name = "Пароль")]
-        public string Password { get; set; }
+    [Required]
+    [StringLength(100, ErrorMessage = "{0} Должен иметь длину от {2} до {1} символов.", MinimumLength = 6)]
+    [DataType(DataType.Password)]
+    [Display(Name = "Пароль")]
+    public string Password { get; set; }
 
-        [DataType(DataType.Password)]
-        [Display(Name = "Подтвердите пароль")]
-        [Compare("Password", ErrorMessage = "Пароль и подтвержденный пароль не совпадают.")]
-        public string ConfirmPassword { get; set; }
-    }
+    [DataType(DataType.Password)]
+    [Display(Name = "Подтвердите пароль")]
+    [Compare("Password", ErrorMessage = "Пароль и подтвержденный пароль не совпадают.")]
+    public string ConfirmPassword { get; set; }
 }

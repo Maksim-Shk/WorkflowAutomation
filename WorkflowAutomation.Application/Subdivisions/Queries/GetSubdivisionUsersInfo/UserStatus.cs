@@ -1,8 +1,7 @@
-﻿namespace WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionUsersInfo
+﻿namespace WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionUsersInfo;
+
+public enum UserStatus
 {
-    public enum UserStatus
-    {
-        Active,
-        Blocked
-    }
+    Active,
+    Blocked
 }

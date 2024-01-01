@@ -1,8 +1,6 @@
+namespace WorkflowAutomation.Application.Files.Queries.GetFile;
 
-namespace WorkflowAutomation.Application.Files.Queries.GetFile
+public class FileDto
 {
-    public class FileDto
-    {
-        public string Path { get; set; }
-    }
+    public string Path { get; set; }
 }

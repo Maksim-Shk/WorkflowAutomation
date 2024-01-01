@@ -1,18 +1,16 @@
 ﻿using WorkflowAutomation.Server.Models;
-//using WorkflowAutomation.Domain;
 using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
-namespace WorkflowAutomation.Server.Data
+namespace WorkflowAutomation.Server.Data;
+
+public class AuthDbContext : ApiAuthorizationDbContext<ApplicationUser>
 {
-    public class AuthDbContext : ApiAuthorizationDbContext<ApplicationUser>
+    public AuthDbContext(
+        DbContextOptions<AuthDbContext> options,
+        IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
     {
-        public AuthDbContext(
-            DbContextOptions<AuthDbContext> options,
-            IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
-        {
-        }
     }
 }

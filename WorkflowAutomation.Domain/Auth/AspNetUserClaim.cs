@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace WorkflowAutomation.Domain;
 
-namespace WorkflowAutomation.Domain
+public partial class AspNetUserClaim
 {
-    public partial class AspNetUserClaim
-    {
-        public int Id { get; set; }
-        public string UserId { get; set; } = null!;
-        public string? ClaimType { get; set; }
-        public string? ClaimValue { get; set; }
+    public int Id { get; set; }
+    public string UserId { get; set; } = null!;
+    public string? ClaimType { get; set; }
+    public string? ClaimValue { get; set; }
 
-        public virtual AspNetUser User { get; set; } = null!;
-    }
+    public virtual AspNetUser User { get; set; } = null!;
 }

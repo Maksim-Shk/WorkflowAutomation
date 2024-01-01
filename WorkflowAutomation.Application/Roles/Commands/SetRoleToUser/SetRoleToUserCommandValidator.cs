@@ -1,14 +1,12 @@
-using System;
 using FluentValidation;
 
-namespace WorkflowAutomation.Application.Roles.Commands.SetRoleToUser
+namespace WorkflowAutomation.Application.Roles.Commands.SetRoleToUser;
+
+public class SetRoleToUserCommandValidator : AbstractValidator<SetRoleToUserCommand>
 {
-    public class SetRoleToUserCommandValidator : AbstractValidator<SetRoleToUserCommand>
+    public SetRoleToUserCommandValidator()
     {
-        public SetRoleToUserCommandValidator()
-        {
-            RuleFor(deleteNoteCommand => deleteNoteCommand.RoleId).NotEmpty();
-            RuleFor(deleteNoteCommand => deleteNoteCommand.UserId).NotEmpty();
-        }
+        RuleFor(deleteNoteCommand => deleteNoteCommand.RoleId).NotEmpty();
+        RuleFor(deleteNoteCommand => deleteNoteCommand.UserId).NotEmpty();
     }
 }

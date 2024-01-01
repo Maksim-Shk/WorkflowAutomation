@@ -1,9 +1,8 @@
 ﻿using MediatR;
 
-namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentList
+namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentList;
+
+public class GetDocumentListQuery : IRequest<DocumentListVm>
 {
-    public class GetDocumentListQuery : IRequest<DocumentListVm>
-    {
-        public string UserId { get; set; }
-    }
+    public string UserId { get; set; }
 }

@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentList
+﻿namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentList;
+
+public class SimpleDocumentListVm
 {
-    public class SimpleDocumentListVm
-    {
-        public IList<SimpleDocumentLookupDto> Documents { get; set; }
-    }
+    public IList<SimpleDocumentLookupDto> Documents { get; set; }
 }

@@ -1,10 +1,8 @@
-using System;
 using MediatR;
 
-namespace WorkflowAutomation.Application.Users.Queries.GetUserInfo
+namespace WorkflowAutomation.Application.Users.Queries.GetUserInfo;
+
+public class GetUserInfoQuery : IRequest<GetUserInfoDto>
 {
-    public class GetUserInfoQuery : IRequest<GetUserInfoDto>
-    {
-        public string UserId { get; set; }
-    }
+    public string UserId { get; set; }
 }

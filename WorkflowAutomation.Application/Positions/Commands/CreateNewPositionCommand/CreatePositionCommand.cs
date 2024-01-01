@@ -1,11 +1,10 @@
 ﻿using MediatR;
 
-namespace WorkflowAutomation.Application.Positions.Commands.CreateNewPositionCommand
+namespace WorkflowAutomation.Application.Positions.Commands.CreateNewPositionCommand;
+
+public class CreatePositionCommand : IRequest<int>
 {
-    public class CreatePositionCommand : IRequest<int>
-    {
-        public string Name { get; set; }
-        public int? IdSubordination { get; set; }
-        public string? ShortName { get; set; }
-    }
+    public string Name { get; set; }
+    public int? IdSubordination { get; set; }
+    public string? ShortName { get; set; }
 }

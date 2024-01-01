@@ -1,7 +1,5 @@
 using AutoMapper;
 using WorkflowAutomation.Application.Common.Mappings;
-using MediatR;
-using WorkflowAutomation.Application.Documents.Commands.UserInfoCommand;
 
 namespace WorkflowAutomation.Application.Documents.Commands.DeleteDocument
 {

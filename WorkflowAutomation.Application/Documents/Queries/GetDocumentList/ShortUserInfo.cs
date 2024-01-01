@@ -1,8 +1,7 @@
-namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentList
+namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentList;
+
+public class ShortUserInfo
 {
-    public class ShortUserInfo
-    {
-        public string UserId { get; set; }
-        public string UserInfo { get; set; }
-    }
+    public string UserId { get; set; }
+    public string UserInfo { get; set; }
 }

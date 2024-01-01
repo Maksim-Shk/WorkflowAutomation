@@ -1,8 +1,5 @@
-﻿using FluentValidation;
+﻿namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentStatisticBySubdivision;
 
-namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentStatisticBySubdivision
+public class GetDocumentStatisticBySubdivisionQueryValidator
 {
-    public class GetDocumentStatisticBySubdivisionQueryValidator
-    {
-    }
 }

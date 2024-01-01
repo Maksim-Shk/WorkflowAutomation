@@ -1,9 +1,4 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Serilog;
-using Serilog.Events;
-using System;
 using WorkflowAutomation.Persistence;
 
 namespace WorkflowAutomation.Server

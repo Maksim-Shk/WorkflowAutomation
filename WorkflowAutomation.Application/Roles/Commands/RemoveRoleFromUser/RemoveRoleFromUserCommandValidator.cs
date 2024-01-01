@@ -1,13 +1,12 @@
 using FluentValidation;
 
-namespace WorkflowAutomation.Application.Roles.Commands.RemoveRoleFromUser
+namespace WorkflowAutomation.Application.Roles.Commands.RemoveRoleFromUser;
+
+public class RemoveRoleFromUserCommandValidator : AbstractValidator<RemoveRoleFromUserCommand>
 {
-    public class RemoveRoleFromUserCommandValidator : AbstractValidator<RemoveRoleFromUserCommand>
+    public RemoveRoleFromUserCommandValidator()
     {
-        public RemoveRoleFromUserCommandValidator()
-        {
-            RuleFor(deleteNoteCommand => deleteNoteCommand.RoleId).NotEmpty();
-            RuleFor(deleteNoteCommand => deleteNoteCommand.UserId).NotEmpty();
-        }
+        RuleFor(deleteNoteCommand => deleteNoteCommand.RoleId).NotEmpty();
+        RuleFor(deleteNoteCommand => deleteNoteCommand.UserId).NotEmpty();
     }
 }

@@ -1,10 +1,8 @@
-using System;
-using MediatR;
 using WorkflowAutomation.Domain;
 
-namespace WorkflowAutomation.Application.Documents
+namespace WorkflowAutomation.Application.Documents;
+
+public interface IDocumentRepository
 {
-    public interface IDocumentRepository {
-        Task<List<AppUser>> GetAllowedUsers(string UserId);
-    }
+    Task<List<AppUser>> GetAllowedUsers(string UserId);
 }

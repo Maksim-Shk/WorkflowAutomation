@@ -1,11 +1,10 @@
 ﻿using MediatR;
 
-namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentsStatistics
-{
-    public class GetDocumentsStatisticsQuery : IRequest<DocumentStatisticsListVm>
-    {
-        public string UserId { get; set; }
+namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentsStatistics;
 
-        public List<int> StatusIds { get; set; }
-    }
+public class GetDocumentsStatisticsQuery : IRequest<DocumentStatisticsListVm>
+{
+    public string UserId { get; set; }
+
+    public List<int> StatusIds { get; set; }
 }

@@ -1,12 +1,11 @@
 using FluentValidation;
 
-namespace WorkflowAutomation.Application.Users.Queries.GetAllowedUsers
+namespace WorkflowAutomation.Application.Users.Queries.GetAllowedUsers;
+
+public class GetAllowedUserListQueryValidator : AbstractValidator<GetAllowedUserListQuery>
 {
-    public class GetAllowedUserListQueryValidator : AbstractValidator<GetAllowedUserListQuery>
+    public GetAllowedUserListQueryValidator()
     {
-        public GetAllowedUserListQueryValidator()
-        {
-            RuleFor(getRolesListQueryValidator => getRolesListQueryValidator.UserId).NotEmpty();
-        }
+        RuleFor(getRolesListQueryValidator => getRolesListQueryValidator.UserId).NotEmpty();
     }
 }

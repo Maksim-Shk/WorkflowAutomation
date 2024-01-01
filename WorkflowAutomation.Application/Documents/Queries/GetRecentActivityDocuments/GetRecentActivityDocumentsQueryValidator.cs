@@ -1,13 +1,12 @@
 ﻿using FluentValidation;
 
-namespace WorkflowAutomation.Application.Documents.Queries.GetRecentActivityDocuments
+namespace WorkflowAutomation.Application.Documents.Queries.GetRecentActivityDocuments;
+
+public class GetRecentActivityDocumentsQueryValidator : AbstractValidator<GetRecentActivityDocumentsQuery>
 {
-    public class GetRecentActivityDocumentsQueryValidator : AbstractValidator<GetRecentActivityDocumentsQuery>
+    public GetRecentActivityDocumentsQueryValidator()
     {
-        public GetRecentActivityDocumentsQueryValidator()
-        {
-            RuleFor(getDocumentListQuery => getDocumentListQuery.UserId).NotEmpty();
-            RuleFor(getDocumentListQuery => getDocumentListQuery.NumberOfEntity).NotEmpty().GreaterThanOrEqualTo(1);
-        }
+        RuleFor(getDocumentListQuery => getDocumentListQuery.UserId).NotEmpty();
+        RuleFor(getDocumentListQuery => getDocumentListQuery.NumberOfEntity).NotEmpty().GreaterThanOrEqualTo(1);
     }
 }

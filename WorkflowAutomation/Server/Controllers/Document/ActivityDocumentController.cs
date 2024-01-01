@@ -1,48 +1,34 @@
 ﻿using AutoMapper;
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using System.Threading;
-using System.Reflection;
-using AutoMapper.QueryableExtensions;
-using Microsoft.Extensions.Logging;
-
-using WorkflowAutomation.Server.Models;
-using WorkflowAutomation.Application.Interfaces;
-using WorkflowAutomation.Domain;
 using WorkflowAutomation.Application.Documents.Queries.GetRecentActivityDocuments;
-using WorkflowAutomation.Application.Documents.Queries.GetDocumentList;
 
-namespace WorkflowAutomation.Server.Controllers.Document
+namespace WorkflowAutomation.Server.Controllers.Document;
+
+[Authorize]
+[ApiController]
+[Route("[controller]")]
+public class ActivityDocumentController : BaseController
 {
-    [Authorize]
-    [ApiController]
-    [Route("[controller]")]
-    public class ActivityDocumentController : BaseController
+    private readonly IMapper _mapper;
+    private readonly ILogger<ActivityDocumentController> _logger;
+
+    public ActivityDocumentController(IMapper mapper, ILogger<ActivityDocumentController> logger)
     {
-        private readonly IMapper _mapper;
-        private readonly ILogger<ActivityDocumentController> _logger;
+        _mapper = mapper;
+        _logger = logger;
+    }
 
-        public ActivityDocumentController(IMapper mapper, ILogger<ActivityDocumentController> logger)
+    [HttpGet("RecentActivityDocument")]
+    [Authorize]
+    public async Task<ActionResult<RecentActivityDocumentListVm>> GetRecentActivityDocument()
+    {
+        var query = new GetRecentActivityDocumentsQuery
         {
-            _mapper = mapper;
-            _logger = logger;
-        }
-
-        [HttpGet("RecentActivityDocument")]
-        [Authorize]
-        public async Task<ActionResult<RecentActivityDocumentListVm>> GetRecentActivityDocument()
-        {
-            var query = new GetRecentActivityDocumentsQuery
-            {
-                UserId = UserId,
-                NumberOfEntity = 10
-            };
-            var vm = await Mediator.Send(query);
-            return Ok(vm);
-        }
+            UserId = UserId,
+            NumberOfEntity = 10
+        };
+        var vm = await Mediator.Send(query);
+        return Ok(vm);
     }
 }

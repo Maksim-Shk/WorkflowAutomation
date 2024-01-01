@@ -1,8 +1,7 @@
-namespace WorkflowAutomation.Application.Roles.Queries.GetRolesList
+namespace WorkflowAutomation.Application.Roles.Queries.GetRolesList;
+
+public class RolesListVm
 {
-    public class RolesListVm
-    {
-        public IList<RolesListLookupDto> Roles { get; set; }
-    }
+    public IList<RolesListLookupDto> Roles { get; set; }
 }
 

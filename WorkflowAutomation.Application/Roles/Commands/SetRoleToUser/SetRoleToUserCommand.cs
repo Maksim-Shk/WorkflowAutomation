@@ -1,12 +1,9 @@
-using System;
 using MediatR;
 
-namespace WorkflowAutomation.Application.Roles.Commands.SetRoleToUser
+namespace WorkflowAutomation.Application.Roles.Commands.SetRoleToUser;
+
+public class SetRoleToUserCommand : IRequest
 {
-    public class SetRoleToUserCommand : IRequest
-    {
-        public string UserId { get; set; }
-        public string RoleId { get; set; }
-        //TODO: public string WhoGaveRoleId { get; set; }
-    }
+    public string UserId { get; set; }
+    public string RoleId { get; set; }
 }

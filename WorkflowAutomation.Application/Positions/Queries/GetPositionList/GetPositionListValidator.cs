@@ -1,13 +1,11 @@
-﻿using System;
-using FluentValidation;
+﻿using FluentValidation;
 
-namespace WorkflowAutomation.Application.Positions.Queries.GetPositionList
+namespace WorkflowAutomation.Application.Positions.Queries.GetPositionList;
+
+public class GetPositionListValidator : AbstractValidator<GetPositionListQuery>
 {
-    public class GetPositionListValidator : AbstractValidator<GetPositionListQuery>
+    public GetPositionListValidator()
     {
-        public GetPositionListValidator()
-        {
-            RuleFor(getPositionListValidator => getPositionListValidator.UserId).NotEmpty();
-        }
+        RuleFor(getPositionListValidator => getPositionListValidator.UserId).NotEmpty();
     }
 }

@@ -34,6 +34,5 @@ namespace WorkflowAutomation.Server.Controllers
             await Mediator.Send(command);
             return NoContent();
         }
-
     }
 }

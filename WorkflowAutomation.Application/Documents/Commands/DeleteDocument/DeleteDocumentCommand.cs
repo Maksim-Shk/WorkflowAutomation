@@ -1,11 +1,9 @@
-using System;
 using MediatR;
 
-namespace WorkflowAutomation.Application.Documents.Commands.DeleteDocument
+namespace WorkflowAutomation.Application.Documents.Commands.DeleteDocument;
+
+public class DeleteDocumentCommand : IRequest
 {
-    public class DeleteDocumentCommand : IRequest
-    {
-        public string UserId { get; set; }
-        public int DocumentId { get; set; }
-    }
+    public string UserId { get; set; }
+    public int DocumentId { get; set; }
 }

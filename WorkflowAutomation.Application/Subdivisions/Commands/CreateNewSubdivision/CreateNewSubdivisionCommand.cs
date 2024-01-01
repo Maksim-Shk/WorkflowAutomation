@@ -1,16 +1,13 @@
-using System;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 
-namespace WorkflowAutomation.Application.Subdivisions.Commands.CreateNewSubdivision
+namespace WorkflowAutomation.Application.Subdivisions.Commands.CreateNewSubdivision;
+
+public class CreateNewSubdivisionCommand : IRequest<int>
 {
-    public class CreateNewSubdivisionCommand : IRequest<int>
-    {
-        public string UserId { get; set; }
-        public string Name { get; set; }
-        public DateTime CreateDate { get; set; }
-        public int? SubordinationId { get; set; }
-        public List<SubUsers>? SubdivisionUsers { get; set; }
+    public string UserId { get; set; }
+    public string Name { get; set; }
+    public DateTime CreateDate { get; set; }
+    public int? SubordinationId { get; set; }
+    public List<SubUsers>? SubdivisionUsers { get; set; }
 
-    }
 }

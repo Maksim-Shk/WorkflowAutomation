@@ -1,11 +1,10 @@
-﻿namespace WorkflowAutomation.Persistence
+﻿namespace WorkflowAutomation.Persistence;
+
+public class DbInitializer
 {
-    public class DbInitializer
+    public static void Initialize(DocumentsDbContext context)
     {
-        public static void Initialize(DocumentsDbContext context)
-        {
-          //  context.Database.EnsureDeleted();
-            context.Database.EnsureCreated();
-        }
+        //context.Database.EnsureDeleted();
+        context.Database.EnsureCreated();
     }
 }

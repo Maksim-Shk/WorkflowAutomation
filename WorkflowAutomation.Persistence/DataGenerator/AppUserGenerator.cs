@@ -34,10 +34,6 @@
 //                    NormalizedEmail = username.ToUpper(),
 //                    EmailConfirmed = true,
 //                    PasswordHash = 
-
-
-                     
-
 //                }
 //            }
 

@@ -1,10 +1,8 @@
-using System;
 using MediatR;
 
-namespace WorkflowAutomation.Application.Users.Queries.GetAllUsers
+namespace WorkflowAutomation.Application.Users.Queries.GetAllUsers;
+
+public class GetAllUsersListQuery : IRequest<AllUsersListVm>
 {
-    public class GetAllUsersListQuery : IRequest<AllUsersListVm>
-    {
-        public string UserId { get; set; }
-    }
+    public string UserId { get; set; }
 }

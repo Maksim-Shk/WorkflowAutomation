@@ -1,8 +1,6 @@
-﻿
-namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentStatisticBySubdivision
+﻿namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentStatisticBySubdivision;
+
+public class DocumentStatisticBySubdivisionListVm
 {
-    public class DocumentStatisticBySubdivisionListVm
-    {
-        public IList<StatisticSubdivisionSet> StatisticSubdivisionSet { get; set; }
-    }
+    public IList<StatisticSubdivisionSet> StatisticSubdivisionSet { get; set; }
 }

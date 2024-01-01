@@ -1,10 +1,7 @@
-using System.Collections.Generic;
+namespace WorkflowAutomation.Shared.Identity;
 
-namespace WorkflowAutomation.Shared.Identity
+public class RegisterResult
 {
-    public class RegisterResult
-    {
-        public bool Successful { get; set; }
-        public IEnumerable<string> Errors { get; set; }
-    }
+    public bool Successful { get; set; }
+    public IEnumerable<string> Errors { get; set; }
 }

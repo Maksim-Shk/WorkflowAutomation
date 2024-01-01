@@ -1,9 +1,6 @@
-﻿using System;
+﻿namespace WorkflowAutomation.Application.Interfaces;
 
-namespace WorkflowAutomation.Application.Interfaces
+public interface ICurrentUserService
 {
-    public interface ICurrentUserService
-    {
-        Guid UserId { get; }
-    }
+    Guid UserId { get; }
 }

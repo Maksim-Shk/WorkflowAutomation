@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
-namespace WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionInfo
+namespace WorkflowAutomation.Application.Subdivisions.Queries.GetSubdivisionInfo;
+
+public enum RenderOption
 {
-    public enum RenderOption
-    {
-        [Description("Не отображать")]
-        NotRender,
-        [Description("Редактировать")]
-        Edit,
-        [Description("Перевести")]
-        ChangeSubdivison,
-        [Description("Уволить")]
-        Remove
-    }
+    [Description("Не отображать")]
+    NotRender,
+    [Description("Редактировать")]
+    Edit,
+    [Description("Перевести")]
+    ChangeSubdivison,
+    [Description("Уволить")]
+    Remove
 }

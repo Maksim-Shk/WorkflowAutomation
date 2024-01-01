@@ -1,12 +1,11 @@
 ﻿using FluentValidation;
 
-namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentList
+namespace WorkflowAutomation.Application.Documents.Queries.GetDocumentList;
+
+public class GetSimpleDocumentListQueryValidator : AbstractValidator<GetSimpleDocumentListQuery>
 {
-    public class GetSimpleDocumentListQueryValidator : AbstractValidator<GetSimpleDocumentListQuery>
+    public GetSimpleDocumentListQueryValidator()
     {
-        public GetSimpleDocumentListQueryValidator()
-        {
-            RuleFor(GetSimpleDocumentListQueryValidator => GetSimpleDocumentListQueryValidator.UserId).NotEmpty();
-        }
+        RuleFor(GetSimpleDocumentListQueryValidator => GetSimpleDocumentListQueryValidator.UserId).NotEmpty();
     }
 }

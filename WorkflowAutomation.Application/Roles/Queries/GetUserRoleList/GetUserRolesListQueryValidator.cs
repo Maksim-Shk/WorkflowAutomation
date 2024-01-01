@@ -1,13 +1,11 @@
-using System;
 using FluentValidation;
 
-namespace WorkflowAutomation.Application.Roles.Queries.GetUserRolesList
+namespace WorkflowAutomation.Application.Roles.Queries.GetUserRolesList;
+
+public class GetRolesListQueryValidator : AbstractValidator<GetUserRolesListQuery>
 {
-    public class GetRolesListQueryValidator : AbstractValidator<GetUserRolesListQuery>
+    public GetRolesListQueryValidator()
     {
-        public GetRolesListQueryValidator()
-        {
-            RuleFor(getRolesListQueryValidator => getRolesListQueryValidator.UserId).NotEmpty();
-        }
+        RuleFor(getRolesListQueryValidator => getRolesListQueryValidator.UserId).NotEmpty();
     }
 }

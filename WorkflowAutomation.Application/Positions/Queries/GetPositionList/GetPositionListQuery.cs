@@ -1,9 +1,8 @@
 ﻿using MediatR;
 
-namespace WorkflowAutomation.Application.Positions.Queries.GetPositionList
+namespace WorkflowAutomation.Application.Positions.Queries.GetPositionList;
+
+public class GetPositionListQuery : IRequest<PositionListVm>
 {
-    public class GetPositionListQuery : IRequest<PositionListVm>
-    {
-        public string UserId { get; set; }
-    }
+    public string UserId { get; set; }
 }

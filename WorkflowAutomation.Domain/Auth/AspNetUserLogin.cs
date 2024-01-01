@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace WorkflowAutomation.Domain;
 
-namespace WorkflowAutomation.Domain
+public partial class AspNetUserLogin
 {
-    public partial class AspNetUserLogin
-    {
-        public string LoginProvider { get; set; } = null!;
-        public string ProviderKey { get; set; } = null!;
-        public string? ProviderDisplayName { get; set; }
-        public string UserId { get; set; } = null!;
+    public string LoginProvider { get; set; } = null!;
+    public string ProviderKey { get; set; } = null!;
+    public string? ProviderDisplayName { get; set; }
+    public string UserId { get; set; } = null!;
 
-        public virtual AspNetUser User { get; set; } = null!;
-    }
+    public virtual AspNetUser User { get; set; } = null!;
 }

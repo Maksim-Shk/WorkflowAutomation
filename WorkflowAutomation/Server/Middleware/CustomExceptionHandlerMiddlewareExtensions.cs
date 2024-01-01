@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿namespace WorkflowAutomation.Server.Middleware;
 
-namespace WorkflowAutomation.Server.Middleware
+public static class CustomExceptionHandlerMiddlewareExtensions
 {
-    public static class CustomExceptionHandlerMiddlewareExtensions
+    public static IApplicationBuilder UseCustomExceptionHandler(this
+       IApplicationBuilder builder)
     {
-        public static IApplicationBuilder UseCustomExceptionHandler(this
-           IApplicationBuilder builder)
-        {
-            return builder.UseMiddleware<CustomExceptionHandlerMiddleware>();
-        }
+        return builder.UseMiddleware<CustomExceptionHandlerMiddleware>();
     }
 }
